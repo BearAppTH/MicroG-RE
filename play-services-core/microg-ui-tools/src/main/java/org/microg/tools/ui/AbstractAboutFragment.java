@@ -157,10 +157,8 @@ public abstract class AbstractAboutFragment extends Fragment {
         if (morpheCardContainer != null) {
             View morpheCard = inflater.inflate(R.layout.about_morphe, morpheCardContainer, true);
 
-            morpheCard.findViewById(R.id.morphe_github).setOnClickListener(v -> openUrl("https://github.com/MorpheApp"));
-            morpheCard.findViewById(R.id.morphe_x).setOnClickListener(v -> openUrl("https://twitter.com/MorpheApp"));
-            morpheCard.findViewById(R.id.morphe_reddit).setOnClickListener(v -> openUrl("https://www.reddit.com/r/MorpheApp"));
-            morpheCard.findViewById(R.id.morphe_website).setOnClickListener(v -> openUrl("https://morphe.software/"));
+            morpheCard.findViewById(R.id.morphe_github).setOnClickListener(v -> openUrl("https://github.com/BearAppTH"));
+            morpheCard.findViewById(R.id.morphe_website).setOnClickListener(v -> openUrl("https://www.bearappth.online"));
         }
 
         List<Library> libraries = new ArrayList<>();
