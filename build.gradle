@@ -24,7 +24,7 @@ buildscript {
     ext.webkitVersion = '1.14.0'
 
     ext.coroutineVersion = '1.10.2'
-    ext.kotlinVersion = '2.2.10'
+    ext.kotlinVersion = '2.3.21'
 
     ext.cronetVersion = '119.6045.31'
     ext.okhttpVersion = '5.1.0'
