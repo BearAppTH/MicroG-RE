@@ -2,7 +2,7 @@
 
 <img
   width="160px"
-  src="https://raw.githubusercontent.com/BearAppTH/MicroG-RE/main/bearappth_logo.svg"
+  src="https://raw.githubusercontent.com/BearAppTH/bearapp-branding/main/assets/bearappth-logo/bearappth_logo_with_frame_dark.svg"
   alt="BearAppTH Logo"
 />
 
