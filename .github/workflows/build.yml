@@ -55,4 +55,5 @@ jobs:
         with:
           name: lint-reports
           path: "**/build/reports/lint-results-*.html"
+          if-no-files-found: ignore
           retention-days: 7
