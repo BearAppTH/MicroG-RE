@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout dev
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           ref: dev
           fetch-depth: 0
@@ -41,40 +41,37 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Checkout crowdin branch to run checks on it
       - name: Checkout crowdin branch
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           ref: crowdin
           fetch-depth: 0
           clean: true
 
-      # Step 2: Compile Android app to check string resources
-      - name: "Setup Java"
+      - name: Setup Java
         uses: actions/setup-java@v5
         with:
           distribution: "temurin"
           java-version: "21"
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
       - name: Compile Android app to check resources
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           chmod +x ./gradlew
           ./gradlew --no-daemon clean :play-services-core:assembleDefaultDebug
 
-      # Step 3: Checkout dev branch to prepare for merging
       - name: Checkout dev branch for merge
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           ref: dev
           fetch-depth: 0
           clean: true
 
-      # Step 4: Fetch the latest crowdin branch (already checked)
       - name: Fetch crowdin branch
         run: git fetch origin crowdin
 
-      # Step 5: Squash merge crowdin into dev
       - name: Squash merge crowdin into dev
         run: |
           git config --local user.name "Crowdin Bot"
