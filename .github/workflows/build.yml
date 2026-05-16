@@ -29,28 +29,25 @@ jobs:
           build-scan-terms-of-use-agree: "yes"
       - name: "Setup matchers"
         run: |
-          # Setting up matchers...
-
           matchers_dir='${{ github.workspace }}/.github/matchers'
           matcher_list()
           {
             echo 'gradle-build-matcher.json'
             echo 'gradle-build-kotlin-error-matcher.json'
           }
-
           matcher_list | while IFS='' read -r NAME; do
             if test -f "${matchers_dir:?}/${NAME:?}"; then
               echo "::add-matcher::${matchers_dir:?}/${NAME:?}"
               echo "Matcher configured: ${NAME:?}"
             fi
           done
-      - name: "Execute Gradle assemble"
-        run: "./gradlew --no-daemon assemble"
+      - name: "Execute Gradle build (debug only)"
+        run: "./gradlew --no-daemon :play-services-core:assembleDefaultDebug"
       - name: "Execute Gradle check"
         run: "./gradlew --no-daemon check"
       - name: "Upload build artifacts"
         uses: actions/upload-artifact@v4
         with:
-          name: apk-build
-          path: play-services-core/build/outputs/apk/
+          name: apk-debug
+          path: play-services-core/build/outputs/apk/default/debug/
           retention-days: 7

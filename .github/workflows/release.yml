@@ -9,9 +9,9 @@ on:
         description: "Version name (e.g. 1.0.2)"
         required: true
       release_notes:
-        description: "Release notes"
+        description: "Release notes (ถ้าเว้นว่างจะ auto-generate จาก git log)"
         required: false
-        default: "Bug fixes and improvements."
+        default: ""
 
 jobs:
   build:
@@ -26,13 +26,34 @@ jobs:
 
       - name: "Update version in build.gradle"
         run: |
-          sed -i "s/ext\.appVersionName = '[^']*'/ext.appVersionName = '${{ github.event.inputs.version }}'/" build.gradle
+          sed -i "s/ext\.appVersionName = '[^']*'/ext.appVersionName = '${{ github.event.inputs.version }}'/'" build.gradle
 
       - name: "Read version from build.gradle"
         id: version
         run: |
           VERSION=$(grep -oP "(?<=ext\.appVersionName = ')[^']+" build.gradle)
           echo "name=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: "Generate changelog"
+        id: changelog
+        run: |
+          NOTES="${{ github.event.inputs.release_notes }}"
+          if [ -z "$NOTES" ]; then
+            LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+            if [ -n "$LAST_TAG" ]; then
+              NOTES=$(git log "$LAST_TAG"..HEAD --pretty=format:"- %s" --no-merges)
+            else
+              NOTES=$(git log --pretty=format:"- %s" --no-merges -20)
+            fi
+            if [ -z "$NOTES" ]; then
+              NOTES="Bug fixes and improvements."
+            fi
+          fi
+          {
+            echo 'notes<<EOF'
+            echo "$NOTES"
+            echo 'EOF'
+          } >> $GITHUB_OUTPUT
 
       - name: "Setup Java"
         uses: actions/setup-java@v5
@@ -89,7 +110,7 @@ jobs:
           body: |
             ## 🐻 Bear MicroG v${{ steps.version.outputs.name }}
 
-            ${{ github.event.inputs.release_notes }}
+            ${{ steps.changelog.outputs.notes }}
 
             ---
 
