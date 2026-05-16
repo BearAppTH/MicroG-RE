@@ -25,8 +25,10 @@ jobs:
           fetch-depth: 0
 
       - name: "Update version in build.gradle"
+        env:
+          VERSION_INPUT: ${{ github.event.inputs.version }}
         run: |
-          sed -i "s/ext\.appVersionName = '[^']*'/ext.appVersionName = '${{ github.event.inputs.version }}'/" build.gradle
+          sed -i "s/ext\.appVersionName = '[^']*'/ext.appVersionName = '$VERSION_INPUT'/" build.gradle
 
       - name: "Read version from build.gradle"
         id: version
@@ -36,8 +38,10 @@ jobs:
 
       - name: "Generate changelog"
         id: changelog
+        env:
+          RELEASE_NOTES: ${{ github.event.inputs.release_notes }}
         run: |
-          NOTES='${{ github.event.inputs.release_notes }}'
+          NOTES="$RELEASE_NOTES"
           if [ -z "$NOTES" ]; then
             LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
             if [ -n "$LAST_TAG" ]; then
@@ -49,11 +53,11 @@ jobs:
               NOTES="Bug fixes and improvements."
             fi
           fi
+          DELIM=$(openssl rand -hex 16)
           {
-            echo 'notes<<EOF'
-            printf '%s' "$NOTES"
-            echo
-            echo 'EOF'
+            echo "notes<<$DELIM"
+            printf '%s\n' "$NOTES"
+            echo "$DELIM"
           } >> $GITHUB_OUTPUT
 
       - name: "Setup Java"
