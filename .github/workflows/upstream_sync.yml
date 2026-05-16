@@ -1,0 +1,119 @@
+name: Check Upstream Updates
+
+on:
+  schedule:
+    - cron: '0 0 * * 1'  # ทุกวันจันทร์ เวลา 00:00 UTC
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  check-upstream:
+    name: Check for upstream microG updates
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Fetch upstream and compare
+        id: compare
+        run: |
+          git remote add upstream https://github.com/microg/GmsCore.git
+          git fetch upstream master --quiet
+
+          UPSTREAM_SHA=$(git rev-parse upstream/master)
+          echo "upstream_sha=$UPSTREAM_SHA" >> $GITHUB_OUTPUT
+
+          # นับจำนวน commit ของ upstream ที่ยังไม่ได้ merge
+          COMMIT_COUNT=$(git rev-list HEAD..upstream/master --count 2>/dev/null || echo "0")
+          echo "commit_count=$COMMIT_COUNT" >> $GITHUB_OUTPUT
+
+          if [ "$COMMIT_COUNT" -gt "0" ]; then
+            echo "has_updates=true" >> $GITHUB_OUTPUT
+
+            # เก็บ commit log ล่าสุด 10 รายการ
+            LOG=$(git log upstream/master ^HEAD --oneline -10 2>/dev/null || echo "ไม่สามารถดึง log ได้")
+            echo "commit_log<<EOF" >> $GITHUB_OUTPUT
+            echo "$LOG" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          else
+            echo "has_updates=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create or update issue if updates found
+        if: steps.compare.outputs.has_updates == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const existingIssues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'upstream-sync',
+              state: 'open'
+            });
+
+            const body = [
+              '## พบการอัพเดทจาก upstream microG GmsCore',
+              '',
+              `- **Upstream SHA:** \`${{ steps.compare.outputs.upstream_sha }}\``,
+              `- **จำนวน commit ใหม่:** ${{ steps.compare.outputs.commit_count }}`,
+              '',
+              '### Commits ล่าสุดจาก upstream',
+              '```',
+              `${{ steps.compare.outputs.commit_log }}`,
+              '```',
+              '',
+              '### วิธี merge',
+              '```bash',
+              'git remote add upstream https://github.com/microg/GmsCore.git',
+              'git fetch upstream master',
+              'git checkout dev',
+              'git merge upstream/master',
+              '# แก้ conflict แล้ว push',
+              '```',
+              '',
+              '_Issue นี้สร้างอัตโนมัติโดย GitHub Actions_',
+            ].join('\n');
+
+            if (existingIssues.data.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: '🔄 มีการอัพเดทจาก upstream microG GmsCore',
+                body: body,
+                labels: ['upstream-sync']
+              });
+            } else {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existingIssues.data[0].number,
+                body: body
+              });
+            }
+
+      - name: Close upstream issue if up to date
+        if: steps.compare.outputs.has_updates == 'false'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const existingIssues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'upstream-sync',
+              state: 'open'
+            });
+
+            for (const issue of existingIssues.data) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed'
+              });
+            }
