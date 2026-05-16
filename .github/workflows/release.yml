@@ -26,7 +26,7 @@ jobs:
 
       - name: "Update version in build.gradle"
         run: |
-          sed -i "s/ext\.appVersionName = '[^']*'/ext.appVersionName = '${{ github.event.inputs.version }}'/'" build.gradle
+          sed -i "s/ext\.appVersionName = '[^']*'/ext.appVersionName = '${{ github.event.inputs.version }}'/" build.gradle
 
       - name: "Read version from build.gradle"
         id: version
@@ -37,7 +37,7 @@ jobs:
       - name: "Generate changelog"
         id: changelog
         run: |
-          NOTES="${{ github.event.inputs.release_notes }}"
+          NOTES='${{ github.event.inputs.release_notes }}'
           if [ -z "$NOTES" ]; then
             LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
             if [ -n "$LAST_TAG" ]; then
@@ -51,7 +51,8 @@ jobs:
           fi
           {
             echo 'notes<<EOF'
-            echo "$NOTES"
+            printf '%s' "$NOTES"
+            echo
             echo 'EOF'
           } >> $GITHUB_OUTPUT
 
@@ -100,7 +101,7 @@ jobs:
 
       - name: "Rename APK"
         run: |
-          mv ${{ steps.sign_app.outputs.signedFile }} bear-microg-v${{ steps.version.outputs.name }}.apk
+          mv "${{ steps.sign_app.outputs.signedFile }}" "bear-microg-v${{ steps.version.outputs.name }}.apk"
 
       - name: "Create GitHub Release"
         uses: softprops/action-gh-release@v2
