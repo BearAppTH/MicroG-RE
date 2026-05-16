@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+concurrency:
+  group: back-merge
+  cancel-in-progress: false
+
 jobs:
   back-merge:
     name: Back Merge Main to Dev

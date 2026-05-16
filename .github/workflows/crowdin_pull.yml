@@ -41,12 +41,23 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout crowdin branch
+      - name: Checkout dev branch
         uses: actions/checkout@v4
         with:
-          ref: crowdin
+          ref: dev
           fetch-depth: 0
           clean: true
+
+      - name: Fetch and squash-merge crowdin into dev
+        run: |
+          git config --local user.name "Crowdin Bot"
+          git config --local user.email "support+bot@crowdin.com"
+          git fetch origin crowdin
+          if ! git merge --squash origin/crowdin; then
+            echo "::error::Merge conflicts between crowdin and dev. Manual resolution required."
+            git merge --abort 2>/dev/null || true
+            exit 1
+          fi
 
       - name: Setup Java
         uses: actions/setup-java@v5
@@ -57,25 +68,16 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Compile Android app to check resources
+      - name: Compile Android app to verify merged translations
         run: |
           chmod +x ./gradlew
           ./gradlew --no-daemon clean :play-services-core:assembleDefaultDebug
 
-      - name: Checkout dev branch for merge
-        uses: actions/checkout@v4
-        with:
-          ref: dev
-          fetch-depth: 0
-          clean: true
-
-      - name: Fetch crowdin branch
-        run: git fetch origin crowdin
-
-      - name: Squash merge crowdin into dev
+      - name: Commit and push if translations changed
         run: |
-          git config --local user.name "Crowdin Bot"
-          git config --local user.email "support+bot@crowdin.com"
-          git merge --squash origin/crowdin
-          git commit --allow-empty -m "chore: Update translations from Crowdin"
-          git push origin dev
+          if ! git diff --staged --quiet; then
+            git commit -m "chore: Update translations from Crowdin"
+            git push origin dev
+          else
+            echo "No translation changes to commit."
+          fi
