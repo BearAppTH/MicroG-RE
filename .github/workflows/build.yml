@@ -48,9 +48,18 @@ jobs:
         run: "./gradlew --no-daemon assemble"
       - name: "Execute Gradle check"
         run: "./gradlew --no-daemon check"
+      - name: "Execute Android Lint"
+        run: "./gradlew --no-daemon lint"
       - name: "Upload build artifacts"
         uses: actions/upload-artifact@v4
         with:
           name: apk-build
           path: play-services-core/build/outputs/apk/
+          retention-days: 7
+      - name: "Upload lint reports"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-reports
+          path: "**/build/reports/lint-results*.html"
           retention-days: 7
