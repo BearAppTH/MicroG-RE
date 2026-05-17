@@ -16,7 +16,6 @@ android {
     namespace "org.microg.gms.core.conscrypt"
 
     compileSdkVersion androidCompileSdk
-//    buildToolsVersion "$androidBuildVersionTools"
 
     defaultConfig {
         minSdkVersion androidMinSdk

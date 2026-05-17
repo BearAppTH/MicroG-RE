@@ -23,7 +23,6 @@ android {
     namespace "org.microg.gms.cast.framework.core"
 
     compileSdkVersion androidCompileSdk
-//    buildToolsVersion "$androidBuildVersionTools"
 
     defaultConfig {
         versionName version

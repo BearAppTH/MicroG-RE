@@ -20,7 +20,6 @@ android {
     namespace "org.microg.gms"
 
     compileSdkVersion androidCompileSdk
-//    buildToolsVersion "$androidBuildVersionTools"
 
     defaultConfig {
         minSdkVersion androidMinSdk
