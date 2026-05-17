@@ -38,7 +38,7 @@ buildscript {
 //    ext.androidBuildVersionTools = '34.0.0'
 
     ext.androidMinSdk = 24
-    ext.androidTargetSdk = 33
+    ext.androidTargetSdk = 30
     ext.androidCompileSdk = 36
 
     ext.localProperties = new Properties()
@@ -83,7 +83,7 @@ allprojects {
     apply plugin: 'idea'
 
     group = 'org.microg.gms'
-    ext.appVersionName = '2.4.0'
+    ext.appVersionName = '2.5.0'
     def _vParts = ext.appVersionName.tokenize('.')
     // versionCode = 255034XYZ where XYZ encodes vMajor*100 + vMinor*10 + vPatch
     // baseVersion stays "25.50.34" for GMS compatibility display
