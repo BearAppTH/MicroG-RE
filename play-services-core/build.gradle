@@ -161,9 +161,12 @@ project.afterEvaluate {
     android.applicationVariants.configureEach { variant ->
         def taskName = "process${variant.name.capitalize()}Manifest"
         tasks.matching { it.name == taskName }.configureEach { task ->
+            task.notCompatibleWithConfigurationCache("manifest auto-patch uses Groovy closure incompatible with configuration cache")
+            def variantName = variant.name
+            def buildDirPath = project.buildDir.absolutePath
             task.doLast {
-                def mergedDir = new File(project.buildDir,
-                    "intermediates/merged_manifests/${variant.name}")
+                def mergedDir = new File(buildDirPath,
+                    "intermediates/merged_manifests/${variantName}")
                 if (!mergedDir.exists()) return
 
                 mergedDir.eachFileRecurse { file ->
