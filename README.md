@@ -11,6 +11,9 @@
 
 [![Website](https://img.shields.io/badge/Website-0a0a0a?style=for-the-badge&logo=googlechrome&logoColor=white)](https://www.bearappth.online)
 [![GitHub](https://img.shields.io/badge/GitHub-0a0a0a?style=for-the-badge&logo=github&logoColor=white)](https://github.com/BearAppTH/MicroG-RE)
+[![Latest Release](https://img.shields.io/github/v/release/BearAppTH/MicroG-RE?style=for-the-badge&color=4f8ef7&label=Latest)](https://github.com/BearAppTH/MicroG-RE/releases/latest)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue?style=for-the-badge)](LICENSE)
+[![Min SDK](https://img.shields.io/badge/Android-7.0%2B-green?style=for-the-badge&logo=android&logoColor=white)](https://github.com/BearAppTH/MicroG-RE)
 
 <br/>
 
@@ -37,6 +40,60 @@
 - ✅ รันภายใต้ package name `app.bear.android.gms`
 
 Repository นี้ดัดแปลงมาจาก [microG GmsCore](https://github.com/microg/GmsCore) เพื่อรองรับแอปที่ patch แล้วภายใต้ชื่อ package ทางเลือก โดยใช้ **GmsCore support** patch เพื่อเปิดใช้งาน Google account authentication และ services แทนที่ Google Play Services
+
+&nbsp;
+
+## 📸 ภาพหน้าจอ
+
+> ภาพหน้าจอจะถูกเพิ่มในเวอร์ชันถัดไป
+
+&nbsp;
+
+## 📥 วิธีติดตั้ง
+
+1. ดาวน์โหลดไฟล์ APK ล่าสุดจาก [Releases](https://github.com/BearAppTH/MicroG-RE/releases/latest)
+2. เปิดไฟล์ APK บนอุปกรณ์ Android แล้วกด **ติดตั้ง**
+3. หากติดตั้งทับเวอร์ชันเดิม ให้กด **อัพเดท**
+4. เปิดแอป **Bear MicroG** แล้วเพิ่ม Google Account
+
+> **หมายเหตุ:** ต้องใช้งานร่วมกับแอปที่ผ่านการ patch ด้วย GmsCore support เท่านั้น
+
+&nbsp;
+
+## ❓ คำถามที่พบบ่อย (FAQ)
+
+**Q: Bear MicroG แตกต่างจาก microG ต้นฉบับอย่างไร?**
+> Bear MicroG ใช้ package name `app.bear.android.gms` แทน `com.google.android.gms` เพื่อให้ทำงานร่วมกับแอปที่ patch แล้วโดยเฉพาะ ไม่ได้แทนที่ Google Play Services บนระบบ
+
+**Q: ต้อง root เครื่องไหม?**
+> ไม่ต้อง root ติดตั้งเหมือนแอปทั่วไปได้เลย
+
+**Q: รองรับ Android เวอร์ชันอะไรบ้าง?**
+> Android 7.0 (API 24) ขึ้นไป
+
+**Q: ใช้งานได้กับแอปอะไรบ้าง?**
+> ใช้งานได้กับแอปที่ผ่านการ patch ด้วย GmsCore support patch (เช่น แอปที่ patch โดยทีม BearAppTH)
+
+**Q: ปลอดภัยไหม?**
+> Bear MicroG เป็น open source สามารถตรวจสอบ source code ได้ที่ repository นี้ทั้งหมด
+
+&nbsp;
+
+## 🔧 สำหรับนักพัฒนา
+
+ดูรายละเอียดการ setup และการส่ง contribution ได้ที่ [CONTRIBUTING.md](CONTRIBUTING.md)
+
+สำหรับการตั้งค่า GitHub Secrets ที่จำเป็นสำหรับ release workflow:
+
+| Secret | คำอธิบาย |
+|--------|----------|
+| `KEYSTORE_B64` | Keystore ที่ encode ด้วย Base64 (`base64 -w0 release.keystore`) |
+| `KEYSTORE_ENTRY_ALIAS` | Key alias ใน Keystore |
+| `KEYSTORE_PASSWORD` | Password ของ Keystore |
+| `KEYSTORE_ENTRY_PASSWORD` | Password ของ Key entry |
+| `GradleEncryptionKey` | Key สำหรับ Gradle build cache encryption |
+
+&nbsp;
 
 ## 🤝 Credits
 

@@ -15,9 +15,11 @@ jobs:
   push:
     name: Push strings
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout dev
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           ref: dev
           fetch-depth: 0
