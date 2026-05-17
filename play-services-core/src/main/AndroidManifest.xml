@@ -30,7 +30,7 @@
         android:name="${basePackageName}.android.c2dm.permission.SEND"
         android:label="@string/perm_c2dm_send_label"
         android:permissionGroup="android.permission-group.NETWORK"
-        android:protectionLevel="privileged|signature" />
+        android:protectionLevel="signature" />
     <permission
         android:name="${basePackageName}.android.gtalkservice.permission.GTALK_SERVICE"
         android:label="@string/perm_gtalk_svc_label"
@@ -77,12 +77,6 @@
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission
-        android:name="android.permission.CHANGE_DEVICE_IDLE_TEMP_WHITELIST"
-        tools:ignore="ProtectedPermissions" />
-    <uses-permission
-        android:name="android.permission.UPDATE_APP_OPS_STATS"
-        tools:ignore="ProtectedPermissions" />
 
     <application
         android:allowBackup="true"
