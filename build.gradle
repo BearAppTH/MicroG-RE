@@ -84,7 +84,10 @@ allprojects {
 
     group = 'org.microg.gms'
     ext.appVersionName = '2.1.0'
-    ext.appVersionCode = 255034007
+    def _vParts = ext.appVersionName.tokenize('.')
+    // versionCode = 255034XYZ where XYZ encodes vMajor*100 + vMinor*10 + vPatch
+    // baseVersion stays "25.50.34" for GMS compatibility display
+    ext.appVersionCode = 255034000 + _vParts[0].toInteger() * 100 + _vParts[1].toInteger() * 10 + _vParts[2].toInteger()
     ext.baseVersion = ext.appVersionCode.toString()[0..1] + '.' + ext.appVersionCode.toString()[2..3] + '.' + ext.appVersionCode.toString()[4..5]
     version = ext.appVersionName
     ext.isReleaseVersion = false
