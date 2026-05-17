@@ -10,6 +10,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.listitem.ListItemCardView
 import com.google.android.material.listitem.ListItemLayout
+import com.google.android.material.listitem.ListItemRevealLayout
 import com.google.android.material.listitem.SwipeableListItem
 
 class AccountPreference(context: Context) : Preference(context) {
@@ -33,6 +34,7 @@ class AccountPreference(context: Context) : Preference(context) {
 
         val layout = holder.itemView as? ListItemLayout ?: return
         val card = holder.findViewById(R.id.account_list_card) as? ListItemCardView
+        val revealLayout = holder.findViewById(R.id.account_reveal_layout) as? ListItemRevealLayout
         val avatarView = holder.findViewById(R.id.account_avatar) as? ShapeableImageView
         val nameView = holder.findViewById(R.id.account_name) as? TextView
         val emailView = holder.findViewById(R.id.account_email) as? TextView
@@ -45,16 +47,18 @@ class AccountPreference(context: Context) : Preference(context) {
         avatarView?.setImageDrawable(accountAvatar)
 
         card?.setOnClickListener {
-            layout.swipeState = if (layout.swipeState == SwipeableListItem.STATE_CLOSED) {
-                SwipeableListItem.STATE_OPEN
-            } else {
-                SwipeableListItem.STATE_CLOSED
+            if (revealLayout != null) {
+                if (layout.getSwipeState() == SwipeableListItem.STATE_CLOSED) {
+                    layout.setSwipeState(SwipeableListItem.STATE_OPEN, revealLayout)
+                } else {
+                    layout.setSwipeState(SwipeableListItem.STATE_CLOSED, revealLayout)
+                }
             }
         }
 
         actionRemove?.setOnClickListener {
             onRemoveListener?.invoke()
-            layout.swipeState = SwipeableListItem.STATE_CLOSED
+            revealLayout?.let { layout.setSwipeState(SwipeableListItem.STATE_CLOSED, it) }
         }
     }
 }
