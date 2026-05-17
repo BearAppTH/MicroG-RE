@@ -158,54 +158,61 @@ android.applicationVariants.configureEach { variant ->
 // also has an explicit android:exported attribute. Some binary library AARs
 // predate the API 31 requirement and ship without it, causing MIUI/HyperOS
 // to reject the APK at install time when targetSdk >= 31.
+//
+// Uses the intermediates/merged_manifests path directly to avoid relying on
+// task-type-specific properties (ProcessMultiApkApplicationManifest vs
+// ProcessApplicationManifest differ across AGP versions).
 project.afterEvaluate {
     android.applicationVariants.configureEach { variant ->
         def taskName = "process${variant.name.capitalize()}Manifest"
         tasks.matching { it.name == taskName }.configureEach { task ->
             task.doLast {
-                def outDir = task.manifestOutputDirectory.get().asFile
-                def manifestFile = new File(outDir, 'AndroidManifest.xml')
-                if (!manifestFile.exists()) return
+                def mergedDir = new File(project.buildDir,
+                    "intermediates/merged_manifests/${variant.name}")
+                if (!mergedDir.exists()) return
 
-                def content = manifestFile.text
-                def changed = false
+                mergedDir.eachFileRecurse { file ->
+                    if (file.name != 'AndroidManifest.xml') return
+                    try {
+                        def content = file.text
+                        def changed = false
 
-                try {
-                    def root = new groovy.xml.XmlSlurper(false, false).parseText(content)
+                        def root = new groovy.xml.XmlSlurper(false, false).parseText(content)
 
-                    ['activity', 'service', 'receiver', 'activity-alias'].each { type ->
-                        root.application."${type}".each { comp ->
-                            if (comp.'intent-filter'.isEmpty()) return
-                            if (comp.@'android:exported'.toString()) return
+                        ['activity', 'service', 'receiver', 'activity-alias'].each { type ->
+                            root.application."${type}".each { comp ->
+                                if (comp.'intent-filter'.isEmpty()) return
+                                if (comp.@'android:exported'.toString()) return
 
-                            def name = comp.@'android:name'.toString()
-                            if (!name) return
+                                def name = comp.@'android:name'.toString()
+                                if (!name) return
 
-                            def escapedName = java.util.regex.Pattern.quote(name)
-                            def pat = java.util.regex.Pattern.compile(
-                                "<${type}[^>]*android:name=\\\"${escapedName}\\\"[^>]*>"
-                            )
-                            def m = pat.matcher(content)
-                            if (m.find()) {
-                                def tag = m.group(0)
-                                if (!tag.contains('android:exported')) {
-                                    def fixed = tag.replaceFirst(/>$/, ' android:exported="false">')
-                                    content = content.replace(tag, fixed)
-                                    changed = true
-                                    println "  [manifest-fix] <${type}> ${name} → added android:exported=\"false\""
+                                def escapedName = java.util.regex.Pattern.quote(name)
+                                def pat = java.util.regex.Pattern.compile(
+                                    "<${type}[^>]*android:name=\\\"${escapedName}\\\"[^>]*>"
+                                )
+                                def m = pat.matcher(content)
+                                if (m.find()) {
+                                    def tag = m.group(0)
+                                    if (!tag.contains('android:exported')) {
+                                        def fixed = tag.replaceFirst(/>$/, ' android:exported="false">')
+                                        content = content.replace(tag, fixed)
+                                        changed = true
+                                        println "  [manifest-fix] <${type}> ${name} added android:exported=false"
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    if (changed) {
-                        manifestFile.text = content
-                        println "  [manifest-fix] Patched merged manifest: ${manifestFile}"
-                    } else {
-                        println "  [manifest-fix] No issues found in merged manifest"
+                        if (changed) {
+                            file.text = content
+                            println "  [manifest-fix] Patched: ${file}"
+                        } else {
+                            println "  [manifest-fix] OK (no missing exported): ${file.name}"
+                        }
+                    } catch (Exception e) {
+                        println "  [manifest-fix] Warning: ${e.message}"
                     }
-                } catch (Exception e) {
-                    println "  [manifest-fix] Warning: could not patch manifest: ${e.message}"
                 }
             }
         }
