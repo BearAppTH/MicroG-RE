@@ -67,13 +67,11 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
-        with:
-          cache-encryption-key: ${{ secrets.GradleEncryptionKey }}
 
       - name: Compile Android app to verify merged translations
         run: |
           chmod +x ./gradlew
-          ./gradlew --no-daemon clean :play-services-core:assembleDefaultDebug
+          ./gradlew --no-daemon clean assembleDebug
 
       - name: Commit and push if translations changed
         run: |

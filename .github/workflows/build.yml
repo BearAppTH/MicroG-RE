@@ -24,7 +24,6 @@ jobs:
       - name: "Setup Gradle"
         uses: gradle/actions/setup-gradle@v4
         with:
-          cache-encryption-key: ${{ secrets.GradleEncryptionKey }}
           build-scan-publish: true
           build-scan-terms-of-use-url: "https://gradle.com/help/legal-terms-of-use"
           build-scan-terms-of-use-agree: "yes"
@@ -42,16 +41,16 @@ jobs:
               echo "Matcher configured: ${NAME:?}"
             fi
           done
-      - name: "Build debug APK"
-        run: "./gradlew --no-daemon :play-services-core:assembleDefaultDebug"
+      - name: "Build debug APKs"
+        run: "./gradlew --no-daemon assembleDebug"
       - name: "Run lint (non-blocking)"
-        run: "./gradlew --no-daemon :play-services-core:lintDefaultDebug"
+        run: "./gradlew --no-daemon lint"
         continue-on-error: true
-      - name: "Upload APK artifact"
+      - name: "Upload APK artifacts"
         uses: actions/upload-artifact@v4
         with:
           name: apk-debug
-          path: play-services-core/build/outputs/apk/default/debug/
+          path: play-services-core/build/outputs/apk/
           retention-days: 7
       - name: "Upload lint reports"
         if: always()
