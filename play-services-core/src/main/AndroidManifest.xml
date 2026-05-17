@@ -77,6 +77,7 @@
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
@@ -119,9 +120,11 @@
             </intent-filter>
         </service>
 
+        <!-- exported=false: only receives protected system broadcasts (BOOT_COMPLETED etc.)
+             System can always deliver broadcasts regardless of exported flag -->
         <receiver
             android:name="org.microg.gms.checkin.TriggerReceiver"
-            android:exported="true">
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.AIRPLANE_MODE" />
@@ -159,6 +162,7 @@
             </intent-filter>
         </service>
 
+        <!-- exported=true: receives TOKEN_REQUEST from third-party apps using Firebase/GCM -->
         <receiver
             android:name="org.microg.gms.gcm.PushRegisterReceiver"
             android:exported="true"
@@ -173,6 +177,7 @@
             android:name="org.microg.gms.gcm.McsService"
             android:process=":persistent" />
 
+        <!-- exported=true: receives SEND from third-party apps sending upstream GCM messages -->
         <receiver
             android:name="org.microg.gms.gcm.SendReceiver"
             android:exported="true"
@@ -185,11 +190,13 @@
 
         <receiver
             android:name="org.microg.gms.gcm.ServiceInfoReceiver"
+            android:exported="false"
             android:process=":persistent" />
 
+        <!-- exported=false: only receives protected system broadcasts and internal reconnect -->
         <receiver
             android:name="org.microg.gms.gcm.TriggerReceiver"
-            android:exported="true"
+            android:exported="false"
             android:process=":persistent">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -211,9 +218,10 @@
             </intent-filter>
         </receiver>
 
+        <!-- exported=false: only receives system PACKAGE_* broadcasts -->
         <receiver
             android:name="org.microg.gms.gcm.UnregisterReceiver"
-            android:exported="true"
+            android:exported="false"
             android:process=":persistent">
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_DATA_CLEARED" />
@@ -503,7 +511,7 @@
 
         <activity
             android:name="org.microg.gms.accountsettings.ui.MainActivity"
-            android:exported="false"
+            android:exported="true"
             android:process=":ui"
             android:taskAffinity="org.microg.gms.settings"
             android:theme="@style/AppTheme.Login">
