@@ -161,16 +161,33 @@ project.afterEvaluate {
     android.applicationVariants.configureEach { variant ->
         def taskName = "process${variant.name.capitalize()}Manifest"
         tasks.matching { it.name == taskName }.configureEach { task ->
-            task.notCompatibleWithConfigurationCache("manifest auto-patch uses Groovy closure incompatible with configuration cache")
-            def variantName = variant.name
-            def buildDirPath = project.buildDir.absolutePath
+            task.notCompatibleWithConfigurationCache("manifest auto-patch uses Groovy closure")
             task.doLast {
-                def mergedDir = new File(buildDirPath,
-                    "intermediates/merged_manifests/${variantName}")
-                if (!mergedDir.exists()) return
+                // Resolve manifest directly from task outputs — works regardless of AGP path layout
+                def manifests = task.outputs.files.asFileTree
+                    .matching { include '**/AndroidManifest.xml' }
+                    .files
 
-                mergedDir.eachFileRecurse { file ->
-                    if (file.name != 'AndroidManifest.xml') return
+                println "  [manifest-fix] task=${task.name} found ${manifests.size()} manifest(s)"
+
+                if (manifests.isEmpty()) {
+                    // Fallback: scan common intermediate paths
+                    def buildDir = task.project.buildDir
+                    def varName  = task.name
+                        .replaceFirst(/^process/, '')
+                        .replaceFirst(/Manifest$/, '')
+                        .uncapitalize()
+                    ["intermediates/merged_manifests/${varName}",
+                     "intermediates/packaged_manifests/${varName}"].each { rel ->
+                        def dir = new File(buildDir, rel)
+                        if (dir.exists()) dir.eachFileRecurse { f ->
+                            if (f.name == 'AndroidManifest.xml') manifests.add(f)
+                        }
+                    }
+                    println "  [manifest-fix] fallback scan found ${manifests.size()} manifest(s)"
+                }
+
+                manifests.each { file ->
                     try {
                         def content = file.text
                         def changed = false
@@ -194,7 +211,7 @@ project.afterEvaluate {
                                         def fixed = tag.replaceFirst(/>$/, ' android:exported="false">')
                                         content = content.replace(tag, fixed)
                                         changed = true
-                                        println "  [manifest-fix] <${type}> ${name} → added android:exported=false"
+                                        println "  [manifest-fix] PATCHED <${type}> ${name} → android:exported=false"
                                     }
                                 }
                             }
@@ -202,12 +219,12 @@ project.afterEvaluate {
 
                         if (changed) {
                             file.text = content
-                            println "  [manifest-fix] Patched: ${file}"
+                            println "  [manifest-fix] Written: ${file.canonicalPath}"
                         } else {
-                            println "  [manifest-fix] OK (no missing exported): ${file.name}"
+                            println "  [manifest-fix] CLEAN (no missing exported): ${file.canonicalPath}"
                         }
                     } catch (Exception e) {
-                        println "  [manifest-fix] Warning: ${e.message}"
+                        println "  [manifest-fix] ERROR processing ${file}: ${e.message}"
                     }
                 }
             }
