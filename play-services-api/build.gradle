@@ -20,7 +20,6 @@ android {
     namespace "org.microg.gms.api"
 
     compileSdkVersion androidCompileSdk
-//    buildToolsVersion "$androidBuildVersionTools"
 
     buildFeatures {
         aidl = true
