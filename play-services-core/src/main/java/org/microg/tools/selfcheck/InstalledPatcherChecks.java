@@ -23,7 +23,7 @@ import java.util.List;
 
 public class InstalledPatcherChecks implements SelfCheckGroup {
 
-    private static final String MORPHE_PACKAGE_SUBSTRING = ".morphe.android";
+    private static final String BEAR_PACKAGE_SUBSTRING = ".bear.android";
 
     @Override
     public String getGroupName(Context context) {
@@ -35,9 +35,9 @@ public class InstalledPatcherChecks implements SelfCheckGroup {
         PackageManager pm = context.getPackageManager();
         List<PackageInfo> installedPackages = pm.getInstalledPackages(0);
 
-        List<ChipInfo> morpheChips = new ArrayList<>();
+        List<ChipInfo> bearChips = new ArrayList<>();
         List<ChipInfo> alternativeChips = new ArrayList<>();
-        List<String> morpheNames = new ArrayList<>();
+        List<String> bearNames = new ArrayList<>();
         List<String> alternativeNames = new ArrayList<>();
 
         for (PackageInfo pkg : installedPackages) {
@@ -54,10 +54,10 @@ public class InstalledPatcherChecks implements SelfCheckGroup {
 
                 ChipInfo chip = new ChipInfo(label, icon, openAppListener);
 
-                if (pkgName.contains(MORPHE_PACKAGE_SUBSTRING)) {
-                    if (!morpheNames.contains(label)) {
-                        morpheChips.add(chip);
-                        morpheNames.add(label);
+                if (pkgName.contains(BEAR_PACKAGE_SUBSTRING)) {
+                    if (!bearNames.contains(label)) {
+                        bearChips.add(chip);
+                        bearNames.add(label);
                     }
                 } else {
                     if (!alternativeNames.contains(label)) {
@@ -68,24 +68,24 @@ public class InstalledPatcherChecks implements SelfCheckGroup {
             }
         }
 
-        processMorpheResult(context, collector, morpheChips, morpheNames);
+        processBearResult(context, collector, bearChips, bearNames);
 
         if (!alternativeChips.isEmpty()) {
             processAlternativeResult(context, collector, alternativeChips, alternativeNames);
         }
     }
 
-    private void processMorpheResult(Context context, ResultCollector collector, List<ChipInfo> chips, List<String> names) {
+    private void processBearResult(Context context, ResultCollector collector, List<ChipInfo> chips, List<String> names) {
         boolean isPositive = !chips.isEmpty();
-        String sourceName = context.getString(R.string.self_check_source_morphe);
+        String sourceName = context.getString(R.string.self_check_source_bear);
         String title = context.getString(R.string.self_check_patched_app_installed, sourceName);
         String resolution = isPositive ? "" : context.getString(R.string.self_check_resolution_patched_app_installed, sourceName);
 
         if (!isPositive) {
             Drawable downloadIcon = ContextCompat.getDrawable(context, R.drawable.ic_download);
-            String downloadText = context.getString(R.string.self_check_action_download_morphe);
+            String downloadText = context.getString(R.string.self_check_action_download_bear);
             chips.add(new ChipInfo(downloadText, downloadIcon, v -> {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://morphe.software/"));
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.bearappth.online"));
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             }));
