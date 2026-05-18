@@ -8,7 +8,7 @@ object AppPatcherDetector {
     // TODO: Also need implement detection using apk signature.
 
     private val KNOWN_PACKAGES = listOf(
-        ".morphe.android" to R.string.morphe,
+        ".bear.android" to R.string.bear,
         ".vanced.android" to R.string.vanced,
         ".revanced.android" to R.string.revanced,
         ".rex.android" to R.string.youtube_advanced,
@@ -20,8 +20,7 @@ object AppPatcherDetector {
 
     private val BLACKLIST_PACKAGES = listOf(
         "app.bear.android.gms",
-        "app.morphe.android.gms", // If it's happening in future
-        "app.morphe.manager",
+        "app.bear.manager",
         "app.revanced.manager",
         "app.rvx.manager"
     )
