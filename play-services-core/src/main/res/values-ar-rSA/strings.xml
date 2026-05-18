@@ -58,7 +58,7 @@
     <string name="service_name_mcs">تسليم الرسائل</string>
     <string name="gcm_enable_switch">الإشعارات الفورية</string>
     <!--gcm: register dialogs-->
-    <string name="gcm_registered">مُسجَّل</string>
+    <string name="gcm_registered">مُسجَّل</string>
     <string name="gcm_unregister_app">إلغاء التسجيل</string>
     <string name="gcm_remove_registers_dialog_title">إزالة جميع التسجيلات؟</string>
     <!-- %1$s is an app name, such as "YouTube"? -->
@@ -126,13 +126,13 @@
     <string name="self_check_cat_gms_packages">الحزم المثبتة</string>
     <string name="self_check_cat_fake_sig">دعم تزييف التوقيع</string>
     <!--self check: patched apps-->
-    <string name="self_check_source_morphe">تعديلات Morphe</string>
+    <string name="self_check_source_bear">تعديلات Morphe</string>
     <string name="self_check_source_alternative">التعديلات البديلة</string>
     <!-- %1$s is an app name, such as "Morphe" -->
     <string name="self_check_patched_app_installed">قيد التشغيل باستخدام %1$s</string>
     <!-- %1$s is an app name, such as "YouTube" -->
     <string name="self_check_resolution_patched_app_installed">لم يتم العثور على التطبيقات التي تستخدم %1$s. يرجى تعديل التطبيق المُعدَّل وتثبيته.</string>
-    <string name="self_check_action_download_morphe">تنزيل Morphe</string>
+    <string name="self_check_action_download_bear">تنزيل Morphe</string>
     <!--self check: permission-->
     <string name="self_check_name_notifications">الإشعارات المسموح بها</string>
     <string name="self_check_resolution_notifications">انقر هنا لفتح إعدادات الإشعارات. تُستخدم الإشعارات للحفاظ على تشغيل خدمة GcmService في الخلفية عند تمكين تحسين البطارية أو في ظروف أخرى.</string>
@@ -142,7 +142,7 @@
     <string name="self_check_name_battery_optimizations">تم تعطيل تحسينات البطارية</string>
     <string name="self_check_resolution_battery_optimizations">انقر هنا لتعطيل تحسينات البطارية. في حال تركها مُفعّلة، قد تواجه مشاكل في تلقي الإشعارات من YouTube والتطبيقات الأخرى المُسجّلة.</string>
     <string name="self_check_name_oem_restriction">قيود عملية الخلفية</string>
-    <string name="self_check_resolution_oem_restriction">قد يقيّد نظامك عمليات الخلفية. انقر هنا لفتح موقع \"لا تغلق تطبيقي!\" والتعرف على كيفية تعطيل هذه القيود.</string>
+    <string name="self_check_resolution_oem_restriction">قد يقيّد نظامك عمليات الخلفية. انقر هنا لفتح موقع "لا تغلق تطبيقي!" والتعرف على كيفية تعطيل هذه القيود.</string>
     <!--self check: signature-->
     <string name="self_check_name_system_spoofs">تزييف توقيع النظام</string>
     <string name="self_check_resolution_system_spoofs">يرجى مراجعة الوثائق لمعرفة الخطوات التي قد تكون مطلوبة</string>
