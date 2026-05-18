@@ -132,13 +132,13 @@
     <string name="self_check_cat_gms_packages">بسته‌های نصب‌شده</string>
     <string name="self_check_cat_fake_sig">پشتیبانی از جعل امضا</string>
     <!--self check: patched apps-->
-    <string name="self_check_source_morphe">پچ‌های Morphe</string>
+    <string name="self_check_source_bear">پچ‌های Morphe</string>
     <string name="self_check_source_alternative">پچ‌های جایگزین</string>
     <!-- %1$s is an app name, such as "Morphe" -->
     <string name="self_check_patched_app_installed">در حال اجرا با %1$s</string>
     <!-- %1$s is an app name, such as "YouTube" -->
     <string name="self_check_resolution_patched_app_installed">برنامه‌هایی که از %1$s استفاده می‌کنند یافت نشدند. لطفاً برنامه را پچ کرده و نصب کنید.</string>
-    <string name="self_check_action_download_morphe">دانلود Morphe</string>
+    <string name="self_check_action_download_bear">دانلود Morphe</string>
     <!--self check: permission-->
     <string name="self_check_name_notifications">اعلان‌ها مجاز هستند</string>
     <string name="self_check_resolution_notifications">برای باز کردن تنظیمات اعلان اینجا را لمس کنید. اعلان‌ها برای اجرای GcmService در پس‌زمینه استفاده می‌شوند، به‌ویژه زمانی که بهینه‌سازی باتری فعال است یا در شرایط دیگر.</string>

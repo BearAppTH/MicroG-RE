@@ -114,13 +114,13 @@ Sommige apps kunnen zich na deze actie mogelijk niet opnieuw registreren. Mogeli
     <string name="self_check_cat_gms_packages">Geïnstalleerde pakketten</string>
     <string name="self_check_cat_fake_sig">Ondersteuning voor het vervalsen van handtekeningen</string>
     <!--self check: patched apps-->
-    <string name="self_check_source_morphe">Morphe-patches</string>
+    <string name="self_check_source_bear">Morphe-patches</string>
     <string name="self_check_source_alternative">Meldingen toegestaan</string>
     <!-- %1$s is an app name, such as "Morphe" -->
     <string name="self_check_patched_app_installed">Wordt uitgevoerd met %1$s</string>
     <!-- %1$s is an app name, such as "YouTube" -->
     <string name="self_check_resolution_patched_app_installed">Apps die %1$s gebruiken niet gevonden. Installeer de gewijzigde app</string>
-    <string name="self_check_action_download_morphe">Tap hier om deze permissie toe te kennen. Deze permissie is vereist om pop-up waarschuwingen te tonen op bovenliggende apps</string>
+    <string name="self_check_action_download_bear">Tap hier om deze permissie toe te kennen. Deze permissie is vereist om pop-up waarschuwingen te tonen op bovenliggende apps</string>
     <!--self check: permission-->
     <string name="self_check_name_notifications">Meldingen toegestaan</string>
     <string name="self_check_resolution_notifications">Tik hier om de meldingsinstellingen te openen. 
