@@ -157,17 +157,15 @@ android.applicationVariants.configureEach { variant ->
 // also has an explicit android:exported attribute. Some binary library AARs
 // predate the API 31 requirement and ship without it, causing MIUI/HyperOS
 // to reject the APK at install time when targetSdk >= 31.
-//
-// Uses the intermediates/merged_manifests path directly to avoid relying on
-// task-type-specific properties (ProcessMultiApkApplicationManifest vs
-// ProcessApplicationManifest differ across AGP versions).
 project.afterEvaluate {
     android.applicationVariants.configureEach { variant ->
-        def taskName = "process${variant.name.capitalize()}Manifest"
+        def variantName = variant.name
+        def taskName = "process${variantName.capitalize()}Manifest"
         tasks.matching { it.name == taskName }.configureEach { task ->
+            task.notCompatibleWithConfigurationCache("manifest auto-patch uses Groovy closure")
             task.doLast {
                 def mergedDir = new File(project.buildDir,
-                    "intermediates/merged_manifests/${variant.name}")
+                    "intermediates/merged_manifests/${variantName}")
                 if (!mergedDir.exists()) return
 
                 mergedDir.eachFileRecurse { file ->
