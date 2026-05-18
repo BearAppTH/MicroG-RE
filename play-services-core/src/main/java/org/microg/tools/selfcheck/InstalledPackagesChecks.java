@@ -16,14 +16,9 @@
 
 package org.microg.tools.selfcheck;
 
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.util.Log;
-
-import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.R;
 
@@ -68,18 +63,6 @@ public class InstalledPackagesChecks implements SelfCheckGroup {
             }
         }
         return false;
-    }
-
-    private void tryGrantFakeSignaturePermissionActivity(Fragment fragment, String androidPackageName) {
-        ComponentName grantPermissionActivity = new ComponentName(androidPackageName, androidPackageName + ".GrantFakeSignaturePermissionActivity");
-        try {
-            Intent intent = new Intent();
-            intent.setPackage(androidPackageName);
-            intent.setComponent(grantPermissionActivity);
-            fragment.startActivityForResult(intent, 1);
-        } catch (Exception e) {
-            Log.w("SelfCheck", e);
-        }
     }
 
     private void addPackageInstalledResult(Context context, ResultCollector collector, String nicePackageName, String androidPackageName) {
