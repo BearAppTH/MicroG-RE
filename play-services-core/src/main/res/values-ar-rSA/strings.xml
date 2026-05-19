@@ -32,11 +32,11 @@
 قد يستغرق هذا بضع ثوانٍ."</string>
     <string name="auth_no_network_error_desc">"لا يوجد اتصال بالشبكة.
 
-قد تكون هذه مشكلة مؤقتة، أو قد لا يكون جهازك Android مُهيأً لخدمات البيانات. حاول مرة أخرى عند الاتصال بشبكة الجوال، أو اتصل بشبكة واي فاي."</string>
+قد تكون هذه مشكلة مؤقتة، أو قد لا يكون جهازك Android مُهَيّأً لخدمات البيانات. حاول مرة أخرى عند الاتصال بشبكة الجوال، أو اتصل بشبكة واي فاي."</string>
     <string name="auth_general_error_desc">"حدثت مشكلة في الاتصال بخوادم Google.
 
 حاول مرة أخرى لاحقًا."</string>
-    <string name="auth_finalize">"يتصل جهازك بـ ،Google لحفظ المعلومات في حسابك.
+    <string name="auth_finalize">"يتصل جهازك بـ ،‏Google لحفظ المعلومات في حسابك.
 
 قد يستغرق هذا بضع دقائق."</string>
     <!--auth: notifications-->
@@ -45,7 +45,7 @@
     <string name="auth_notification_content">يتطلب %1$s إذنك للوصول إلى حسابك على Google</string>
     <!--Account Manager-->
     <string name="dialog_title_remove_account">إزالة حساب</string>
-    <string name="dialog_message_remove_account">"هل أنت متأكد من رغبتك في حذف هذا الحساب؟
+    <string name="dialog_message_remove_account">"هل أنت متأكد من رغبتك في حذف هذا الحساب?
 
 ستكون بعض الخدمات والوظائف غير متاحة.
 
@@ -58,7 +58,7 @@
     <string name="service_name_mcs">تسليم الرسائل</string>
     <string name="gcm_enable_switch">الإشعارات الفورية</string>
     <!--gcm: register dialogs-->
-    <string name="gcm_registered">مُسجَّل</string>
+    <string name="gcm_registered">مُسجَّل</string>
     <string name="gcm_unregister_app">إلغاء التسجيل</string>
     <string name="gcm_remove_registers_dialog_title">إزالة جميع التسجيلات؟</string>
     <!-- %1$s is an app name, such as "YouTube"? -->
@@ -74,7 +74,7 @@
 
 هل ترغب في إلغاء تسجيله الآن حتى لا يتلقّى إشعارات فورية في المستقبل؟"</string>
     <!--gcm: register messages infos-->
-    <string name="gcm_no_message_yet">لم تتلقى رسائل حتى الآن</string>
+    <string name="gcm_no_message_yet">لم تتلق رسائل حتى الآن</string>
     <!-- %1$s is a date time, such as  app name, such as "Yesterday, 02:20 PM" -->
     <string name="gcm_last_message_at">آخر رسالة: %1$s</string>
     <!-- %1$s is a date time, such as  app name, such as "Yesterday, 02:20 PM" -->
@@ -117,7 +117,7 @@
     <string name="profile_name_native">محلي</string>
     <string name="profile_name_real">حقيقي</string>
     <string name="profile_name_user">مخصص: %s</string>
-    <string name="profile_name_auto">ألي: %s</string>
+    <string name="profile_name_auto">آلي: %s</string>
     <string name="profile_name_system">النظام: %s</string>
     <!--Self Check-->
     <!--self check: categories-->
@@ -131,18 +131,18 @@
     <!-- %1$s is an app name, such as "Morphe" -->
     <string name="self_check_patched_app_installed">قيد التشغيل باستخدام %1$s</string>
     <!-- %1$s is an app name, such as "YouTube" -->
-    <string name="self_check_resolution_patched_app_installed">لم يتم العثور على التطبيقات التي تستخدم %1$s. يرجى تعديل التطبيق المُعدَّل وتثبيته.</string>
+    <string name="self_check_resolution_patched_app_installed">لم يتم العثور على التطبيقات التي تستخدم %1$s. يرجى تعديل التطبيق المُعدَل وتثبيته.</string>
     <string name="self_check_action_download_bear">تنزيل Morphe</string>
     <!--self check: permission-->
     <string name="self_check_name_notifications">الإشعارات المسموح بها</string>
-    <string name="self_check_resolution_notifications">انقر هنا لفتح إعدادات الإشعارات. تُستخدم الإشعارات للحفاظ على تشغيل خدمة GcmService في الخلفية عند تمكين تحسين البطارية أو في ظروف أخرى.</string>
+    <string name="self_check_resolution_notifications">انقر هنا لفتح إعدادات الإشعار. تُستخدم الإشعارات للحفاظ على تشغيل خدمة GcmService في الخلفية عند تمكين تحسين البطارية أو في ظروف أخرى.</string>
     <string name="self_check_name_overlay">السماح بالظهور فوق التطبيقات الأخرى</string>
     <string name="self_check_resolution_overlay">انقر هنا للسماح لهذا الإذن. هذا الإذن مطلوب لإظهار الإشعارات فوق التطبيقات الأخرى</string>
     <!--self check: system-->
     <string name="self_check_name_battery_optimizations">تم تعطيل تحسينات البطارية</string>
     <string name="self_check_resolution_battery_optimizations">انقر هنا لتعطيل تحسينات البطارية. في حال تركها مُفعّلة، قد تواجه مشاكل في تلقي الإشعارات من YouTube والتطبيقات الأخرى المُسجّلة.</string>
     <string name="self_check_name_oem_restriction">قيود عملية الخلفية</string>
-    <string name="self_check_resolution_oem_restriction">قد يقيّد نظامك عمليات الخلفية. انقر هنا لفتح موقع \"لا تغلق تطبيقي!\" والتعرف على كيفية تعطيل هذه القيود.</string>
+    <string name="self_check_resolution_oem_restriction">قد يقيّد نظامك عمليات الخلفية. انقر هنا لفتح موقع “لا تغلق تطبيقي!” والتعرف على كيفية تعطيل هذه القيود.</string>
     <!--self check: signature-->
     <string name="self_check_name_system_spoofs">تزييف توقيع النظام</string>
     <string name="self_check_resolution_system_spoofs">يرجى مراجعة الوثائق لمعرفة الخطوات التي قد تكون مطلوبة</string>
