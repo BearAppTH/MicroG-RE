@@ -127,13 +127,13 @@ Voulez-vous la désenregistrer maintenant afin qu’elle ne reçoive plus de mes
     <string name="self_check_cat_gms_packages">Packages installés</string>
     <string name="self_check_cat_fake_sig">Prise en charge de la falsification de signature</string>
     <!--self check: patched apps-->
-    <string name="self_check_source_morphe">Patchs Morphe</string>
+    <string name="self_check_source_bear">Patchs Morphe</string>
     <string name="self_check_source_alternative">patchs alternatifs</string>
     <!-- %1$s is an app name, such as "Morphe" -->
     <string name="self_check_patched_app_installed">Exécuté avec %1$s</string>
     <!-- %1$s is an app name, such as "YouTube" -->
     <string name="self_check_resolution_patched_app_installed">Applications utilisant %1$s introuvables. Veuillez patcher et installer l’application modifiée</string>
-    <string name="self_check_action_download_morphe">Télécharger Morphe</string>
+    <string name="self_check_action_download_bear">Télécharger Morphe</string>
     <!--self check: permission-->
     <string name="self_check_name_notifications">Notifications autorisées</string>
     <string name="self_check_resolution_notifications">Appuyez ici pour ouvrir les paramètres de notifications. Les notifications sont utilisées pour maintenir GcmService en exécution en arrière-plan lorsque l’optimisation de la batterie est activée ou dans d’autres conditions</string>
