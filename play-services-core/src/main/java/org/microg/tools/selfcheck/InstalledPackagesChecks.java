@@ -16,14 +16,9 @@
 
 package org.microg.tools.selfcheck;
 
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.util.Log;
-
-import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.R;
 
