@@ -45,7 +45,7 @@ dependencies {
 
     //noinspection GradleDependency
     implementation "androidx.lifecycle:lifecycle-service:$lifecycleVersion"
-    //noinspection GradleDependency
+    //noinspection GrDeprecatedAPIUsage
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
 }
 
