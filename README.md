@@ -97,8 +97,7 @@ Bear MicroG ใช้ Package name `app.bear.android.gms` แทน `com.google.
 
 Bear MicroG เผยแพร่ภายใต้ Apache License 2.0
 
-    Copyright 2013-2025 microG Project Team
-    Copyright 2025 BearAppTH
+    Copyright 2026 BearAppTH
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
