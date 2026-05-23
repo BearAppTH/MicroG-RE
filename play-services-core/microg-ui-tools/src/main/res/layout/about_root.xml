@@ -26,6 +26,24 @@
             android:orientation="vertical" />
 
         <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/changelog_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingTop="24dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="12dp"
+            android:text="@string/about_changelog_title"
+            android:textAppearance="?attr/textAppearanceLabelLarge"
+            android:textColor="?attr/colorPrimary" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/changelog_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/libraries_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

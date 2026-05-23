@@ -157,6 +157,11 @@ public abstract class AbstractAboutFragment extends Fragment {
                     }
                 });
             }
+
+            TextView gmsVersion = appCard.findViewById(R.id.gms_version);
+            if (gmsVersion != null) {
+                gmsVersion.setText(appCard.getContext().getString(R.string.about_gms_version_str, getGmsVersion()));
+            }
         }
 
         ViewGroup bearCardContainer = aboutRoot.findViewById(R.id.bear_card_container);
@@ -165,6 +170,24 @@ public abstract class AbstractAboutFragment extends Fragment {
 
             bearCard.findViewById(R.id.bear_github).setOnClickListener(v -> openUrl("https://github.com/BearAppTH"));
             bearCard.findViewById(R.id.bear_website).setOnClickListener(v -> openUrl("https://www.bearappth.online"));
+        }
+
+        ViewGroup changelogContainer = aboutRoot.findViewById(R.id.changelog_container);
+        if (changelogContainer != null) {
+            String[] entries = getResources().getStringArray(R.array.about_changelog_entries);
+            for (int i = 0; i < entries.length; i++) {
+                View item = inflater.inflate(R.layout.library_item, changelogContainer, false);
+                TextView title = item.findViewById(android.R.id.text1);
+                TextView subtitle = item.findViewById(android.R.id.text2);
+                String[] parts = entries[i].split("\\|", 2);
+                title.setText(parts[0].trim());
+                subtitle.setText(parts.length > 1 ? parts[1].trim() : "");
+                ListItemLayout listItemLayout = item.findViewById(R.id.list_item_library);
+                if (listItemLayout != null) {
+                    listItemLayout.updateAppearance(i, entries.length);
+                }
+                changelogContainer.addView(item);
+            }
         }
 
         List<Library> libraries = new ArrayList<>();

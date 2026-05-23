@@ -27,6 +27,7 @@ import kotlinx.coroutines.launch
 import org.microg.gms.auth.AuthConstants
 import org.microg.gms.checkin.CheckinPreferences
 import org.microg.gms.checkin.getCheckinServiceInfo
+import org.microg.gms.gcm.GcmDatabase
 import org.microg.gms.gcm.GcmPrefs
 import org.microg.gms.gcm.getGcmServiceInfo
 import org.microg.gms.profile.ProfileManager
@@ -135,6 +136,20 @@ class HomeFragment : Fragment() {
                     else getString(R.string.home_push_disconnected)
                 }
             }
+
+            val pushAppsCount = if (gcmEnabled) {
+                val db = GcmDatabase(appContext)
+                val count = db.registrationList.size
+                db.close()
+                count
+            } else 0
+
+            v.findViewById<TextView>(R.id.tv_push_apps_count)?.text = if (pushAppsCount > 0)
+                resources.getQuantityString(R.plurals.home_push_apps_count, pushAppsCount, pushAppsCount)
+            else
+                ""
+            v.findViewById<TextView>(R.id.tv_push_apps_count)?.visibility =
+                if (pushAppsCount > 0) View.VISIBLE else View.GONE
 
             val profile = ProfileManager.getConfiguredProfile(appContext)
             val profileName = ProfileManager.getProfileName(appContext, profile) ?: profile

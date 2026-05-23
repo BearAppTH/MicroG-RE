@@ -26,10 +26,15 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import android.accounts.AccountManager;
+
 import com.google.android.gms.R;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.color.DynamicColors;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import org.microg.gms.auth.AuthConstants;
 
 import org.microg.gms.ui.settings.SettingsProvider;
 
@@ -48,6 +53,7 @@ public class MainSettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DynamicColors.applyToActivityIfAvailable(this);
         enableEdgeToEdgeNoContrast();
 
         Intent intent = getIntent();
@@ -120,6 +126,26 @@ public class MainSettingsActivity extends AppCompatActivity {
                 fab.extend();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateAccountBadge();
+    }
+
+    private void updateAccountBadge() {
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
+        if (bottomNav == null) return;
+        AccountManager accountManager = AccountManager.get(this);
+        int count = accountManager.getAccountsByType(AuthConstants.DEFAULT_ACCOUNT_TYPE).length;
+        if (count > 0) {
+            BadgeDrawable badge = bottomNav.getOrCreateBadge(R.id.accountManagerFragment);
+            badge.setNumber(count);
+            badge.setVisible(true);
+        } else {
+            bottomNav.removeBadge(R.id.accountManagerFragment);
+        }
     }
 
     private void enableEdgeToEdgeNoContrast() {

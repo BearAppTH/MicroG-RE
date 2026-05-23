@@ -53,4 +53,15 @@
     <string name="about_root_title">microG UI Demo</string>
     <string name="about_root_version">Version v0.1.0</string>
     <string name="about_root_libraries">Included libraries</string>
+
+    <!--About: version-->
+    <string name="about_gms_version_str">GMS API %1$s</string>
+    <!--About: changelog-->
+    <string name="about_changelog_title">What\'s New</string>
+    <string-array name="about_changelog_entries">
+        <item>v3.0.0 — UX/UI Redesign|New bottom navigation, Home dashboard with service status cards</item>
+        <item>New app icon|Professional Bear logo with dark background, adaptive icon support</item>
+        <item>Dynamic Color (Material You)|Wallpaper-based color theme on Android 12+</item>
+        <item>Navigation fixes|Resolved Settings tab crash and missing nav actions</item>
+    </string-array>
 </resources>

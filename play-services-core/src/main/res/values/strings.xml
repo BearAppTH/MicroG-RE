@@ -269,4 +269,9 @@ Not yet supported"</string>
     <string name="cond_gcm_bat_summary">You enabled Cloud messaging but have battery optimizations active for microG Services. For push notifications to arrive you should ignore battery optimizations</string>
     <string name="cond_gcm_bat_action">Ignore optimizations</string>
     <string name="cond_perm_title">Permission missing</string>
+
+    <plurals name="home_push_apps_count">
+        <item quantity="one">%d app registered</item>
+        <item quantity="other">%d apps registered</item>
+    </plurals>
 </resources>
