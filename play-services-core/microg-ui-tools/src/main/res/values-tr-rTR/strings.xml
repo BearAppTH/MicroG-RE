@@ -24,7 +24,7 @@
     <string name="update_checker_no_internet">İnternet bağlantısı yok</string>
     <string name="update_checker_generic_error">Bir hata oluştu... Lütfen daha sonra tekrar deneyin</string>
     <!--Settings About-->
-    <string name="about_morphe_description">Morphe, yamalar aracılığıyla Android uygulamalarını değiştirmek için tasarlanmış açık kaynaklı bir projedir</string>
+    <string name="about_bear_description">BearAppTH, yamalar aracılığıyla Android uygulamalarını değiştirmek için tasarlanmış açık kaynaklı bir projedir</string>
     <string name="about_version_str">Sürüm %1$s</string>
     <string name="about_default_license">Tüm hakları saklıdır</string>
     <!--Self Check-->

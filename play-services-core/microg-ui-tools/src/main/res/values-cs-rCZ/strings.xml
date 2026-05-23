@@ -24,7 +24,7 @@
     <string name="update_checker_no_internet">Žádné připojení k internetu</string>
     <string name="update_checker_generic_error">Něco se pokazilo… Prosím, zkuste to později znovu</string>
     <!--Settings About-->
-    <string name="about_morphe_description">Morphe je open-source projekt určený pro modifikaci Android aplikací prostřednictvím záplat</string>
+    <string name="about_bear_description">BearAppTH je open-source projekt určený pro modifikaci Android aplikací prostřednictvím záplat</string>
     <string name="about_version_str">Verze %1$s</string>
     <string name="about_default_license">Všechna práva vyhrazena</string>
     <!--Self Check-->

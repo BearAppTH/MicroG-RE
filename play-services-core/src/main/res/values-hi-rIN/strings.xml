@@ -123,13 +123,13 @@
     <string name="self_check_cat_gms_packages">इंस्टॉल्ड पैकेज</string>
     <string name="self_check_cat_fake_sig">साइनच्यूरिटी स्पोफिंग समर्थन</string>
     <!--self check: patched apps-->
-    <string name="self_check_source_morphe">मोरफे पैच</string>
+    <string name="self_check_source_bear">मोरफे पैच</string>
     <string name="self_check_source_alternative">अल्टरनेटिव पैच</string>
-    <!-- %1$s is an app name, such as "Morphe" -->
+    <!-- %1$s is an app name, such as "BearAppTH" -->
     <string name="self_check_patched_app_installed">%1$s स्थापित किया गया है</string>
     <!-- %1$s is an app name, such as "YouTube" -->
     <string name="self_check_resolution_patched_app_installed">%1$s ऐप पुश नोटिफिकेशन प्राप्त करने में समस्या हो सकती है। प्लीज करें इन ऐप को स्थापित और संशोधित करें</string>
-    <string name="self_check_action_download_morphe">मोरफे डाउनलोड करें</string>
+    <string name="self_check_action_download_bear">मोरफे डाउनलोड करें</string>
     <!--self check: permission-->
     <string name="self_check_name_notifications">नोटिफिकेशन अनुमत</string>
     <string name="self_check_resolution_notifications">यहाँ क्लिक करें और नोटिफिकेशन सेटिंग्स खोलें। नोटिफिकेशन गूगल सर्विस को रन करने के लिए आवश्यक है जब बैटरी ऑप्टिमाइज़ेशन सक्षम है या अन्य स्थितियों में</string>

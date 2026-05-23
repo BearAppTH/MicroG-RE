@@ -24,7 +24,7 @@
     <string name="update_checker_no_internet">沒有網路連線</string>
     <string name="update_checker_generic_error">發生錯誤……請稍後再試一次</string>
     <!--Settings About-->
-    <string name="about_morphe_description">Morphe 是一個開源專案，目的在透過修補來修改 Android 應用程式</string>
+    <string name="about_bear_description">BearAppTH 是一個開源專案，目的在透過修補來修改 Android 應用程式</string>
     <string name="about_version_str">版本 %1$s</string>
     <string name="about_default_license">版權所有</string>
     <!--Self Check-->

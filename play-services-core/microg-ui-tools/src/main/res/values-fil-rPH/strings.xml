@@ -24,7 +24,7 @@
     <string name="update_checker_no_internet">Walang koneksyon sa internet</string>
     <string name="update_checker_generic_error">Nagkaroon ng problema… Subukan ulit mamaya</string>
     <!--Settings About-->
-    <string name="about_morphe_description">Ang Morphe ay isang open-source na proyekto na idinisenyo upang baguhin ang mga Android na aplikasyon sa pamamagitan ng mga patch</string>
+    <string name="about_bear_description">Ang BearAppTH ay isang open-source na proyekto na idinisenyo upang baguhin ang mga Android na aplikasyon sa pamamagitan ng mga patch</string>
     <string name="about_version_str">Bersyon %1$s</string>
     <string name="about_default_license">Lahat ng karapatan ay nakalaan</string>
     <!--Self Check-->

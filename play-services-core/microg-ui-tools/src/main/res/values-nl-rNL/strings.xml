@@ -24,7 +24,7 @@
     <string name="update_checker_no_internet">Geen internetverbinding</string>
     <string name="update_checker_generic_error">Er is iets misgegaan… Probeer het later nog eens</string>
     <!--Settings About-->
-    <string name="about_morphe_description">Morphe is een open-source project ontworpen om Android-apps te wijzigen door middel van patches</string>
+    <string name="about_bear_description">BearAppTH is een open-source project ontworpen om Android-apps te wijzigen door middel van patches</string>
     <string name="about_version_str">Versie %1$s</string>
     <string name="about_default_license">Alle rechten voorbehouden</string>
     <!--Self Check-->

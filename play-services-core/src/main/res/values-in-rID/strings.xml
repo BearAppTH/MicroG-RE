@@ -126,13 +126,13 @@ Apakah Anda ingin membatalkan pendaftarannya sekarang sehingga tidak menerima pe
     <string name="self_check_cat_gms_packages">Paket yang dipasang</string>
     <string name="self_check_cat_fake_sig">Dukungan pemalsuan tanda tangan</string>
     <!--self check: patched apps-->
-    <string name="self_check_source_morphe">Tambalan Morphe</string>
+    <string name="self_check_source_bear">Tambalan BearAppTH</string>
     <string name="self_check_source_alternative">tambalan alternatif</string>
-    <!-- %1$s is an app name, such as "Morphe" -->
+    <!-- %1$s is an app name, such as "BearAppTH" -->
     <string name="self_check_patched_app_installed">Berjalan dengan %1$s</string>
     <!-- %1$s is an app name, such as "YouTube" -->
     <string name="self_check_resolution_patched_app_installed">Aplikasi yang menggunakan %1$s tidak ditemukan. Silakan tambal dan pasangl aplikasi yang dimodifikasi</string>
-    <string name="self_check_action_download_morphe">Unduh Morphe</string>
+    <string name="self_check_action_download_bear">Unduh BearAppTH</string>
     <!--self check: permission-->
     <string name="self_check_name_notifications">Pemberitahuan diizinkan</string>
     <string name="self_check_resolution_notifications">Ketuk di sini untuk membuka pengaturan pemberitahuan. Pemberitahuan digunakan untuk menjaga GcmService berjalan di latar belakang ketika optimasi baterai diaktifkan atau dalam keadaan lain</string>

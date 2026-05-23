@@ -24,7 +24,7 @@
     <string name="update_checker_no_internet">Ni internetne povezave</string>
     <string name="update_checker_generic_error">Prišlo je do napake... Prosimo, poskusite pozneje</string>
     <!--Settings About-->
-    <string name="about_morphe_description">Morphe je projekt z odprtim kodom, zasnovan za spreminjanje Android aplikacij prek popravkov</string>
+    <string name="about_bear_description">BearAppTH je projekt z odprtim kodom, zasnovan za spreminjanje Android aplikacij prek popravkov</string>
     <string name="about_version_str">Različica %1$s</string>
     <string name="about_default_license">Vse pravice pridržane</string>
     <!--Self Check-->

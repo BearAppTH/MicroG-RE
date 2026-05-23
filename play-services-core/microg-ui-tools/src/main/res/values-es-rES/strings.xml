@@ -24,7 +24,7 @@
     <string name="update_checker_no_internet">No hay conexión a Internet</string>
     <string name="update_checker_generic_error">Algo ha salido mal… Por favor, inténtelo de nuevo más tarde</string>
     <!--Settings About-->
-    <string name="about_morphe_description">Morphe es un proyecto de código abierto diseñado para modificar aplicaciones Android a través de parches</string>
+    <string name="about_bear_description">BearAppTH es un proyecto de código abierto diseñado para modificar aplicaciones Android a través de parches</string>
     <string name="about_version_str">Versión %1$s</string>
     <string name="about_default_license">Todos los derechos reservados</string>
     <!--Self Check-->

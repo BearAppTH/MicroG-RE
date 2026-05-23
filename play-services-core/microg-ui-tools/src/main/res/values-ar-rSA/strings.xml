@@ -24,7 +24,7 @@
     <string name="update_checker_no_internet">لا يوجد اتصال بالإنترنت</string>
     <string name="update_checker_generic_error">حدث خطأ ما... يرجى المحاولة مرة أخرى لاحقًا</string>
     <!--Settings About-->
-    <string name="about_morphe_description">Morphe هو مشروع مفتوح المصدر مصمم لتعديل تطبيقات Android من خلال التعديلات.</string>
+    <string name="about_bear_description">BearAppTH هو مشروع مفتوح المصدر مصمم لتعديل تطبيقات Android من خلال التعديلات.</string>
     <string name="about_version_str">الإصدار %1$s</string>
     <string name="about_default_license">جميع الحقوق محفوظة</string>
     <!--Self Check-->
