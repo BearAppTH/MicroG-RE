@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/homeFragment"
+        android:icon="@drawable/ic_nav_home"
+        android:title="@string/nav_home" />
+    <item
+        android:id="@+id/accountManagerFragment"
+        android:icon="@drawable/ic_accounts"
+        android:title="@string/pref_account_title" />
+    <item
+        android:id="@+id/gcmFragment"
+        android:icon="@drawable/ic_cloud_messaging"
+        android:title="@string/gcm_enable_switch" />
+    <item
+        android:id="@+id/settingsFragment"
+        android:icon="@drawable/ic_settings"
+        android:title="@string/nav_settings_tab_label" />
+</menu>

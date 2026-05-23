@@ -2,14 +2,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_settings"
-    app:startDestination="@id/settingsFragment">
+    app:startDestination="@id/homeFragment">
 
-    <!-- Start -->
+    <!-- Home Dashboard -->
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="org.microg.gms.ui.HomeFragment"
+        android:label="@string/gms_settings_name">
+        <action
+            android:id="@+id/openCheckinFromHome"
+            app:destination="@id/checkinFragment" />
+        <action
+            android:id="@+id/openSelfCheckFromHome"
+            app:destination="@id/selfcheckFragment" />
+    </fragment>
+
+    <!-- Settings tab -->
 
     <fragment
         android:id="@+id/settingsFragment"
         android:name="org.microg.gms.ui.SettingsFragment"
-        android:label="@string/gms_settings_name">
+        android:label="@string/nav_settings_tab_label">
         <action
             android:id="@+id/openCheckinSettings"
             app:destination="@id/checkinFragment" />
@@ -36,14 +50,14 @@
         android:label="@string/service_name_checkin"
         tools:layout="@layout/device_registration_fragment" />
 
-    <!-- Account manager-->
+    <!-- Account manager -->
 
     <fragment
         android:id="@+id/accountManagerFragment"
         android:name="org.microg.gms.ui.AccountsFragment"
         android:label="@string/pref_account_title" />
 
-    <!-- Privacy-->
+    <!-- Privacy -->
 
     <fragment
         android:id="@+id/privacyFragment"
@@ -55,7 +69,7 @@
     <fragment
         android:id="@+id/gcmFragment"
         android:name="org.microg.gms.ui.PushNotificationFragment"
-        android:label="@string/service_name_mcs"
+        android:label="@string/gcm_enable_switch"
         tools:layout="@layout/push_notification_fragment">
         <action
             android:id="@+id/openGcmAppDetails"
@@ -80,7 +94,7 @@
     <fragment
         android:id="@+id/gcmAppFragment"
         android:name="org.microg.gms.ui.PushNotificationAppFragment"
-        android:label="@string/service_name_mcs"
+        android:label="@string/gcm_enable_switch"
         tools:layout="@layout/push_notification_app_fragment">
         <argument
             android:name="package"
@@ -99,4 +113,5 @@
         android:name="org.microg.gms.ui.AboutFragment"
         android:label="@string/prefcat_about"
         tools:layout="@layout/about_root" />
+
 </navigation>

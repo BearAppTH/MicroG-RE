@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: 2026 BearAppTH
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 package org.microg.gms.ui;
 
 import android.content.Intent;
@@ -23,11 +28,13 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.gms.R;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 import org.microg.gms.ui.settings.SettingsProvider;
 
 import java.util.Objects;
+import java.util.Set;
 
 import static org.microg.gms.ui.settings.SettingsProviderKt.getAllSettingsProviders;
 
@@ -57,6 +64,7 @@ public class MainSettingsActivity extends AppCompatActivity {
         View rootLayout = findViewById(R.id.root_layout);
         ExtendedFloatingActionButton fab = findViewById(R.id.preference_fab);
         NestedScrollView nestedScrollView = findViewById(R.id.nested_scroll_view);
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
 
         final int initialScrollViewPaddingLeft = nestedScrollView.getPaddingLeft();
         final int initialScrollViewPaddingTop = nestedScrollView.getPaddingTop();
@@ -70,13 +78,16 @@ public class MainSettingsActivity extends AppCompatActivity {
 
         ViewCompat.setOnApplyWindowInsetsListener(rootLayout, (v, windowInsets) -> {
             Insets systemBarsInsets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
-
             Insets imeInsets = windowInsets.getInsets(WindowInsetsCompat.Type.ime());
-
             boolean imeVisible = windowInsets.isVisible(WindowInsetsCompat.Type.ime());
             int bottomInset = imeVisible ? imeInsets.bottom : systemBarsInsets.bottom;
 
-            nestedScrollView.setPadding(initialScrollViewPaddingLeft + systemBarsInsets.left, initialScrollViewPaddingTop, initialScrollViewPaddingRight + systemBarsInsets.right, initialScrollViewPaddingBottom + bottomInset);
+            nestedScrollView.setPadding(
+                    initialScrollViewPaddingLeft + systemBarsInsets.left,
+                    initialScrollViewPaddingTop,
+                    initialScrollViewPaddingRight + systemBarsInsets.right,
+                    initialScrollViewPaddingBottom + bottomInset
+            );
 
             ViewGroup.MarginLayoutParams fabParams = (ViewGroup.MarginLayoutParams) fab.getLayoutParams();
             fabParams.leftMargin = initialFabMarginLeft + systemBarsInsets.left;
@@ -91,8 +102,16 @@ public class MainSettingsActivity extends AppCompatActivity {
             settingsProvider.extendNavigation(getNavController());
         }
 
-        appBarConfiguration = new AppBarConfiguration.Builder(getNavController().getGraph()).build();
+        // Top-level destinations for bottom navigation (no back arrow shown)
+        appBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.homeFragment,
+                R.id.accountManagerFragment,
+                R.id.gcmFragment,
+                R.id.settingsFragment
+        ).build();
+
         NavigationUI.setupWithNavController(toolbarLayout, toolbar, getNavController(), appBarConfiguration);
+        NavigationUI.setupWithNavController(bottomNav, getNavController());
 
         nestedScrollView.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
             if (scrollY > oldScrollY) {
