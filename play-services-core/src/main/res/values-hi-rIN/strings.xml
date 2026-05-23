@@ -125,7 +125,7 @@
     <!--self check: patched apps-->
     <string name="self_check_source_bear">मोरफे पैच</string>
     <string name="self_check_source_alternative">अल्टरनेटिव पैच</string>
-    <!-- %1$s is an app name, such as "Morphe" -->
+    <!-- %1$s is an app name, such as "BearAppTH" -->
     <string name="self_check_patched_app_installed">%1$s स्थापित किया गया है</string>
     <!-- %1$s is an app name, such as "YouTube" -->
     <string name="self_check_resolution_patched_app_installed">%1$s ऐप पुश नोटिफिकेशन प्राप्त करने में समस्या हो सकती है। प्लीज करें इन ऐप को स्थापित और संशोधित करें</string>

@@ -24,7 +24,7 @@
     <string name="update_checker_no_internet">Нema интернет везе</string>
     <string name="update_checker_generic_error">Нешто је пошло по злу… Покушајте поново касније</string>
     <!--Settings About-->
-    <string name="about_morphe_description">Morphe је отворени изворни пројекат дизајниран да модификује Андроид апликације кроз патче</string>
+    <string name="about_morphe_description">BearAppTH је отворени изворни пројекат дизајниран да модификује Андроид апликације кроз патче</string>
     <string name="about_version_str">Верзија %1$s</string>
     <string name="about_default_license">Све права задржана</string>
     <!--Self Check-->

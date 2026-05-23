@@ -124,13 +124,13 @@ Niektóre aplikacje mogą nie być w stanie zarejestrować się ponownie. Koniec
     <string name="self_check_cat_gms_packages">Zainstalowane pakiety</string>
     <string name="self_check_cat_fake_sig">Wsparcie fałszowania podpisu</string>
     <!--self check: patched apps-->
-    <string name="self_check_source_bear">Modyfikacje Morphe</string>
+    <string name="self_check_source_bear">Modyfikacje BearAppTH</string>
     <string name="self_check_source_alternative">Alternatywne modyfikacje</string>
-    <!-- %1$s is an app name, such as "Morphe" -->
+    <!-- %1$s is an app name, such as "BearAppTH" -->
     <string name="self_check_patched_app_installed">Działa przy użyciu %1$s</string>
     <!-- %1$s is an app name, such as "YouTube" -->
     <string name="self_check_resolution_patched_app_installed">Nie znaleziono aplikacji korzystających z %1$s. Zmodyfikuj i zainstaluj wybraną aplikację.</string>
-    <string name="self_check_action_download_bear">Pobierz Morphe</string>
+    <string name="self_check_action_download_bear">Pobierz BearAppTH</string>
     <!--self check: permission-->
     <string name="self_check_name_notifications">Zezwolono na powiadomienia</string>
     <string name="self_check_resolution_notifications">Stuknij tutaj, aby otworzyć ustawienia powiadomień. Powiadomienia służą do utrzymania GcmService w tle, gdy optymalizacja baterii jest włączona lub w innych przypadkach</string>

@@ -49,9 +49,9 @@
     <!--Self Check-->
     <!--self check: categories-->
     <!--self check: patched apps-->
-    <!-- %1$s is an app name, such as "Morphe" -->
+    <!-- %1$s is an app name, such as "BearAppTH" -->
     <!-- %1$s is an app name, such as "YouTube" -->
-    <string name="self_check_action_download_bear">Lejupielādēt Morphe</string>
+    <string name="self_check_action_download_bear">Lejupielādēt BearAppTH</string>
     <!--self check: permission-->
     <!--self check: system-->
     <string name="self_check_name_battery_optimizations">Akumulatora optimizācijas atspējotas</string>

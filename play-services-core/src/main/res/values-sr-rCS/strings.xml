@@ -124,15 +124,15 @@ Da li želite da je uklonite sada da ne prima obaveštenja u budućnosti?"</stri
     <string name="self_check_cat_system">Sistem</string>
     <string name="self_check_cat_patched_apps">Uređene aplikacije</string>
     <string name="self_check_cat_gms_packages">Podrška lažnog potpisivanja</string>
-    <string name="self_check_cat_fake_sig">Morphe obaveštenje</string>
+    <string name="self_check_cat_fake_sig">BearAppTH obaveštenje</string>
     <!--self check: patched apps-->
-    <string name="self_check_source_bear">Morphe obaveštenja</string>
+    <string name="self_check_source_bear">BearAppTH obaveštenja</string>
     <string name="self_check_source_alternative">alternativni nakosi</string>
-    <!-- %1$s is an app name, such as "Morphe" -->
+    <!-- %1$s is an app name, such as "BearAppTH" -->
     <string name="self_check_patched_app_installed">Pokreće se sa %1$s</string>
     <!-- %1$s is an app name, such as "YouTube" -->
     <string name="self_check_resolution_patched_app_installed">Aplikacije koje koriste %1$s nisu nađene. Molimo patčite i instalirajte modifikovanu aplikaciju</string>
-    <string name="self_check_action_download_bear">Preuzmi Morphe</string>
+    <string name="self_check_action_download_bear">Preuzmi BearAppTH</string>
     <!--self check: permission-->
     <string name="self_check_name_notifications">Obaveštenja dozvoljena</string>
     <string name="self_check_resolution_notifications">Pritisnite ovde da biste dodali ovu dozvolu. Ova dozvola je neophodna da bi se GcmService mogao pokrenuti u pozadini pri aktivaciji optimizacije baterije ili u drugim uslovima</string>

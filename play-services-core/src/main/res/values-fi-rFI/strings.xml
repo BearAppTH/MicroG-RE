@@ -126,13 +126,13 @@ Haluatko poistaa sen rekisteröinnin nyt, jotta se ei vastaanota push-ilmoituksi
     <string name="self_check_cat_gms_packages">Asennetut paketit</string>
     <string name="self_check_cat_fake_sig">Allekirjoituksen väärennöksen tuki</string>
     <!--self check: patched apps-->
-    <string name="self_check_source_bear">Morphe-muokkausten</string>
+    <string name="self_check_source_bear">BearAppTH-muokkausten</string>
     <string name="self_check_source_alternative">vaihtoehtoisien muokkausten</string>
-    <!-- %1$s is an app name, such as "Morphe" -->
+    <!-- %1$s is an app name, such as "BearAppTH" -->
     <string name="self_check_patched_app_installed">Toimii %1$s kanssa</string>
     <!-- %1$s is an app name, such as "YouTube" -->
     <string name="self_check_resolution_patched_app_installed">%1$s-sovelluksia ei löydy. Paikkaa ja asenna muokattu sovellus.</string>
-    <string name="self_check_action_download_bear">Lataa Morphe</string>
+    <string name="self_check_action_download_bear">Lataa BearAppTH</string>
     <!--self check: permission-->
     <string name="self_check_name_notifications">Ilmoitukset sallittu</string>
     <string name="self_check_resolution_notifications">Napauta tästä avataksesi ilmoitusasetukset. Ilmoituksia käytetään pitämään GcmService käynnissä taustalla, kun akun optimointi on käytössä tai muissa vastaavissa olosuhteissa</string>

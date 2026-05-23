@@ -24,7 +24,7 @@
     <string name="update_checker_no_internet">ইন্টারনেট সংযোগ নেই</string>
     <string name="update_checker_generic_error">কিছু ভুল হয়েছে… পরে আবার চেষ্টা করুন</string>
     <!--Settings About-->
-    <string name="about_morphe_description">Morphe একটি খোলা-উৎসাহী প্রকল্প, যা Android অ্যাপ্লিকেশনকে প্যাচের মাধ্যমে পরিবর্তন করে</string>
+    <string name="about_morphe_description">BearAppTH একটি খোলা-উৎসাহী প্রকল্প, যা Android অ্যাপ্লিকেশনকে প্যাচের মাধ্যমে পরিবর্তন করে</string>
     <string name="about_version_str">বেরশন %1$S</string>
     <string name="about_default_license">সকল অধিকার সংরক্ষিত</string>
     <!--Self Check-->

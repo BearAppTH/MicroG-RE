@@ -24,7 +24,7 @@
     <string name="update_checker_no_internet">Няма връзка с интернет</string>
     <string name="update_checker_generic_error">Нещо се обърка... Моля, опитайте отново по-късно</string>
     <!--Settings About-->
-    <string name="about_morphe_description">Morphe е отворен проект, насочен към модифициране на Android приложения чрез патчове</string>
+    <string name="about_morphe_description">BearAppTH е отворен проект, насочен към модифициране на Android приложения чрез патчове</string>
     <string name="about_version_str">Версия %1$s</string>
     <string name="about_default_license">Всички права запазени</string>
     <!--Self Check-->

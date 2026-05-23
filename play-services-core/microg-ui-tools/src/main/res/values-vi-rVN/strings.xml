@@ -24,7 +24,7 @@
     <string name="update_checker_no_internet">Không có kết nối mạng</string>
     <string name="update_checker_generic_error">Đã xảy ra lỗi... Vui lòng thử lại sau</string>
     <!--Settings About-->
-    <string name="about_morphe_description">Morphe là một dự án nguồn mở, được thiết kế để sửa đổi ứng dụng Android thông qua các bản vá</string>
+    <string name="about_morphe_description">BearAppTH là một dự án nguồn mở, được thiết kế để sửa đổi ứng dụng Android thông qua các bản vá</string>
     <string name="about_version_str">Phiên bản %1$s</string>
     <string name="about_default_license">Bảo lưu mọi quyền</string>
     <!--Self Check-->
