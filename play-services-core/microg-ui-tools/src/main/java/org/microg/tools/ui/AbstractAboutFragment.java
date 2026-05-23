@@ -153,12 +153,12 @@ public abstract class AbstractAboutFragment extends Fragment {
             }
         }
 
-        ViewGroup morpheCardContainer = aboutRoot.findViewById(R.id.morphe_card_container);
-        if (morpheCardContainer != null) {
-            View morpheCard = inflater.inflate(R.layout.about_bear, morpheCardContainer, true);
+        ViewGroup bearCardContainer = aboutRoot.findViewById(R.id.bear_card_container);
+        if (bearCardContainer != null) {
+            View bearCard = inflater.inflate(R.layout.about_bear, bearCardContainer, true);
 
-            morpheCard.findViewById(R.id.morphe_github).setOnClickListener(v -> openUrl("https://github.com/BearAppTH"));
-            morpheCard.findViewById(R.id.morphe_website).setOnClickListener(v -> openUrl("https://www.bearappth.online"));
+            bearCard.findViewById(R.id.bear_github).setOnClickListener(v -> openUrl("https://github.com/BearAppTH"));
+            bearCard.findViewById(R.id.bear_website).setOnClickListener(v -> openUrl("https://www.bearappth.online"));
         }
 
         List<Library> libraries = new ArrayList<>();
