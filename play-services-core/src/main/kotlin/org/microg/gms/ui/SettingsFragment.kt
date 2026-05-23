@@ -14,18 +14,24 @@ import android.os.Bundle
 import android.os.PowerManager
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
+import androidx.preference.PreferenceManager
 import androidx.preference.SwitchPreferenceCompat
 import com.google.android.gms.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.transition.MaterialSharedAxis
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.microg.gms.checkin.CheckinPreferences
 import org.microg.gms.common.ForegroundServiceOemUtils
 import org.microg.gms.gcm.GcmDatabase
@@ -48,6 +54,10 @@ class SettingsFragment : ResourceSettingsFragment() {
         const val PREF_SELF_CHECK = "pref_self_check"
         const val PREF_GITHUB = "pref_github"
         const val PREF_IGNORE_BATTERY_OPTIMIZATION = "pref_ignore_battery_optimization"
+        const val PREF_DARK_MODE = "pref_dark_mode"
+        const val PREF_EXPORT_SETTINGS = "pref_export_settings"
+        const val PREF_IMPORT_SETTINGS = "pref_import_settings"
+        const val PREF_NETWORK_DIAGNOSTICS = "pref_network_diagnostics"
 
         private const val ACTIVITY_LAUNCHER_CONTROL = "org.microg.gms.ui.SettingsActivityLauncher"
         private const val PREF_GITHUB_URL = "https://github.com/BearAppTH/MicroG-RE"
@@ -58,6 +68,51 @@ class SettingsFragment : ResourceSettingsFragment() {
     private val requestIgnoreBatteryOptimizationLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             updateBatteryOptimizationPreference()
+        }
+
+    private val exportSettingsLauncher =
+        registerForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
+            if (uri != null) {
+                lifecycleScope.launch {
+                    val ok = withContext(Dispatchers.IO) {
+                        try {
+                            requireContext().contentResolver.openOutputStream(uri)?.use { out ->
+                                SettingsBackupManager.export(requireContext(), out)
+                            }
+                            true
+                        } catch (e: Exception) {
+                            Log.e(TAG, "Export failed", e)
+                            false
+                        }
+                    }
+                    val ctx = context ?: return@launch
+                    Toast.makeText(ctx, if (ok) R.string.export_success else R.string.export_failed, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+    private val importSettingsLauncher =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            if (uri != null) {
+                lifecycleScope.launch {
+                    val ok = withContext(Dispatchers.IO) {
+                        try {
+                            requireContext().contentResolver.openInputStream(uri)?.use { ins ->
+                                SettingsBackupManager.import(requireContext(), ins)
+                            } ?: false
+                        } catch (e: Exception) {
+                            Log.e(TAG, "Import failed", e)
+                            false
+                        }
+                    }
+                    val ctx = context ?: return@launch
+                    if (ok) {
+                        val mode = PreferenceManager.getDefaultSharedPreferences(ctx).getString(PREF_DARK_MODE, "system") ?: "system"
+                        applyDarkMode(mode)
+                    }
+                    Toast.makeText(ctx, if (ok) R.string.import_success else R.string.import_failed, Toast.LENGTH_SHORT).show()
+                }
+            }
         }
 
     init {
@@ -125,6 +180,31 @@ class SettingsFragment : ResourceSettingsFragment() {
             findNavController().navigate(requireContext(), R.id.openAbout)
             true
         }
+        findPreference<ListPreference>(PREF_DARK_MODE)?.setOnPreferenceChangeListener { _, newValue ->
+            applyDarkMode(newValue as String)
+            true
+        }
+        findPreference<Preference>(PREF_EXPORT_SETTINGS)?.setOnPreferenceClickListener {
+            exportSettingsLauncher.launch("bear_microg_settings.json")
+            true
+        }
+        findPreference<Preference>(PREF_IMPORT_SETTINGS)?.setOnPreferenceClickListener {
+            importSettingsLauncher.launch("application/json")
+            true
+        }
+        findPreference<Preference>(PREF_NETWORK_DIAGNOSTICS)?.setOnPreferenceClickListener {
+            findNavController().navigate(requireContext(), R.id.openNetworkDiagnostics)
+            true
+        }
+    }
+
+    private fun applyDarkMode(mode: String) {
+        val nightMode = when (mode) {
+            "light" -> AppCompatDelegate.MODE_NIGHT_NO
+            "dark" -> AppCompatDelegate.MODE_NIGHT_YES
+            else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+        }
+        AppCompatDelegate.setDefaultNightMode(nightMode)
     }
 
     private fun updateAboutSummary() {

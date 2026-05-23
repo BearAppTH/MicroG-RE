@@ -6,6 +6,7 @@
 package org.microg.gms.ui;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,6 +17,8 @@ import androidx.activity.EdgeToEdge;
 import androidx.activity.SystemBarStyle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.preference.PreferenceManager;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -53,6 +56,7 @@ public class MainSettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        applyStoredDarkMode();
         DynamicColors.applyToActivityIfAvailable(this);
         enableEdgeToEdgeNoContrast();
 
@@ -146,6 +150,16 @@ public class MainSettingsActivity extends AppCompatActivity {
         } else {
             bottomNav.removeBadge(R.id.accountManagerFragment);
         }
+    }
+
+    private void applyStoredDarkMode() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String mode = prefs.getString("pref_dark_mode", "system");
+        int nightMode;
+        if ("light".equals(mode)) nightMode = AppCompatDelegate.MODE_NIGHT_NO;
+        else if ("dark".equals(mode)) nightMode = AppCompatDelegate.MODE_NIGHT_YES;
+        else nightMode = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
+        AppCompatDelegate.setDefaultNightMode(nightMode);
     }
 
     private void enableEdgeToEdgeNoContrast() {

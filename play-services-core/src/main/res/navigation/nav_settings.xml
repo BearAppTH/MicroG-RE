@@ -39,6 +39,9 @@
         <action
             android:id="@+id/openSelfCheck"
             app:destination="@id/selfcheckFragment" />
+        <action
+            android:id="@+id/openNetworkDiagnostics"
+            app:destination="@id/networkDiagnosticsFragment" />
     </fragment>
 
     <!-- Self-Check -->
@@ -86,6 +89,9 @@
         <action
             android:id="@+id/openGcmAdvancedSettings"
             app:destination="@id/gcmAdvancedFragment" />
+        <action
+            android:id="@+id/openPushLog"
+            app:destination="@id/pushLogFragment" />
     </fragment>
 
     <fragment
@@ -111,6 +117,18 @@
         android:id="@+id/gcmAdvancedFragment"
         android:name="org.microg.gms.ui.PushNotificationAdvancedFragment"
         android:label="@string/menu_settings" />
+
+    <fragment
+        android:id="@+id/pushLogFragment"
+        android:name="org.microg.gms.ui.PushLogFragment"
+        android:label="@string/pref_push_log_title" />
+
+    <!-- Network Diagnostics -->
+
+    <fragment
+        android:id="@+id/networkDiagnosticsFragment"
+        android:name="org.microg.gms.ui.NetworkDiagnosticsFragment"
+        android:label="@string/pref_network_diagnostics_title" />
 
     <!-- About -->
 

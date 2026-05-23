@@ -571,6 +571,30 @@
             </intent-filter>
         </service>
 
+        <!-- Quick Settings Tile -->
+        <service
+            android:name="org.microg.gms.ui.GmsQuickSettingsTileService"
+            android:exported="true"
+            android:icon="@drawable/ic_cloud_messaging"
+            android:label="@string/service_name_mcs"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
+        <!-- Home Screen Widget -->
+        <receiver
+            android:name="org.microg.gms.ui.GmsStatusWidget"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/gms_status_widget_info" />
+        </receiver>
+
         <meta-data
             android:name="org.microg.gms.settings.checkin_enable_service"
             android:value="true" />

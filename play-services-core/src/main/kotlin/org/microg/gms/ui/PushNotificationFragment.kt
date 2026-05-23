@@ -71,6 +71,10 @@ class PushNotificationFragment : PreferenceFragmentCompat() {
             findNavController().navigate(requireContext(), R.id.openAllGcmApps)
             true
         }
+        preferenceScreen.findPreference<androidx.preference.Preference>("pref_push_log")?.setOnPreferenceClickListener {
+            findNavController().navigate(requireContext(), R.id.openPushLog)
+            true
+        }
         switchBarPreference.setOnPreferenceChangeListener { _, newValue ->
             val newStatus = newValue as Boolean
             GcmPrefs.setEnabled(requireContext(), newStatus)

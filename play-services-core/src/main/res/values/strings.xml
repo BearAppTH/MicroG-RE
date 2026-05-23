@@ -274,4 +274,55 @@ Not yet supported"</string>
         <item quantity="one">%d app registered</item>
         <item quantity="other">%d apps registered</item>
     </plurals>
+
+    <!--Dark Mode-->
+    <string name="pref_dark_mode_title">Dark Mode</string>
+    <string-array name="dark_mode_entries">
+        <item>System default</item>
+        <item>Light</item>
+        <item>Dark</item>
+    </string-array>
+    <string-array name="dark_mode_values">
+        <item>system</item>
+        <item>light</item>
+        <item>dark</item>
+    </string-array>
+
+    <!--Export / Import-->
+    <string name="pref_export_settings_title">Export settings</string>
+    <string name="pref_export_settings_summary">Save settings to a JSON file</string>
+    <string name="pref_import_settings_title">Import settings</string>
+    <string name="pref_import_settings_summary">Restore settings from a JSON file</string>
+    <string name="export_success">Settings exported successfully</string>
+    <string name="export_failed">Export failed</string>
+    <string name="import_success">Settings imported successfully</string>
+    <string name="import_failed">Import failed — invalid file</string>
+
+    <!--Network Diagnostics-->
+    <string name="pref_network_diagnostics_title">Network Diagnostics</string>
+    <string name="pref_network_diagnostics_summary">Test connectivity to Google services</string>
+    <string name="diagnostics_run_button">Run Diagnostics</string>
+    <string name="diagnostics_running">Running…</string>
+    <string name="diagnostics_result_ok">OK — %d ms</string>
+    <string name="diagnostics_result_failed">Failed — %s</string>
+    <string name="diagnostics_checkin_host">Device registration (checkin.googleapis.com)</string>
+    <string name="diagnostics_mcs_host">Cloud messaging (mtalk.google.com)</string>
+    <string name="diagnostics_googleapis_host">Google APIs (www.googleapis.com)</string>
+
+    <!--Push Activity Log-->
+    <string name="pref_push_log_title">Push Activity Log</string>
+    <string name="pref_push_log_summary">View per-app push message history</string>
+    <string name="push_log_empty">No push activity recorded</string>
+    <string name="push_log_last_message">Last message: %s</string>
+    <plurals name="push_log_message_count">
+        <item quantity="one">%d message received</item>
+        <item quantity="other">%d messages received</item>
+    </plurals>
+
+    <!--Widget-->
+    <string name="widget_title">MicroG Status</string>
+    <string name="widget_status_ok">Running</string>
+    <string name="widget_status_off">Offline</string>
+    <string name="widget_gcm_on">Push: On</string>
+    <string name="widget_gcm_off">Push: Off</string>
 </resources>
