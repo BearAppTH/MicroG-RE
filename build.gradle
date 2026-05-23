@@ -82,7 +82,7 @@ allprojects {
     apply plugin: 'idea'
 
     group = 'org.microg.gms'
-    ext.appVersionName = '2.9.0'
+    ext.appVersionName = '2.9.1'
     def _vParts = ext.appVersionName.tokenize('.')
     // versionCode = 255034XYZ where XYZ encodes vMajor*100 + vMinor*10 + vPatch
     // baseVersion stays "25.50.34" for GMS compatibility display
