@@ -61,12 +61,12 @@ class PushNotificationFragment : PreferenceFragmentCompat() {
 
     @SuppressLint("RestrictedApi")
     override fun onBindPreferences() {
-        switchBarPreference = preferenceScreen.findPreference("pref_push_enabled") ?: switchBarPreference
-        pushStatusCategory = preferenceScreen.findPreference("prefcat_push_status") ?: pushStatusCategory
-        pushStatus = preferenceScreen.findPreference("pref_push_status") ?: pushStatus
-        pushApps = preferenceScreen.findPreference("prefcat_push_apps") ?: pushApps
-        pushAppsAll = preferenceScreen.findPreference("pref_push_apps_all") ?: pushAppsAll
-        pushAppsNone = preferenceScreen.findPreference("pref_push_apps_none") ?: pushAppsNone
+        switchBarPreference = preferenceScreen.findPreference("pref_push_enabled") ?: return
+        pushStatusCategory = preferenceScreen.findPreference("prefcat_push_status") ?: return
+        pushStatus = preferenceScreen.findPreference("pref_push_status") ?: return
+        pushApps = preferenceScreen.findPreference("prefcat_push_apps") ?: return
+        pushAppsAll = preferenceScreen.findPreference("pref_push_apps_all") ?: return
+        pushAppsNone = preferenceScreen.findPreference("pref_push_apps_none") ?: return
         pushAppsAll.setOnPreferenceClickListener {
             findNavController().navigate(requireContext(), R.id.openAllGcmApps)
             true

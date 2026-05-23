@@ -82,13 +82,13 @@ class DeviceRegistrationFragment : PreferenceFragmentCompat() {
 
     @SuppressLint("RestrictedApi")
     override fun onBindPreferences() {
-        switchBarPreference = preferenceScreen.findPreference("pref_checkin_enabled") ?: switchBarPreference
-        deviceProfile = preferenceScreen.findPreference("pref_device_profile") ?: deviceProfile
-        importProfile = preferenceScreen.findPreference("pref_device_profile_import") ?: importProfile
-        serial = preferenceScreen.findPreference("pref_device_serial") ?: serial
-        statusCategory = preferenceScreen.findPreference("prefcat_device_registration_status") ?: statusCategory
-        status = preferenceScreen.findPreference("pref_device_registration_status") ?: status
-        androidId = preferenceScreen.findPreference("pref_device_registration_android_id") ?: androidId
+        switchBarPreference = preferenceScreen.findPreference("pref_checkin_enabled") ?: return
+        deviceProfile = preferenceScreen.findPreference("pref_device_profile") ?: return
+        importProfile = preferenceScreen.findPreference("pref_device_profile_import") ?: return
+        serial = preferenceScreen.findPreference("pref_device_serial") ?: return
+        statusCategory = preferenceScreen.findPreference("prefcat_device_registration_status") ?: return
+        status = preferenceScreen.findPreference("pref_device_registration_status") ?: return
+        androidId = preferenceScreen.findPreference("pref_device_registration_android_id") ?: return
 
         deviceProfile.setOnPreferenceChangeListener { _, newValue ->
             ProfileManager.setProfile(requireContext(), newValue as String? ?: PROFILE_AUTO)
@@ -181,5 +181,6 @@ class DeviceRegistrationFragment : PreferenceFragmentCompat() {
 
     companion object {
         private const val UPDATE_INTERVAL = 1000L
+        private const val TAG = "DeviceRegistrationFragment"
     }
 }

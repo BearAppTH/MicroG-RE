@@ -133,12 +133,18 @@ public abstract class AbstractAboutFragment extends Fragment {
             View appCard = inflater.inflate(R.layout.about_app, appCardContainer, true);
 //            ((ImageView) appCard.findViewById(R.id.app_icon)).setImageDrawable(getIcon(requireContext()));
 //            ((TextView) appCard.findViewById(R.id.app_title)).setText(getAppName());
-            ((TextView) appCard.findViewById(R.id.app_version)).setText(appCard.getContext().getString(R.string.about_version_str, getAppVersion()));
+            TextView appVersion = appCard.findViewById(R.id.app_version);
+            if (appVersion != null) {
+                appVersion.setText(appCard.getContext().getString(R.string.about_version_str, getAppVersion()));
+            }
 
-            appCard.findViewById(R.id.app_check_updates).setOnClickListener(v -> {
-                new UpdateChecker(requireContext()).checkForUpdates(v, () -> {
+            View checkUpdates = appCard.findViewById(R.id.app_check_updates);
+            if (checkUpdates != null) {
+                checkUpdates.setOnClickListener(v -> {
+                    new UpdateChecker(requireContext()).checkForUpdates(v, () -> {
+                    });
                 });
-            });
+            }
 
             View appInfo = appCard.findViewById(R.id.app_info);
             if (appInfo != null) {
