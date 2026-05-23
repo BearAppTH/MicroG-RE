@@ -155,7 +155,7 @@ public abstract class AbstractAboutFragment extends Fragment {
 
         ViewGroup morpheCardContainer = aboutRoot.findViewById(R.id.morphe_card_container);
         if (morpheCardContainer != null) {
-            View morpheCard = inflater.inflate(R.layout.about_morphe, morpheCardContainer, true);
+            View morpheCard = inflater.inflate(R.layout.about_bear, morpheCardContainer, true);
 
             morpheCard.findViewById(R.id.morphe_github).setOnClickListener(v -> openUrl("https://github.com/BearAppTH"));
             morpheCard.findViewById(R.id.morphe_website).setOnClickListener(v -> openUrl("https://www.bearappth.online"));
