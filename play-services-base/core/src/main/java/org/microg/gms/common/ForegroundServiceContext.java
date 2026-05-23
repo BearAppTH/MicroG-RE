@@ -80,7 +80,14 @@ public class ForegroundServiceContext extends ContextWrapper {
             Log.d(tag, "Started " + serviceName + " in foreground mode.");
             try {
                 Notification notification = buildForegroundNotification(service, serviceName);
-                service.startForeground(serviceName.hashCode(), notification);
+                if (SDK_INT >= 34) {
+                    int serviceType = 0;
+                    ForegroundServiceInfo annotation = service.getClass().getAnnotation(ForegroundServiceInfo.class);
+                    if (annotation != null) serviceType = annotation.foregroundServiceType();
+                    service.startForeground(serviceName.hashCode(), notification, serviceType);
+                } else {
+                    service.startForeground(serviceName.hashCode(), notification);
+                }
                 Log.d(tag, "Notification: " + notification);
             } catch (Exception e) {
                 Log.w(tag, e);

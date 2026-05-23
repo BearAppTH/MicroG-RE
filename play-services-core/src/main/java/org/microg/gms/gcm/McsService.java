@@ -82,7 +82,7 @@ import static org.microg.gms.common.PackageUtils.warnIfNotPersistentProcess;
 import static org.microg.gms.gcm.GcmConstants.*;
 import static org.microg.gms.gcm.McsConstants.*;
 
-@ForegroundServiceInfo(value = "Cloud messaging", resName = "service_name_mcs", resPackage = "com.google.android.gms")
+@ForegroundServiceInfo(value = "Cloud messaging", resName = "service_name_mcs", resPackage = "com.google.android.gms", foregroundServiceType = 0x00000400 /* FOREGROUND_SERVICE_TYPE_REMOTE_MESSAGING, API 34+ */)
 public class McsService extends Service implements Handler.Callback {
     private static final String TAG = "GmsGcmMcsSvc";
 

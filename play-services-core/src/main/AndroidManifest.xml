@@ -76,6 +76,8 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_REMOTE_MESSAGING" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
@@ -112,6 +114,7 @@
         <service
             android:name="org.microg.gms.checkin.CheckinService"
             android:exported="true"
+            android:foregroundServiceType="dataSync"
             tools:ignore="ExportedService">
             <intent-filter>
                 <action android:name="com.google.android.gms.checkin.BIND_TO_SERVICE" />
@@ -173,6 +176,7 @@
 
         <service
             android:name="org.microg.gms.gcm.McsService"
+            android:foregroundServiceType="remoteMessaging"
             android:process=":persistent" />
 
         <!-- exported=true: receives SEND from third-party apps sending upstream GCM messages -->

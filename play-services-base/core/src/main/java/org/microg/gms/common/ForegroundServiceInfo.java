@@ -18,4 +18,5 @@ public @interface ForegroundServiceInfo {
     int res() default 0;
     String resName() default "";
     String resPackage() default "";
+    int foregroundServiceType() default 0;
 }
