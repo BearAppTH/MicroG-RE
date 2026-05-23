@@ -1,13 +1,13 @@
 <div align="center">
 
 <img
-  width="160px"
-  src="https://raw.githubusercontent.com/BearAppTH/bearapp-branding/main/assets/bearappth-logo/bearappth_logo_with_frame_dark.svg"
-  alt="BearAppTH Logo"
+  width="140px"
+  src=".github/assets/logo.svg"
+  alt="Bear MicroG Logo"
 />
 
 <h1>Bear MicroG</h1>
-<p><b>microG GmsCore เวอร์ชัน BearAppTH</b></p>
+<p><b>Google Play Services แบบ Open Source สำหรับ Android</b></p>
 
 [![Website](https://img.shields.io/badge/Website-0a0a0a?style=for-the-badge&logo=googlechrome&logoColor=white)](https://www.bearappth.online)
 [![GitHub](https://img.shields.io/badge/GitHub-0a0a0a?style=for-the-badge&logo=github&logoColor=white)](https://github.com/BearAppTH/MicroG-RE)
@@ -29,17 +29,17 @@
 
 &nbsp;
 
-## ⚙️ Bear MicroG (GmsCore)
+## ⚙️ Bear MicroG คืออะไร?
 
-**Bear MicroG** คือ Fork ของ [microG GmsCore](https://github.com/microg/GmsCore) ที่พัฒนาโดยทีม **BearAppTH** เพื่อใช้งานร่วมกับแอปที่ผ่านการ patch แล้ว โดยไม่ต้องการสิทธิ์ root
+**Bear MicroG** คือระบบทดแทน Google Play Services แบบ Open Source ที่พัฒนาและดูแลรักษาโดย **BearAppTH** ช่วยให้แอป Android สามารถใช้งาน Google Account Authentication และ Google Services ได้โดยไม่ต้องพึ่งพา Google Play Services ต้นฉบับ และไม่ต้องการสิทธิ์ root
 
-- ✅ ใช้งานได้โดยไม่ต้อง root
+- ✅ ติดตั้งและใช้งานได้โดยไม่ต้อง root
 - ✅ รองรับ Google Account Authentication
-- ✅ ทดแทน Google Play Services
-- ✅ ออกแบบ UI ด้วย Material 3 Expressive
-- ✅ รันภายใต้ package name `app.bear.android.gms`
+- ✅ ทดแทน Google Play Services อย่างสมบูรณ์
+- ✅ UI ออกแบบด้วย Material 3 Expressive
+- ✅ Package name `app.bear.android.gms` แยกจากระบบ
 
-Repository นี้ดัดแปลงมาจาก [microG GmsCore](https://github.com/microg/GmsCore) เพื่อรองรับแอปที่ patch แล้วภายใต้ชื่อ package ทางเลือก โดยใช้ **GmsCore support** patch เพื่อเปิดใช้งาน Google account authentication และ services แทนที่ Google Play Services
+Bear MicroG ใช้ Package name `app.bear.android.gms` แทน `com.google.android.gms` ทำให้ทำงานควบคู่กับ Google Play Services ต้นฉบับได้โดยไม่ขัดแย้ง และรองรับเฉพาะแอปที่ patch ด้วย GmsCore support
 
 &nbsp;
 
@@ -51,37 +51,35 @@ Repository นี้ดัดแปลงมาจาก [microG GmsCore](https:
 
 ## 📥 วิธีติดตั้ง
 
-1. ดาวน์โหลดไฟล์ APK ล่าสุดจาก [Releases](https://github.com/BearAppTH/MicroG-RE/releases/latest)
+1. ดาวน์โหลดไฟล์ `.apk` ล่าสุดจาก [Releases](https://github.com/BearAppTH/MicroG-RE/releases/latest)
 2. เปิดไฟล์ APK บนอุปกรณ์ Android แล้วกด **ติดตั้ง**
-3. หากติดตั้งทับเวอร์ชันเดิม ให้กด **อัพเดท**
+3. หากอัปเดตจากเวอร์ชันเดิม ให้กด **อัพเดท**
 4. เปิดแอป **Bear MicroG** แล้วเพิ่ม Google Account
 
 > **หมายเหตุ:** ต้องใช้งานร่วมกับแอปที่ผ่านการ patch ด้วย GmsCore support เท่านั้น
 
 &nbsp;
 
-## ❓ คำถามที่พบบ่อย (FAQ)
+## ❓ คำถามที่พบบ่อย
 
-**Q: Bear MicroG แตกต่างจาก microG ต้นฉบับอย่างไร?**
-> Bear MicroG ใช้ package name `app.bear.android.gms` แทน `com.google.android.gms` เพื่อให้ทำงานร่วมกับแอปที่ patch แล้วโดยเฉพาะ ไม่ได้แทนที่ Google Play Services บนระบบ
+**Q: Bear MicroG แตกต่างจาก Google Play Services อย่างไร?**
+> Bear MicroG เป็น Open Source และทำงานแบบ user-level ไม่ฝังอยู่ในระบบ ไม่รวบรวมข้อมูล และสามารถตรวจสอบ Source Code ได้ทั้งหมดที่ repository นี้
 
 **Q: ต้อง root เครื่องไหม?**
-> ไม่ต้อง root ติดตั้งเหมือนแอปทั่วไปได้เลย
+> ไม่ต้อง ติดตั้งเหมือนแอปทั่วไปได้เลย
 
 **Q: รองรับ Android เวอร์ชันอะไรบ้าง?**
 > Android 7.0 (API 24) ขึ้นไป
 
 **Q: ใช้งานได้กับแอปอะไรบ้าง?**
-> ใช้งานได้กับแอปที่ผ่านการ patch ด้วย GmsCore support patch (เช่น แอปที่ patch โดยทีม BearAppTH)
+> ใช้งานได้กับแอปที่ผ่านการ patch ด้วย GmsCore support patch ซึ่งพัฒนาโดยทีม BearAppTH
 
 **Q: ปลอดภัยไหม?**
-> Bear MicroG เป็น open source สามารถตรวจสอบ source code ได้ที่ repository นี้ทั้งหมด
+> Bear MicroG เป็น Open Source ทั้งหมด ตรวจสอบ Source Code ได้เองที่ repository นี้
 
 &nbsp;
 
 ## 🔧 สำหรับนักพัฒนา
-
-ดูรายละเอียดการ setup และการส่ง contribution ได้ที่ [CONTRIBUTING.md](CONTRIBUTING.md)
 
 สำหรับการตั้งค่า GitHub Secrets ที่จำเป็นสำหรับ release workflow:
 
@@ -95,16 +93,12 @@ Repository นี้ดัดแปลงมาจาก [microG GmsCore](https:
 
 &nbsp;
 
-## 🤝 Credits
-
-- [microG Project](https://github.com/microg) สำหรับ GmsCore ทางเลือกของ Play Services — [wiki](https://github.com/microg/GmsCore/wiki)
-- [MorpheApp](https://github.com/MorpheApp/MicroG-RE) สำหรับ GmsCore Redesign ต้นฉบับ
-- [Shadow578](https://github.com/shadow578) และ [ReVanced Team](https://github.com/ReVanced) สำหรับ ReVanced GmsCore group ID vendor
-- [AyushTNM](https://github.com/ayushTNM) สำหรับ implementations และ ideas
-
 ## 📜 License
 
+Bear MicroG เผยแพร่ภายใต้ Apache License 2.0
+
     Copyright 2013-2025 microG Project Team
+    Copyright 2025 BearAppTH
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
