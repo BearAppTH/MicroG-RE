@@ -126,13 +126,13 @@ Es posible que algunas apps no puedan volver a registrarse después de esta acci
     <string name="self_check_cat_gms_packages">Paquetes instalados</string>
     <string name="self_check_cat_fake_sig">Soporte de firmado de firma</string>
     <!--self check: patched apps-->
-    <string name="self_check_source_morphe">Parches de Morphe</string>
+    <string name="self_check_source_bear">Parches de Morphe</string>
     <string name="self_check_source_alternative">parches alternativos</string>
     <!-- %1$s is an app name, such as "Morphe" -->
     <string name="self_check_patched_app_installed">Ejecutándose con %1$s</string>
     <!-- %1$s is an app name, such as "YouTube" -->
     <string name="self_check_resolution_patched_app_installed">No se encontraron apps que usen %1$s. Por favor, parchea e instala la app modificada</string>
-    <string name="self_check_action_download_morphe">Descargar Morphe</string>
+    <string name="self_check_action_download_bear">Descargar Morphe</string>
     <!--self check: permission-->
     <string name="self_check_name_notifications">Notificaciones permitidas</string>
     <string name="self_check_resolution_notifications">Toca aquí para abrir los ajustes de notificaciones. Las notificaciones se utilizan para mantener GcmService en ejecución en segundo plano cuando se activa la optimización de la batería u otras condiciones</string>

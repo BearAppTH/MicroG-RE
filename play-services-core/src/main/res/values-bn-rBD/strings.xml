@@ -126,13 +126,13 @@
     <string name="self_check_cat_gms_packages">সিগনচার স্পুফিং সমর্থন</string>
     <string name="self_check_cat_fake_sig">মর্ফে প্যাচস</string>
     <!--self check: patched apps-->
-    <string name="self_check_source_morphe">বিকল্প প্যাচস</string>
+    <string name="self_check_source_bear">বিকল্প প্যাচস</string>
     <string name="self_check_source_alternative">বিকল্প প্যাচ</string>
     <!-- %1$s is an app name, such as "Morphe" -->
     <string name="self_check_patched_app_installed">%1$S-এ রানিং</string>
     <!-- %1$s is an app name, such as "YouTube" -->
     <string name="self_check_resolution_patched_app_installed">%1$S-কে ব্যবহারকারী apps পাওয়া যায়নি. অনুগ্রহ করে মডিফাইড অ্যাপটি প্যাচ করুন এবং ইনস্টল করুন</string>
-    <string name="self_check_action_download_morphe">ডাউনলোড মর্ফে</string>
+    <string name="self_check_action_download_bear">ডাউনলোড মর্ফে</string>
     <!--self check: permission-->
     <string name="self_check_name_notifications">নোটিফিকেশন অনুমতি দেওয়া হয়েছে</string>
     <string name="self_check_resolution_notifications">নোটিফিকেশনগুলি চালু করতে, ডিভাইসের ব্যাটারি অপ্টিমাইজেশনকে অক্ষরিক করুন</string>
