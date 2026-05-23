@@ -24,7 +24,7 @@
     <string name="update_checker_no_internet">ไม่มีการเชื่อมต่ออินเทอร์เน็ต</string>
     <string name="update_checker_generic_error">มีบางอย่างผิดพลาด… กรุณาลองใหม่อีกครั้ง</string>
     <!--Settings About-->
-    <string name="about_morphe_description">Bear MicroG คือ microG GmsCore เวอร์ชัน BearAppTH สำหรับแอปที่ปรับแต่งแล้ว</string>
+    <string name="about_bear_description">Bear MicroG คือ microG GmsCore เวอร์ชัน BearAppTH สำหรับแอปที่ปรับแต่งแล้ว</string>
     <string name="about_version_str">เวอร์ชัน %1$s</string>
     <string name="about_default_license">สงวนสิทธิ์ทั้งหมด</string>
     <!--Self Check-->

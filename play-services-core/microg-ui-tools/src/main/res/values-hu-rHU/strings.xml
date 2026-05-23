@@ -24,7 +24,7 @@
     <string name="update_checker_no_internet">Nincs internetkapcsolat</string>
     <string name="update_checker_generic_error">Valami hiba történt… Kérem, próbálja meg később</string>
     <!--Settings About-->
-    <string name="about_morphe_description">A BearAppTH egy nyílt forráskódú projekt, amelynek célja az Android alkalmazások módosítása patchek segítségével.</string>
+    <string name="about_bear_description">A BearAppTH egy nyílt forráskódú projekt, amelynek célja az Android alkalmazások módosítása patchek segítségével.</string>
     <string name="about_version_str">Verzió %1$s</string>
     <string name="about_default_license">Minden jog fenntartva</string>
     <!--Self Check-->

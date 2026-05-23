@@ -24,7 +24,7 @@
     <string name="update_checker_no_internet">इंटरनेट कनेक्शन नहीं है</string>
     <string name="update_checker_generic_error">कुछ गलत हो गया है... बाद में पुन: प्रयास करें</string>
     <!--Settings About-->
-    <string name="about_morphe_description">BearAppTH एक ओपन-सोर्स प्रोजेक्ट है जो एंड्रॉइड ऐप्स को पैचेज़ के माध्यम से बदलता है</string>
+    <string name="about_bear_description">BearAppTH एक ओपन-सोर्स प्रोजेक्ट है जो एंड्रॉइड ऐप्स को पैचेज़ के माध्यम से बदलता है</string>
     <string name="about_version_str">वर्शन %1$s</string>
     <string name="about_default_license">सभी अधिकार सुरक्षित हैं</string>
     <!--Self Check-->

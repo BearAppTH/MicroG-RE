@@ -29,8 +29,8 @@
     <!--Settings About-->
 
     <string name="about_microg_re" translatable="false">Bear MicroG</string>
-    <string name="about_morphe" translatable="false">BearAppTH</string>
-    <string name="about_morphe_description">Bear MicroG is a custom build of microG GmsCore for BearAppTH</string>
+    <string name="about_bear" translatable="false">BearAppTH</string>
+    <string name="about_bear_description">Bear MicroG is a custom build of microG GmsCore for BearAppTH</string>
     <string name="about_version_str">Version %1$s</string>
     <string name="about_name_version_str" translatable="false">%1$s %2$s</string>
     <string name="about_default_license">All rights reserved</string>

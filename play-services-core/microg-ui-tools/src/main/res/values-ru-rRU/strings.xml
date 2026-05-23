@@ -24,7 +24,7 @@
     <string name="update_checker_no_internet">Нет подключения к интернету</string>
     <string name="update_checker_generic_error">Что-то пошло не так… Пожалуйста, попробуйте позже</string>
     <!--Settings About-->
-    <string name="about_morphe_description">BearAppTH — открытый проект, предназначенный для изменения Android-приложений через патчи</string>
+    <string name="about_bear_description">BearAppTH — открытый проект, предназначенный для изменения Android-приложений через патчи</string>
     <string name="about_version_str">Версия %1$s</string>
     <string name="about_default_license">Все права защищены</string>
     <!--Self Check-->

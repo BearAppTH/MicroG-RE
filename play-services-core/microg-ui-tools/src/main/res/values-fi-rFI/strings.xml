@@ -24,7 +24,7 @@
     <string name="update_checker_no_internet">Ei internetyhteyttä</string>
     <string name="update_checker_generic_error">Jokin meni pieleen… Yritä myöhemmin uudelleen</string>
     <!--Settings About-->
-    <string name="about_morphe_description">BearAppTH on avoimen lähdekoodin projekti, joka on suunniteltu Android-sovellusten muokkaamiseen paikkauksien avulla</string>
+    <string name="about_bear_description">BearAppTH on avoimen lähdekoodin projekti, joka on suunniteltu Android-sovellusten muokkaamiseen paikkauksien avulla</string>
     <string name="about_version_str">Versio %1$s</string>
     <string name="about_default_license">Kaikki oikeudet pidätetään</string>
     <!--Self Check-->

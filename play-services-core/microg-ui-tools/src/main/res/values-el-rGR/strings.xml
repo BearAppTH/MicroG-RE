@@ -24,7 +24,7 @@
     <string name="update_checker_no_internet">Δεν υπάρχει σύνδεση με το διαδίκτυο</string>
     <string name="update_checker_generic_error">Κάτι πήγε στραβά… Παρακαλώ δοκιμάστε αργότερα</string>
     <!--Settings About-->
-    <string name="about_morphe_description">Το BearAppTH είναι ένα πρότζεκτ ανοιχτού κώδικα σχεδιασμένο να τροποποιεί εφαρμογές Android μέσω patches</string>
+    <string name="about_bear_description">Το BearAppTH είναι ένα πρότζεκτ ανοιχτού κώδικα σχεδιασμένο να τροποποιεί εφαρμογές Android μέσω patches</string>
     <string name="about_version_str">Έκδοση %1$s</string>
     <string name="about_default_license">Όλα τα δικαιώματα διατηρούνται</string>
     <!--Self Check-->

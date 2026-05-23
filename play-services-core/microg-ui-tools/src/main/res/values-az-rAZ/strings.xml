@@ -24,7 +24,7 @@
     <string name="update_checker_no_internet">İnternet bağlantısı yoxdur</string>
     <string name="update_checker_generic_error">Nəsə səhv oldu... Zəhmət olmasa, daha sonra təkrar cəhd edin</string>
     <!--Settings About-->
-    <string name="about_morphe_description">BearAppTH, Android tətbiqlərini yamaqlar metoduyla dəyişdirmək üçün hazırlanan açıq mənbəli layihədir</string>
+    <string name="about_bear_description">BearAppTH, Android tətbiqlərini yamaqlar metoduyla dəyişdirmək üçün hazırlanan açıq mənbəli layihədir</string>
     <string name="about_version_str">Versiya %1$s</string>
     <string name="about_default_license">Bütün hüquqlar qorunur</string>
     <!--Self Check-->

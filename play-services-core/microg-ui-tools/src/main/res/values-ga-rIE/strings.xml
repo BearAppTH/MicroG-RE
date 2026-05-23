@@ -24,7 +24,7 @@
     <string name="update_checker_no_internet">Gan nasc idirlín</string>
     <string name="update_checker_generic_error">Chuaigh rud éigin mícheart… Déan iarracht arís ar ball</string>
     <!--Settings About-->
-    <string name="about_morphe_description">Is tionscadal foinse oscailte é BearAppTH atá deartha chun aipeanna Android a mhodhnú trí phaistí.</string>
+    <string name="about_bear_description">Is tionscadal foinse oscailte é BearAppTH atá deartha chun aipeanna Android a mhodhnú trí phaistí.</string>
     <string name="about_version_str">Leagan %1$s</string>
     <string name="about_default_license">Gach ceart ar cosaint</string>
     <!--Self Check-->

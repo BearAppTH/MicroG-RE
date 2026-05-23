@@ -24,7 +24,7 @@
     <string name="update_checker_no_internet">Žiadne internetové pripojenie</string>
     <string name="update_checker_generic_error">Vyskytol sa problém... Skúste to znova neskôr.</string>
     <!--Settings About-->
-    <string name="about_morphe_description">BearAppTH je open-source projekt navrhnutý na modifikáciu Android aplikácií pomocou záplat</string>
+    <string name="about_bear_description">BearAppTH je open-source projekt navrhnutý na modifikáciu Android aplikácií pomocou záplat</string>
     <string name="about_version_str">Verzia %1$s</string>
     <string name="about_default_license">Všetky práva vyhradené</string>
     <!--Self Check-->

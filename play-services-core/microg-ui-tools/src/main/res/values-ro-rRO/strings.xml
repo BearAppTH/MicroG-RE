@@ -24,7 +24,7 @@
     <string name="update_checker_no_internet">Nu există conexiune la internet</string>
     <string name="update_checker_generic_error">Ceva nu a mers bine… Te rugăm să încerci din nou mai târziu</string>
     <!--Settings About-->
-    <string name="about_morphe_description">BearAppTH este un proiect open-source conceput pentru a modifica aplicații Android prin intermediul unor pachete</string>
+    <string name="about_bear_description">BearAppTH este un proiect open-source conceput pentru a modifica aplicații Android prin intermediul unor pachete</string>
     <string name="about_version_str">Versiune %1$s</string>
     <string name="about_default_license">Toate drepturile rezervate</string>
     <!--Self Check-->
