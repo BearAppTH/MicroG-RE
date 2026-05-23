@@ -33,6 +33,12 @@
         <action
             android:id="@+id/openAbout"
             app:destination="@id/aboutFragment" />
+        <action
+            android:id="@+id/openPrivacy"
+            app:destination="@id/privacyFragment" />
+        <action
+            android:id="@+id/openSelfCheck"
+            app:destination="@id/selfcheckFragment" />
     </fragment>
 
     <!-- Self-Check -->

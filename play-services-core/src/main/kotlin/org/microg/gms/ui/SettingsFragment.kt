@@ -22,6 +22,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.SwitchPreferenceCompat
 import com.google.android.gms.R
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.transition.MaterialSharedAxis
 import kotlinx.coroutines.launch
@@ -91,7 +92,8 @@ class SettingsFragment : ResourceSettingsFragment() {
 
     private fun setupStaticPreferenceClickListeners() {
         findPreference<Preference>(PREF_ACCOUNTS)?.setOnPreferenceClickListener {
-            findNavController().navigate(requireContext(), R.id.accountManagerFragment)
+            activity?.findViewById<BottomNavigationView>(R.id.bottom_nav)
+                ?.selectedItemId = R.id.accountManagerFragment
             true
         }
         findPreference<Preference>(PREF_CHECKIN)?.setOnPreferenceClickListener {
@@ -103,7 +105,7 @@ class SettingsFragment : ResourceSettingsFragment() {
             true
         }
         findPreference<Preference>(PREF_PRIVACY)?.setOnPreferenceClickListener {
-            findNavController().navigate(requireContext(), R.id.privacyFragment)
+            findNavController().navigate(requireContext(), R.id.openPrivacy)
             true
         }
         findPreference<SwitchPreferenceCompat>(PREF_HIDE_LAUNCHER_ICON)?.setOnPreferenceChangeListener { _, newValue ->
@@ -112,7 +114,7 @@ class SettingsFragment : ResourceSettingsFragment() {
             true
         }
         findPreference<Preference>(PREF_SELF_CHECK)?.setOnPreferenceClickListener {
-            findNavController().navigate(requireContext(), R.id.selfcheckFragment)
+            findNavController().navigate(requireContext(), R.id.openSelfCheck)
             true
         }
         findPreference<Preference>(PREF_GITHUB)?.setOnPreferenceClickListener {
