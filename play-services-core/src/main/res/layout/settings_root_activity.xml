@@ -1,5 +1,5 @@
 <!--
-  ~ SPDX-FileCopyrightText: 2020, microG Project Team
+  ~ SPDX-FileCopyrightText: 2026 BearAppTH
   ~ SPDX-License-Identifier: Apache-2.0
   -->
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -52,6 +52,7 @@
         android:layout_height="match_parent"
         android:clipToPadding="false"
         android:fillViewport="true"
+        android:paddingBottom="80dp"
         android:scrollbars="none"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
@@ -64,16 +65,25 @@
             app:navGraph="@navigation/nav_settings" />
     </androidx.core.widget.NestedScrollView>
 
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_nav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        app:menu="@menu/bottom_nav_menu" />
+
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/preference_fab"
         style="?attr/extendedFloatingActionButtonSmallStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
-        android:layout_margin="17dp"
+        android:layout_marginEnd="17dp"
+        android:layout_marginBottom="97dp"
         android:scrollbars="none"
         android:textColor="?attr/colorOnTertiaryContainer"
         android:visibility="gone"
         app:backgroundTint="?attr/colorTertiaryContainer"
         app:iconTint="?attr/colorOnTertiaryContainer" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

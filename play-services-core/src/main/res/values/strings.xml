@@ -8,7 +8,25 @@
     <!--App Names-->
 
     <string name="gms_app_name" translatable="false">Bear MicroG</string>
-    <string name="gms_settings_name">microG Settings</string>
+    <string name="gms_settings_name" translatable="false">Bear MicroG</string>
+
+    <!--Bottom Navigation-->
+    <string name="nav_home">Home</string>
+    <string name="nav_settings_tab_label">Settings</string>
+
+    <!--Home Dashboard-->
+    <string name="home_status_ok">System Running</string>
+    <string name="home_status_not_registered">Not Registered</string>
+    <string name="home_status_disabled">Service Disabled</string>
+    <string name="home_status_disabled_hint">Enable device registration to use Google Services</string>
+    <string name="home_device_card_title">Device</string>
+    <string name="home_profile_label">Profile: %1$s</string>
+    <string name="home_serial_label">Serial: %1$s</string>
+    <string name="home_self_check_hint">Tap to check system</string>
+    <string name="home_account_none">No account signed in</string>
+    <string name="home_push_connected">Connected</string>
+    <string name="home_push_disconnected">Disconnected</string>
+    <string name="home_push_disabled">Disabled</string>
 
     <!--Authentication-->
 
