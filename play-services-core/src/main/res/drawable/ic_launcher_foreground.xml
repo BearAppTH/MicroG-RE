@@ -1,13 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  SPDX-FileCopyrightText: 2026 BearAppTH
+  SPDX-License-Identifier: Apache-2.0
+
+  Bear face — converted from .github/assets/logo.svg (160x160 → 108x108, scale 0.675)
+  Drawing order: ears → head → inner ears → muzzle → eyes → pupils → highlights → nose → mouth
+-->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!--
-      Bear paw: 4 toe beans (r=9) + 1 main oval pad (rx=18, ry=14)
-      Safe zone: 18-90. Content spans x=25-83, y=28-79 — all within safe zone.
-    -->
+
+    <!-- Bear ears (outer) + head — #6EA8F5 approximates bearGrad midpoint -->
+    <path
+        android:fillColor="#6EA8F5"
+        android:pathData="M32.4,32.4 m-12.83,0 a12.83,12.83 0 1,0 25.65,0 a12.83,12.83 0 1,0 -25.65,0Z
+                          M75.6,32.4 m-12.83,0 a12.83,12.83 0 1,0 25.65,0 a12.83,12.83 0 1,0 -25.65,0Z
+                          M54,62.1 m-33.75,0 a33.75,33.75 0 1,0 67.5,0 a33.75,33.75 0 1,0 -67.5,0Z" />
+
+    <!-- Inner ears + muzzle — #2A57A0 approximates innerEar gradient -->
+    <path
+        android:fillColor="#2A57A0"
+        android:pathData="M32.4,32.4 m-7.43,0 a7.43,7.43 0 1,0 14.85,0 a7.43,7.43 0 1,0 -14.85,0Z
+                          M75.6,32.4 m-7.43,0 a7.43,7.43 0 1,0 14.85,0 a7.43,7.43 0 1,0 -14.85,0Z
+                          M38.47,73.58 a15.53,11.48 0 1,0 31.05,0 a15.53,11.48 0 1,0 -31.05,0Z" />
+
+    <!-- Eye whites -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M54,51C64,51 72,57 72,65C72,73 64,79 54,79C44,79 36,73 36,65C36,57 44,51 54,51ZM34,35C39,35 43,39 43,44C43,49 39,53 34,53C29,53 25,49 25,44C25,39 29,35 34,35ZM46,28C51,28 55,32 55,37C55,42 51,46 46,46C41,46 37,42 37,37C37,32 41,28 46,28ZM62,28C67,28 71,32 71,37C71,42 67,46 62,46C57,46 53,42 53,37C53,32 57,28 62,28ZM74,35C79,35 83,39 83,44C83,49 79,53 74,53C69,53 65,49 65,44C65,39 69,35 74,35Z" />
+        android:pathData="M43.88,57.38 m-5.74,0 a5.74,5.74 0 1,0 11.48,0 a5.74,5.74 0 1,0 -11.48,0Z
+                          M64.13,57.38 m-5.74,0 a5.74,5.74 0 1,0 11.48,0 a5.74,5.74 0 1,0 -11.48,0Z" />
+
+    <!-- Pupils + nose -->
+    <path
+        android:fillColor="#0D1117"
+        android:pathData="M44.55,58.05 m-3.38,0 a3.38,3.38 0 1,0 6.75,0 a3.38,3.38 0 1,0 -6.75,0Z
+                          M64.8,58.05 m-3.38,0 a3.38,3.38 0 1,0 6.75,0 a3.38,3.38 0 1,0 -6.75,0Z
+                          M48.6,68.18 a5.4,4.05 0 1,0 10.8,0 a5.4,4.05 0 1,0 -10.8,0Z" />
+
+    <!-- Eye highlights (white dot on each pupil) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M45.56,57.04 m-1.35,0 a1.35,1.35 0 1,0 2.7,0 a1.35,1.35 0 1,0 -2.7,0Z
+                          M65.81,57.04 m-1.35,0 a1.35,1.35 0 1,0 2.7,0 a1.35,1.35 0 1,0 -2.7,0Z" />
+
+    <!-- Mouth — stroke only, round cap -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#0D1117"
+        android:strokeWidth="1.69"
+        android:strokeLineCap="round"
+        android:pathData="M49.95,73.58 Q54,77.63 58.05,73.58" />
+
 </vector>

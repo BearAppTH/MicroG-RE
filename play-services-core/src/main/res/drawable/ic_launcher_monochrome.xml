@@ -1,9 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  SPDX-FileCopyrightText: 2026 BearAppTH
+  SPDX-License-Identifier: Apache-2.0
+-->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
+
+    <!-- Bear outer silhouette: ears + head + muzzle as single white shape -->
     <path
-        android:fillColor="@android:color/black"
-        android:pathData="M54,51C64,51 72,57 72,65C72,73 64,79 54,79C44,79 36,73 36,65C36,57 44,51 54,51ZM34,35C39,35 43,39 43,44C43,49 39,53 34,53C29,53 25,49 25,44C25,39 29,35 34,35ZM46,28C51,28 55,32 55,37C55,42 51,46 46,46C41,46 37,42 37,37C37,32 41,28 46,28ZM62,28C67,28 71,32 71,37C71,42 67,46 62,46C57,46 53,42 53,37C53,32 57,28 62,28ZM74,35C79,35 83,39 83,44C83,49 79,53 74,53C69,53 65,49 65,44C65,39 69,35 74,35Z" />
+        android:fillColor="@android:color/white"
+        android:pathData="M32.4,32.4 m-12.83,0 a12.83,12.83 0 1,0 25.65,0 a12.83,12.83 0 1,0 -25.65,0Z
+                          M75.6,32.4 m-12.83,0 a12.83,12.83 0 1,0 25.65,0 a12.83,12.83 0 1,0 -25.65,0Z
+                          M54,62.1 m-33.75,0 a33.75,33.75 0 1,0 67.5,0 a33.75,33.75 0 1,0 -67.5,0Z" />
+
 </vector>
