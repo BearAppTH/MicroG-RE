@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  SPDX-FileCopyrightText: 2026 BearAppTH
+  SPDX-License-Identifier: Apache-2.0
+-->
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <shortcut
+        android:shortcutId="shortcut_push"
+        android:enabled="true"
+        android:icon="@drawable/ic_cloud_messaging"
+        android:shortcutShortLabel="@string/gcm_enable_switch"
+        android:shortcutLongLabel="@string/service_name_mcs">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.google.android.gms"
+            android:targetClass="org.microg.gms.ui.MainSettingsActivity" />
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="shortcut_checkin"
+        android:enabled="true"
+        android:icon="@drawable/ic_device_login"
+        android:shortcutShortLabel="@string/service_name_checkin"
+        android:shortcutLongLabel="@string/service_name_checkin">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.google.android.gms"
+            android:targetClass="org.microg.gms.ui.MainSettingsActivity" />
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+
+</shortcuts>
