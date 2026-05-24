@@ -12,7 +12,6 @@
 หากพบช่องโหว่ด้านความปลอดภัย **อย่าเปิด public issue**
 
 กรุณาแจ้งโดยตรงผ่านทาง:
-- **Email:** boss.borwornwong@gmail.com
 - **GitHub Private Advisory:** [Report a vulnerability](https://github.com/BearAppTH/MicroG-RE/security/advisories/new)
 
 ### ข้อมูลที่ควรระบุ
