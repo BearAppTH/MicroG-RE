@@ -8,6 +8,7 @@ on:
 jobs:
   pull:
     name: Pull translations from Crowdin
+    if: ${{ secrets.CROWDIN_PROJECT_ID != '' && secrets.CROWDIN_PERSONAL_TOKEN != '' }}
     permissions:
       contents: write
     runs-on: ubuntu-latest
