@@ -87,78 +87,84 @@ class HomeFragment : Fragment() {
         lifecycleScope.launch {
             val v = getView() ?: return@launch
 
-            val checkinEnabled = CheckinPreferences.isEnabled(appContext)
-            val checkinInfo = if (checkinEnabled) getCheckinServiceInfo(appContext) else null
-            val isRegistered = checkinEnabled && (checkinInfo?.lastCheckin ?: 0L) > 0
+            try {
+                val checkinEnabled = CheckinPreferences.isEnabled(appContext)
+                val checkinInfo = if (checkinEnabled) getCheckinServiceInfo(appContext) else null
+                val isRegistered = checkinEnabled && (checkinInfo?.lastCheckin ?: 0L) > 0
 
-            val colorOk = ContextCompat.getColor(appContext, R.color.md_theme_primary)
-            val colorError = ContextCompat.getColor(appContext, R.color.md_theme_error)
-            val colorDisabled = ContextCompat.getColor(appContext, R.color.md_theme_onSurfaceVariant)
+                val colorOk = ContextCompat.getColor(appContext, R.color.md_theme_primary)
+                val colorError = ContextCompat.getColor(appContext, R.color.md_theme_error)
+                val colorDisabled = ContextCompat.getColor(appContext, R.color.md_theme_onSurfaceVariant)
 
-            val statusColor = when {
-                isRegistered -> colorOk
-                !checkinEnabled -> colorDisabled
-                else -> colorError
-            }
-
-            v.findViewById<View>(R.id.view_status_dot)?.background =
-                GradientDrawable().apply {
-                    shape = GradientDrawable.OVAL
-                    setColor(statusColor)
+                val statusColor = when {
+                    isRegistered -> colorOk
+                    !checkinEnabled -> colorDisabled
+                    else -> colorError
                 }
 
-            v.findViewById<TextView>(R.id.tv_status_label)?.apply {
-                text = when {
-                    isRegistered -> getString(R.string.home_status_ok)
-                    !checkinEnabled -> getString(R.string.home_status_disabled)
-                    else -> getString(R.string.home_status_not_registered)
-                }
-                setTextColor(statusColor)
-            }
+                v.findViewById<View>(R.id.view_status_dot)?.background =
+                    GradientDrawable().apply {
+                        shape = GradientDrawable.OVAL
+                        setColor(statusColor)
+                    }
 
-            v.findViewById<TextView>(R.id.tv_status_subtitle)?.text = when {
-                isRegistered -> getString(
-                    R.string.checkin_last_registration,
-                    DateUtils.getRelativeTimeSpanString(
-                        checkinInfo!!.lastCheckin, System.currentTimeMillis(), 0
+                v.findViewById<TextView>(R.id.tv_status_label)?.apply {
+                    text = when {
+                        isRegistered -> getString(R.string.home_status_ok)
+                        !checkinEnabled -> getString(R.string.home_status_disabled)
+                        else -> getString(R.string.home_status_not_registered)
+                    }
+                    setTextColor(statusColor)
+                }
+
+                v.findViewById<TextView>(R.id.tv_status_subtitle)?.text = when {
+                    isRegistered -> getString(
+                        R.string.checkin_last_registration,
+                        DateUtils.getRelativeTimeSpanString(
+                            checkinInfo!!.lastCheckin, System.currentTimeMillis(), 0
+                        )
                     )
-                )
-                !checkinEnabled -> getString(R.string.home_status_disabled_hint)
-                else -> getString(R.string.checkin_not_registered)
-            }
-
-            val gcmEnabled = GcmPrefs.get(appContext).isEnabled
-            v.findViewById<TextView>(R.id.tv_push_status)?.text = when {
-                !gcmEnabled -> getString(R.string.home_push_disabled)
-                else -> {
-                    val gcmInfo = getGcmServiceInfo(appContext)
-                    if (gcmInfo.connected) getString(R.string.home_push_connected)
-                    else getString(R.string.home_push_disconnected)
+                    !checkinEnabled -> getString(R.string.home_status_disabled_hint)
+                    else -> getString(R.string.checkin_not_registered)
                 }
+
+                val gcmEnabled = GcmPrefs.get(appContext).isEnabled
+                v.findViewById<TextView>(R.id.tv_push_status)?.text = when {
+                    !gcmEnabled -> getString(R.string.home_push_disabled)
+                    else -> {
+                        val gcmInfo = getGcmServiceInfo(appContext)
+                        if (gcmInfo.connected) getString(R.string.home_push_connected)
+                        else getString(R.string.home_push_disconnected)
+                    }
+                }
+
+                val pushAppsCount = if (gcmEnabled) {
+                    val db = GcmDatabase(appContext)
+                    try {
+                        db.registrationList.size
+                    } finally {
+                        db.close()
+                    }
+                } else 0
+
+                v.findViewById<TextView>(R.id.tv_push_apps_count)?.text = if (pushAppsCount > 0)
+                    resources.getQuantityString(R.plurals.home_push_apps_count, pushAppsCount, pushAppsCount)
+                else
+                    ""
+                v.findViewById<TextView>(R.id.tv_push_apps_count)?.visibility =
+                    if (pushAppsCount > 0) View.VISIBLE else View.GONE
+
+                val profile = ProfileManager.getConfiguredProfile(appContext)
+                val profileName = ProfileManager.getProfileName(appContext, profile) ?: profile
+                v.findViewById<TextView>(R.id.tv_device_profile)?.text =
+                    getString(R.string.home_profile_label, profileName)
+
+                val serial = ProfileManager.getSerial(appContext)
+                v.findViewById<TextView>(R.id.tv_device_serial)?.text =
+                    getString(R.string.home_serial_label, serial ?: "—")
+            } catch (_: Exception) {
+                // Status update failed silently; UI retains previous state
             }
-
-            val pushAppsCount = if (gcmEnabled) {
-                val db = GcmDatabase(appContext)
-                val count = db.registrationList.size
-                db.close()
-                count
-            } else 0
-
-            v.findViewById<TextView>(R.id.tv_push_apps_count)?.text = if (pushAppsCount > 0)
-                resources.getQuantityString(R.plurals.home_push_apps_count, pushAppsCount, pushAppsCount)
-            else
-                ""
-            v.findViewById<TextView>(R.id.tv_push_apps_count)?.visibility =
-                if (pushAppsCount > 0) View.VISIBLE else View.GONE
-
-            val profile = ProfileManager.getConfiguredProfile(appContext)
-            val profileName = ProfileManager.getProfileName(appContext, profile) ?: profile
-            v.findViewById<TextView>(R.id.tv_device_profile)?.text =
-                getString(R.string.home_profile_label, profileName)
-
-            val serial = ProfileManager.getSerial(appContext)
-            v.findViewById<TextView>(R.id.tv_device_serial)?.text =
-                getString(R.string.home_serial_label, serial ?: "—")
         }
     }
 }
