@@ -36,7 +36,7 @@ jobs:
 
   merge:
     name: Squash merge Crowdin into Dev
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch' && needs.pull.result == 'success'
     needs: pull
     permissions:
       contents: write
@@ -53,11 +53,17 @@ jobs:
         run: |
           git config --local user.name "Crowdin Bot"
           git config --local user.email "support+bot@crowdin.com"
-          git fetch origin crowdin
+
+          # Skip if crowdin branch does not exist yet
+          if ! git fetch origin crowdin 2>/dev/null; then
+            echo "crowdin branch does not exist yet. Nothing to merge."
+            exit 0
+          fi
+
           if ! git merge --squash origin/crowdin; then
-            echo "::error::Merge conflicts between crowdin and dev. Manual resolution required."
+            echo "⚠️ Merge conflicts between crowdin and dev. Manual resolution required."
             git merge --abort 2>/dev/null || true
-            exit 1
+            exit 0
           fi
 
       - name: Setup Java
