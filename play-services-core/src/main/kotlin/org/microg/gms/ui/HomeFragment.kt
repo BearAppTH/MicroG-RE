@@ -23,6 +23,7 @@ import com.google.android.material.card.MaterialCardView
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.transition.MaterialSharedAxis
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import org.microg.gms.auth.AuthConstants
 import org.microg.gms.checkin.CheckinPreferences
@@ -162,6 +163,8 @@ class HomeFragment : Fragment() {
                 val serial = ProfileManager.getSerial(appContext)
                 v.findViewById<TextView>(R.id.tv_device_serial)?.text =
                     getString(R.string.home_serial_label, serial ?: "—")
+            } catch (e: CancellationException) {
+                throw e
             } catch (_: Exception) {
                 // Status update failed silently; UI retains previous state
             }

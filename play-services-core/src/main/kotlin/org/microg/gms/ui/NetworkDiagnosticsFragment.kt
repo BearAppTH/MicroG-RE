@@ -91,9 +91,10 @@ class NetworkDiagnosticsFragment : Fragment() {
     }
 
     private suspend fun testHttps(urlStr: String): DiagResult = withContext(Dispatchers.IO) {
-        val conn = URL(urlStr).openConnection() as HttpsURLConnection
+        var conn: HttpsURLConnection? = null
         try {
             val start = System.currentTimeMillis()
+            conn = URL(urlStr).openConnection() as HttpsURLConnection
             conn.connectTimeout = 5000
             conn.readTimeout = 5000
             conn.connect()
@@ -103,7 +104,7 @@ class NetworkDiagnosticsFragment : Fragment() {
         } catch (e: Exception) {
             DiagResult.Fail(e.message ?: "Unknown error")
         } finally {
-            conn.disconnect()
+            conn?.disconnect()
         }
     }
 
