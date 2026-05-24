@@ -64,7 +64,7 @@ jobs:
 
           if ! git merge --squash origin/crowdin; then
             echo "⚠️ Merge conflicts between crowdin and dev. Manual resolution required."
-            git reset --hard HEAD
+            git reset --hard HEAD || true
             echo "has_changes=false" >> $GITHUB_OUTPUT
             exit 0
           fi
@@ -88,13 +88,14 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Compile Android app to verify merged translations
+        id: compile
         if: steps.merge.outputs.has_changes == 'true'
         run: |
           chmod +x ./gradlew
           ./gradlew --no-daemon clean assembleDebug
 
       - name: Commit and push if translations changed
-        if: steps.merge.outputs.has_changes == 'true'
+        if: steps.merge.outputs.has_changes == 'true' && steps.compile.outcome == 'success'
         run: |
           git commit -m "chore: Update translations from Crowdin"
           git push origin dev

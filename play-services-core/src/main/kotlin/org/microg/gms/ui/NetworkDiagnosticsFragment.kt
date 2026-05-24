@@ -17,6 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.R
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.transition.MaterialSharedAxis
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -85,6 +86,8 @@ class NetworkDiagnosticsFragment : Fragment() {
                 socket.connect(InetSocketAddress(host, port), 5000)
             }
             DiagResult.Ok((System.currentTimeMillis() - start).toInt())
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             DiagResult.Fail(e.message ?: "Unknown error")
         }
@@ -101,6 +104,8 @@ class NetworkDiagnosticsFragment : Fragment() {
             val code = conn.responseCode
             if (code in 200..599) DiagResult.Ok((System.currentTimeMillis() - start).toInt())
             else DiagResult.Fail("HTTP $code")
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             DiagResult.Fail(e.message ?: "Unknown error")
         } finally {
