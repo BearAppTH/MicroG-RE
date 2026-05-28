@@ -27,6 +27,7 @@ jobs:
           clean: true
 
       - name: Push strings
+        continue-on-error: true
         uses: crowdin/github-action@v2
         with:
           config: crowdin.yml
