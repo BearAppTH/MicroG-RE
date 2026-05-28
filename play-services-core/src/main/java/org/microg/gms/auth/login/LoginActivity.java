@@ -25,7 +25,8 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -306,9 +307,17 @@ public class LoginActivity extends AssistantActivity {
 
     private void start() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-        //noinspection deprecation
-        if (networkInfo != null && networkInfo.isConnected()) {
+        boolean isConnected;
+        if (SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            Network network = cm.getActiveNetwork();
+            NetworkCapabilities caps = network != null ? cm.getNetworkCapabilities(network) : null;
+            isConnected = caps != null && caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
+        } else {
+            @SuppressWarnings("deprecation")
+            NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+            isConnected = networkInfo != null && networkInfo.isConnected();
+        }
+        if (isConnected) {
             if (LastCheckinInfo.read(this).getAndroidId() == 0) {
                 new Thread(() -> {
                     Runnable next;
