@@ -17,7 +17,6 @@
 package org.microg.gms.ui
 
 import android.accounts.AccountManager
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.preference.Preference
@@ -46,24 +45,20 @@ class PrivacyFragment : PreferenceFragmentCompat() {
 
         val pref = findPreference<Preference>(AuthManager.PREF_AUTH_VISIBLE)
         if (pref != null) {
-            if (Build.VERSION.SDK_INT < 26) {
-                pref.isVisible = false
-            } else {
-                pref.onPreferenceChangeListener =
-                    Preference.OnPreferenceChangeListener { preference: Preference?, newValue: Any? ->
-                        if (newValue is Boolean) {
-                            val am = AccountManager.get(requireContext())
-                            for (account in am.getAccountsByType(AuthConstants.DEFAULT_ACCOUNT_TYPE)) {
-                                am.setAccountVisibility(
-                                    account,
-                                    AccountManager.PACKAGE_NAME_KEY_LEGACY_NOT_VISIBLE,
-                                    if (newValue) AccountManager.VISIBILITY_VISIBLE else AccountManager.VISIBILITY_NOT_VISIBLE
-                                )
-                            }
+            pref.onPreferenceChangeListener =
+                Preference.OnPreferenceChangeListener { _: Preference?, newValue: Any? ->
+                    if (newValue is Boolean) {
+                        val am = AccountManager.get(requireContext())
+                        for (account in am.getAccountsByType(AuthConstants.DEFAULT_ACCOUNT_TYPE)) {
+                            am.setAccountVisibility(
+                                account,
+                                AccountManager.PACKAGE_NAME_KEY_LEGACY_NOT_VISIBLE,
+                                if (newValue) AccountManager.VISIBILITY_VISIBLE else AccountManager.VISIBILITY_NOT_VISIBLE
+                            )
                         }
-                        true
                     }
-            }
+                    true
+                }
         }
     }
 }
