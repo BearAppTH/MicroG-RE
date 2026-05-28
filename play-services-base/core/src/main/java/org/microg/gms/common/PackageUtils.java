@@ -294,27 +294,13 @@ public class PackageUtils {
         return null;
     }
 
-    @SuppressWarnings("deprecation")
     public static String packageFromPendingIntent(PendingIntent pi) {
         if (pi == null) return null;
-        if (SDK_INT < 17) {
-            return pi.getTargetPackage();
-        } else {
-            return pi.getCreatorPackage();
-        }
+        return pi.getCreatorPackage();
     }
 
     public static String getProcessName() {
-        if (android.os.Build.VERSION.SDK_INT >= 28)
-            return Application.getProcessName();
-        try {
-            Class<?> activityThread = Class.forName("android.app.ActivityThread");
-            String methodName = android.os.Build.VERSION.SDK_INT >= 18 ? "currentProcessName" : "currentPackageName";
-            Method getProcessName = activityThread.getDeclaredMethod(methodName);
-            return (String) getProcessName.invoke(null);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        return Application.getProcessName();
     }
 
     public static boolean isPersistentProcess() {

@@ -152,11 +152,7 @@ object ProfileManager {
         // Native
         if (profile in listOf(PROFILE_REAL, PROFILE_NATIVE)) {
             var candidate = try {
-                if (android.os.Build.VERSION.SDK_INT >= 26) {
-                    android.os.Build.getSerial()
-                } else {
-                    android.os.Build.SERIAL
-                }
+                android.os.Build.getSerial()
             } catch (e: Exception) {
                 android.os.Build.SERIAL
             }
@@ -229,12 +225,8 @@ object ProfileManager {
             "Build.VERSION.SDK" to android.os.Build.VERSION.SDK,
             "Build.VERSION.SDK_INT" to android.os.Build.VERSION.SDK_INT.toString()
     ).apply {
-        if (android.os.Build.VERSION.SDK_INT >= 21) {
-            put("Build.SUPPORTED_ABIS", android.os.Build.SUPPORTED_ABIS.joinToString(","))
-        }
-        if (android.os.Build.VERSION.SDK_INT >= 23) {
-            put("Build.VERSION.SECURITY_PATCH", android.os.Build.VERSION.SECURITY_PATCH)
-        }
+        put("Build.SUPPORTED_ABIS", android.os.Build.SUPPORTED_ABIS.joinToString(","))
+        put("Build.VERSION.SECURITY_PATCH", android.os.Build.VERSION.SECURITY_PATCH)
         try {
             val field = android.os.Build.VERSION::class.java.getDeclaredField("DEVICE_INITIAL_SDK_INT")
             field.isAccessible = true
@@ -274,16 +266,8 @@ object ProfileManager {
         applyStringField("Build.VERSION.SDK") { Build.VERSION.SDK = it }
         applyIntField("Build.VERSION.SDK_INT") { Build.VERSION.SDK_INT = it }
         applyIntField("Build.VERSION.DEVICE_INITIAL_SDK_INT") { Build.VERSION.DEVICE_INITIAL_SDK_INT = it }
-        if (android.os.Build.VERSION.SDK_INT >= 21) {
-            Build.SUPPORTED_ABIS = profileData["Build.SUPPORTED_ABIS"]?.split(",")?.toTypedArray() ?: emptyArray()
-        } else {
-            Build.SUPPORTED_ABIS = emptyArray()
-        }
-        if (android.os.Build.VERSION.SDK_INT >= 23) {
-            Build.VERSION.SECURITY_PATCH = profileData["Build.VERSION.SECURITY_PATCH"]
-        } else {
-            Build.VERSION.SECURITY_PATCH = null
-        }
+        Build.SUPPORTED_ABIS = profileData["Build.SUPPORTED_ABIS"]?.split(",")?.toTypedArray() ?: emptyArray()
+        Build.VERSION.SECURITY_PATCH = profileData["Build.VERSION.SECURITY_PATCH"]
     }
 
     private fun applyProfile(context: Context, profile: String, serial: String = getSerial(context, profile)) {

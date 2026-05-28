@@ -25,7 +25,6 @@ import androidx.core.content.ContextCompat;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
-import android.net.NetworkInfo;
 import android.os.Build;
 import android.util.Log;
 
@@ -33,8 +32,6 @@ import org.microg.gms.checkin.CheckinPreferences;
 import org.microg.gms.checkin.LastCheckinInfo;
 import org.microg.gms.common.ForegroundServiceContext;
 
-import static android.os.Build.VERSION.SDK_INT;
-import static android.os.Build.VERSION_CODES.N;
 import static org.microg.gms.gcm.McsConstants.ACTION_CONNECT;
 import static org.microg.gms.gcm.McsConstants.ACTION_HEARTBEAT;
 import static org.microg.gms.gcm.McsConstants.EXTRA_REASON;
@@ -48,7 +45,7 @@ public class TriggerReceiver extends BroadcastReceiver {
      * "Project Svelte" is just there to f**k things up...
      */
     public synchronized static void register(Context context) {
-        if (SDK_INT >= N && !registered) {
+        if (!registered) {
             IntentFilter intentFilter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
             ContextCompat.registerReceiver(context.getApplicationContext(), new TriggerReceiver(), intentFilter, ContextCompat.RECEIVER_NOT_EXPORTED);
             registered = true;
@@ -84,29 +81,16 @@ public class TriggerReceiver extends BroadcastReceiver {
             force |= "android.intent.action.BOOT_COMPLETED".equals(intent.getAction());
 
             if (!force) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    Network network = cm.getActiveNetwork();
-                    NetworkCapabilities caps = network != null ? cm.getNetworkCapabilities(network) : null;
-                    boolean isConnected = caps != null && caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
-                    if (!isConnected) {
-                        Log.d(TAG, "Ignoring " + intent + ": network is offline, scheduling new attempt.");
-                        McsService.scheduleReconnect(context);
-                        return;
-                    } else if (!GcmPrefs.get(context).isEnabledFor(caps)) {
-                        Log.d(TAG, "Ignoring " + intent + ": gcm is disabled for active network");
-                        return;
-                    }
-                } else {
-                    @SuppressWarnings("deprecation")
-                    NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-                    if (networkInfo == null || !networkInfo.isConnected()) {
-                        Log.d(TAG, "Ignoring " + intent + ": network is offline, scheduling new attempt.");
-                        McsService.scheduleReconnect(context);
-                        return;
-                    } else if (!GcmPrefs.get(context).isEnabledFor(networkInfo)) {
-                        Log.d(TAG, "Ignoring " + intent + ": gcm is disabled for " + networkInfo.getTypeName());
-                        return;
-                    }
+                Network network = cm.getActiveNetwork();
+                NetworkCapabilities caps = network != null ? cm.getNetworkCapabilities(network) : null;
+                boolean isConnected = caps != null && caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
+                if (!isConnected) {
+                    Log.d(TAG, "Ignoring " + intent + ": network is offline, scheduling new attempt.");
+                    McsService.scheduleReconnect(context);
+                    return;
+                } else if (!GcmPrefs.get(context).isEnabledFor(caps)) {
+                    Log.d(TAG, "Ignoring " + intent + ": gcm is disabled for active network");
+                    return;
                 }
             }
 

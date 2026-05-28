@@ -2,10 +2,7 @@ package org.microg.gms.gcm
 
 import android.content.Context
 import android.content.Intent
-import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.net.NetworkInfo
-import android.os.Build
 import android.util.Log
 import org.microg.gms.gcm.TriggerReceiver.FORCE_TRY_RECONNECT
 import org.microg.gms.settings.SettingsContract
@@ -104,21 +101,6 @@ data class GcmPrefs(
         }
     }
 
-    @Suppress("DEPRECATION")
-    fun getNetworkPrefForInfo(info: NetworkInfo?): String {
-        if (info == null) return PREF_NETWORK_OTHER
-        return if (info.isRoaming) PREF_NETWORK_ROAMING else when (info.type) {
-            ConnectivityManager.TYPE_MOBILE -> PREF_NETWORK_MOBILE
-            ConnectivityManager.TYPE_WIFI -> PREF_NETWORK_WIFI
-            else -> PREF_NETWORK_OTHER
-        }
-    }
-
-    @Suppress("DEPRECATION")
-    fun getHeartbeatMsFor(info: NetworkInfo?): Int {
-        return getHeartbeatMsFor(getNetworkPrefForInfo(info))
-    }
-
     fun getHeartbeatMsFor(pref: String): Int {
         return if (PREF_NETWORK_ROAMING == pref) {
             if (networkRoaming != 0) networkRoaming * 60000 else learntMobileInterval
@@ -177,11 +159,6 @@ data class GcmPrefs(
                 }
             }
         }
-    }
-
-    @Suppress("DEPRECATION")
-    fun isEnabledFor(info: NetworkInfo?): Boolean {
-        return isEnabled && info != null && getHeartbeatMsFor(info) >= 0
     }
 
     fun getNetworkPrefForCapabilities(caps: NetworkCapabilities?): String {

@@ -163,10 +163,8 @@ public class MainSettingsActivity extends AppCompatActivity {
     }
 
     private void enableEdgeToEdgeNoContrast() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            EdgeToEdge.enable(this, SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT));
-            getWindow().setNavigationBarContrastEnforced(false);
-        }
+        EdgeToEdge.enable(this, SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT));
+        getWindow().setNavigationBarContrastEnforced(false);
     }
 
     @Override

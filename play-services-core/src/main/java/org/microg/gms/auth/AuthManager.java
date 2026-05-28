@@ -105,7 +105,7 @@ public class AuthManager {
 
     public void setPermitted(boolean value) {
         setUserData(buildPermKey(), value ? "1" : "0");
-        if (SDK_INT >= 26 && value && packageName != null) {
+        if (value && packageName != null) {
             // Make account persistently visible as we already granted access
             accountManager.setAccountVisibility(getAccount(), packageName, AccountManager.VISIBILITY_VISIBLE);
         }
@@ -196,7 +196,7 @@ public class AuthManager {
 
     public void setAuthToken(String service, String auth) {
         getAccountManager().setAuthToken(getAccount(), buildTokenKey(service), auth);
-        if (SDK_INT >= 26 && packageName != null && auth != null) {
+        if (packageName != null && auth != null) {
             // Make account persistently visible as we already granted access
             accountManager.setAccountVisibility(getAccount(), packageName, AccountManager.VISIBILITY_VISIBLE);
         }

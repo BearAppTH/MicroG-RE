@@ -107,8 +107,6 @@ public abstract class AssistantActivity extends AppCompatActivity {
     private void enableEdgeToEdgeNoContrast() {
         SystemBarStyle systemBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT);
         EdgeToEdge.enable(this, systemBarStyle);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            getWindow().setNavigationBarContrastEnforced(false);
-        }
+        getWindow().setNavigationBarContrastEnforced(false);
     }
 }

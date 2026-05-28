@@ -211,17 +211,12 @@ public class AuthManagerServiceImpl extends IAuthManagerService.Stub {
     @Override
     public Bundle requestGoogleAccountsAccess(String packageName) throws RemoteException {
         PackageUtils.assertExtendedAccess(context);
-        if (SDK_INT >= 26) {
-            for (Account account : get(context).getAccountsByType(AuthConstants.DEFAULT_ACCOUNT_TYPE)) {
-                AccountManager.get(context).setAccountVisibility(account, packageName, VISIBILITY_VISIBLE);
-            }
-            Bundle res = new Bundle();
-            res.putString("Error", "Ok");
-            return res;
-        } else {
-            Log.w(TAG, "Not implemented: requestGoogleAccountsAccess(" + packageName + ")");
+        for (Account account : get(context).getAccountsByType(AuthConstants.DEFAULT_ACCOUNT_TYPE)) {
+            AccountManager.get(context).setAccountVisibility(account, packageName, VISIBILITY_VISIBLE);
         }
-        return null;
+        Bundle res = new Bundle();
+        res.putString("Error", "Ok");
+        return res;
     }
 
     @Override

@@ -27,7 +27,6 @@ import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -175,7 +174,7 @@ public class LoginActivity extends AssistantActivity {
                 AccountManager accountManager = AccountManager.get(this);
                 Account account = new Account(Objects.requireNonNull(getIntent().getStringExtra(EXTRA_EMAIL)), accountType);
                 accountManager.addAccountExplicitly(account, getIntent().getStringExtra(EXTRA_TOKEN), null);
-                if (isAuthVisible(this) && SDK_INT >= 26) {
+                if (isAuthVisible(this)) {
                     accountManager.setAccountVisibility(account, PACKAGE_NAME_KEY_LEGACY_NOT_VISIBLE, VISIBILITY_USER_MANAGED_VISIBLE);
                 }
                 retrieveGmsToken(account);
@@ -308,16 +307,9 @@ public class LoginActivity extends AssistantActivity {
 
     private void start() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        boolean isConnected;
-        if (SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-            Network network = cm.getActiveNetwork();
-            NetworkCapabilities caps = network != null ? cm.getNetworkCapabilities(network) : null;
-            isConnected = caps != null && caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
-        } else {
-            @SuppressWarnings("deprecation")
-            NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-            isConnected = networkInfo != null && networkInfo.isConnected();
-        }
+        Network network = cm.getActiveNetwork();
+        NetworkCapabilities caps = network != null ? cm.getNetworkCapabilities(network) : null;
+        boolean isConnected = caps != null && caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
         if (isConnected) {
             if (LastCheckinInfo.read(this).getAndroidId() == 0) {
                 new Thread(() -> {
@@ -451,7 +443,7 @@ public class LoginActivity extends AssistantActivity {
                         String accountId = PeopleManager.loadUserInfo(LoginActivity.this, account);
                         if (!TextUtils.isEmpty(accountId))
                             accountManager.setUserData(account, "GoogleUserId", accountId);
-                        if (isAuthVisible(LoginActivity.this) && SDK_INT >= 26) {
+                        if (isAuthVisible(LoginActivity.this)) {
                             accountManager.setAccountVisibility(account, PACKAGE_NAME_KEY_LEGACY_NOT_VISIBLE, VISIBILITY_USER_MANAGED_VISIBLE);
                         }
                         checkin(true);

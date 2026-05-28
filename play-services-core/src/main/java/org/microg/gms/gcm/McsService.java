@@ -29,7 +29,6 @@ import android.content.pm.ResolveInfo;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
-import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -178,7 +177,7 @@ public class McsService extends Service implements Handler.Callback {
         heartbeatIntent = PendingIntent.getService(this, 0, new Intent(ACTION_HEARTBEAT, null, this, McsService.class), PendingIntent.FLAG_IMMUTABLE);
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         powerManager = (PowerManager) getSystemService(POWER_SERVICE);
-        if (SDK_INT >= 23 && checkSelfPermission("android.permission.CHANGE_DEVICE_IDLE_TEMP_WHITELIST") == PackageManager.PERMISSION_GRANTED) {
+        if (checkSelfPermission("android.permission.CHANGE_DEVICE_IDLE_TEMP_WHITELIST") == PackageManager.PERMISSION_GRANTED) {
             try {
                 if (SDK_INT >= 31) {
                     Class<?> powerExemptionManagerClass = Class.forName("android.os.PowerExemptionManager");
@@ -267,11 +266,7 @@ public class McsService extends Service implements Handler.Callback {
         long delay = getCurrentDelay();
         logd(context, "Scheduling reconnect in " + delay / 1000 + " seconds...");
         PendingIntent pi = PendingIntent.getBroadcast(context, 1, new Intent(ACTION_RECONNECT, null, context, TriggerReceiver.class), PendingIntent.FLAG_IMMUTABLE);
-        if (SDK_INT >= 23) {
-            alarmManager.setExactAndAllowWhileIdle(ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + delay, pi);
-        } else {
-            alarmManager.set(ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + delay, pi);
-        }
+        alarmManager.setExactAndAllowWhileIdle(ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + delay, pi);
     }
 
     public void scheduleHeartbeat(Context context) {
@@ -282,17 +277,7 @@ public class McsService extends Service implements Handler.Callback {
             closeAll();
         }
         logd(context, "Scheduling heartbeat in " + heartbeatMs / 1000 + " seconds...");
-        if (SDK_INT >= 23) {
-            // This is supposed to work even when running in idle and without battery optimization disabled
-            alarmManager.setExactAndAllowWhileIdle(ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + heartbeatMs, heartbeatIntent);
-        } else if (SDK_INT >= 19) {
-            // With KitKat, the alarms become inexact by default, but with the newly available setWindow we can get inexact alarms with guarantees.
-            // Schedule the alarm to fire within the interval [heartbeatMs/3*4, heartbeatMs]
-            alarmManager.setWindow(ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + heartbeatMs / 4 * 3, heartbeatMs / 4,
-                    heartbeatIntent);
-        } else {
-            alarmManager.set(ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + heartbeatMs, heartbeatIntent);
-        }
+        alarmManager.setExactAndAllowWhileIdle(ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + heartbeatMs, heartbeatIntent);
 
     }
 
@@ -467,26 +452,13 @@ public class McsService extends Service implements Handler.Callback {
         closeAll();
 
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            Network network = cm.getActiveNetwork();
-            NetworkCapabilities caps = network != null ? cm.getNetworkCapabilities(network) : null;
-            activeNetworkPref = GcmPrefs.get(this).getNetworkPrefForCapabilities(caps);
-            if (!GcmPrefs.get(this).isEnabledFor(caps)) {
-                logd(this, caps != null ? "Don't connect, because disabled for active network" : "Don't connect, no active network");
-                scheduleReconnect(this);
-                return;
-            }
-        } else {
-            @SuppressWarnings("deprecation")
-            NetworkInfo activeNetworkInfo = cm.getActiveNetworkInfo();
-            @SuppressWarnings("deprecation")
-            String networkTypeName = activeNetworkInfo != null ? activeNetworkInfo.getTypeName() : null;
-            activeNetworkPref = GcmPrefs.get(this).getNetworkPrefForInfo(activeNetworkInfo);
-            if (!GcmPrefs.get(this).isEnabledFor(activeNetworkInfo)) {
-                logd(this, networkTypeName != null ? "Don't connect, because disabled for " + networkTypeName : "Don't connect, no active network");
-                scheduleReconnect(this);
-                return;
-            }
+        Network network = cm.getActiveNetwork();
+        NetworkCapabilities caps = network != null ? cm.getNetworkCapabilities(network) : null;
+        activeNetworkPref = GcmPrefs.get(this).getNetworkPrefForCapabilities(caps);
+        if (!GcmPrefs.get(this).isEnabledFor(caps)) {
+            logd(this, caps != null ? "Don't connect, because disabled for active network" : "Don't connect, no active network");
+            scheduleReconnect(this);
+            return;
         }
 
         Exception exception = null;
@@ -642,7 +614,7 @@ public class McsService extends Service implements Handler.Callback {
             } catch (Exception e) {
                 Log.e(TAG, "Error adding app" + packageName + " to the temp allowlist.", e);
             }
-        } else if (SDK_INT >= 23) {
+        } else {
             try {
                 if (getUserIdMethod != null && addPowerSaveTempWhitelistAppMethod != null && deviceIdleController != null) {
                     int userId = (int) getUserIdMethod.invoke(null, getPackageManager().getApplicationInfo(packageName, 0).uid);

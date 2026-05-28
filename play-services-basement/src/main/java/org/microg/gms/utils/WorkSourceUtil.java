@@ -50,13 +50,10 @@ public class WorkSourceUtil {
     }
 
     public static boolean isEmpty(WorkSource workSource) {
-        if (SDK_INT >= 28) {
-            try {
-                return invokeMethod(workSource, "isEmpty");
-            } catch (Exception e) {
-                // Ignore and fall-through to size()
-            }
+        try {
+            return invokeMethod(workSource, "isEmpty");
+        } catch (Exception e) {
+            return size(workSource) == 0;
         }
-        return size(workSource) == 0;
     }
 }

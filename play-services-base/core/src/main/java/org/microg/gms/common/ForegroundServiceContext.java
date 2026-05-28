@@ -32,7 +32,7 @@ public class ForegroundServiceContext extends ContextWrapper {
 
     @Override
     public ComponentName startService(Intent service) {
-        if (SDK_INT >= 26 && !isIgnoringBatteryOptimizations()) {
+        if (!isIgnoringBatteryOptimizations()) {
             Log.d(TAG, "Starting in foreground mode.");
             service.putExtra(EXTRA_FOREGROUND, true);
             return super.startForegroundService(service);
@@ -75,7 +75,7 @@ public class ForegroundServiceContext extends ContextWrapper {
     }
 
     public static void completeForegroundService(Service service, Intent intent, String tag) {
-        if (intent != null && intent.getBooleanExtra(EXTRA_FOREGROUND, false) && SDK_INT >= 26) {
+        if (intent != null && intent.getBooleanExtra(EXTRA_FOREGROUND, false)) {
             String serviceName = getServiceName(service);
             Log.d(tag, "Started " + serviceName + " in foreground mode.");
             try {

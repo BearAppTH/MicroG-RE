@@ -65,11 +65,9 @@ public class Conditions {
                 @Override
                 public boolean isActive(Context context) {
                     count = 0;
-                    if (SDK_INT >= 23) {
-                        for (String permission : REQUIRED_PERMISSIONS) {
-                            if (ContextCompat.checkSelfPermission(context, permission) != PERMISSION_GRANTED)
-                                count++;
-                        }
+                    for (String permission : REQUIRED_PERMISSIONS) {
+                        if (ContextCompat.checkSelfPermission(context, permission) != PERMISSION_GRANTED)
+                            count++;
                     }
                     return count > 0;
                 }
