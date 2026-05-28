@@ -18,6 +18,7 @@ package com.google.android.gms.gcm;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Build;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -127,7 +128,13 @@ public abstract class GcmTaskService extends Service {
         intent.setExtrasClassLoader(PendingCallback.class.getClassLoader());
         if (SERVICE_ACTION_EXECUTE_TASK.equals(intent.getAction())) {
             String tag = intent.getStringExtra("tag");
-            Parcelable callback = intent.getParcelableExtra("callback");
+            Parcelable callback;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                callback = intent.getParcelableExtra("callback", PendingCallback.class);
+            } else {
+                //noinspection deprecation
+                callback = intent.getParcelableExtra("callback");
+            }
             Bundle extras = intent.getBundleExtra("extras");
             if (callback == null || !(callback instanceof PendingCallback)) {
                 Log.w(TAG, tag + ": Invalid callback!");
