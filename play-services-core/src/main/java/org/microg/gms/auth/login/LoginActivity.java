@@ -281,12 +281,9 @@ public class LoginActivity extends AssistantActivity {
 
     @SuppressWarnings("deprecation")
     private static void updateWebViewTheme(Context context, WebView webView) {
-        // Apply dark theme to WebView based on system state
         boolean systemIsDark = isSystemDarkTheme(context);
-        if (Build.VERSION.SDK_INT >= 29) {
-            if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
-                WebSettingsCompat.setForceDark(webView.getSettings(), systemIsDark ? WebSettingsCompat.FORCE_DARK_ON : WebSettingsCompat.FORCE_DARK_OFF);
-            }
+        if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
+            WebSettingsCompat.setForceDark(webView.getSettings(), systemIsDark ? WebSettingsCompat.FORCE_DARK_ON : WebSettingsCompat.FORCE_DARK_OFF);
         }
     }
 
