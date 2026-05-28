@@ -144,26 +144,24 @@ public abstract class GcmListenerService extends Service {
     }
 
     private void handleC2dmMessage(Intent intent) {
-        try {
-            String messageType = intent.getStringExtra(EXTRA_MESSAGE_TYPE);
-            if (messageType == null || MESSAGE_TYPE_GCM.equals(messageType)) {
-                String from = intent.getStringExtra(EXTRA_FROM);
-                Bundle data = intent.getExtras();
-                data.remove(EXTRA_MESSAGE_TYPE);
-                data.remove("android.support.content.wakelockid"); // WakefulBroadcastReceiver.EXTRA_WAKE_LOCK_ID
-                data.remove(EXTRA_FROM);
-                onMessageReceived(from, data);
-            } else if (MESSAGE_TYPE_DELETED_MESSAGE.equals(messageType)) {
-                onDeletedMessages();
-            } else if (MESSAGE_TYPE_SEND_EVENT.equals(messageType)) {
-                onMessageSent(intent.getStringExtra(EXTRA_MESSAGE_ID));
-            } else if (MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
-                onSendError(intent.getStringExtra(EXTRA_MESSAGE_ID), intent.getStringExtra(EXTRA_ERROR));
-            } else {
-                Log.w(TAG, "Unknown message type: " + messageType);
-            }
-            finishCounter();
+        String messageType = intent.getStringExtra(EXTRA_MESSAGE_TYPE);
+        if (messageType == null || MESSAGE_TYPE_GCM.equals(messageType)) {
+            String from = intent.getStringExtra(EXTRA_FROM);
+            Bundle data = intent.getExtras();
+            data.remove(EXTRA_MESSAGE_TYPE);
+            data.remove("android.support.content.wakelockid"); // WakefulBroadcastReceiver.EXTRA_WAKE_LOCK_ID
+            data.remove(EXTRA_FROM);
+            onMessageReceived(from, data);
+        } else if (MESSAGE_TYPE_DELETED_MESSAGE.equals(messageType)) {
+            onDeletedMessages();
+        } else if (MESSAGE_TYPE_SEND_EVENT.equals(messageType)) {
+            onMessageSent(intent.getStringExtra(EXTRA_MESSAGE_ID));
+        } else if (MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
+            onSendError(intent.getStringExtra(EXTRA_MESSAGE_ID), intent.getStringExtra(EXTRA_ERROR));
+        } else {
+            Log.w(TAG, "Unknown message type: " + messageType);
         }
+        finishCounter();
     }
 
     private void handlePendingNotification(Intent intent) {
