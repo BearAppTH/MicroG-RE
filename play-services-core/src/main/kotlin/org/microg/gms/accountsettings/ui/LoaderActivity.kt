@@ -12,6 +12,7 @@ import android.content.Intent.*
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import org.microg.gms.auth.AuthConstants.DEFAULT_ACCOUNT_TYPE
 import org.microg.gms.common.PackageUtils
@@ -29,10 +30,17 @@ private const val QUERY_PARAM_EMAIL = "Email"
 
 private const val EXTRA_ALLOWABLE_ACCOUNT_TYPES = "allowableAccountTypes"
 
-private const val REQUEST_ACCOUNT_PICKER = 1
-
 class LoaderActivity : AppCompatActivity() {
-    private var canAskForAccount = false
+
+    private val accountPickerLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK && result.data?.hasExtra(AccountManager.KEY_ACCOUNT_NAME) == true) {
+                intent.putExtra(EXTRA_ACCOUNT_NAME, result.data?.getStringExtra(AccountManager.KEY_ACCOUNT_NAME))
+                launchMain()
+            } else {
+                finishResult(result.resultCode)
+            }
+        }
 
     private fun launchFallback() {
         val fallbackUrl = intent?.getStringExtra(EXTRA_FALLBACK_URL)
@@ -89,15 +97,10 @@ class LoaderActivity : AppCompatActivity() {
                 return finishResult(RESULT_CANCELED)
             }
         } else if (accounts.size > 1) {
-            if (canAskForAccount) {
-                val intent = Intent(this, AccountPickerActivity::class.java)
-                intent.putExtra(EXTRA_ALLOWABLE_ACCOUNT_TYPES, arrayOf(DEFAULT_ACCOUNT_TYPE))
-                startActivityForResult(intent, REQUEST_ACCOUNT_PICKER)
-                canAskForAccount = false
-                return
-            } else {
-                return finishResult(RESULT_CANCELED)
-            }
+            val pickerIntent = Intent(this, AccountPickerActivity::class.java)
+            pickerIntent.putExtra(EXTRA_ALLOWABLE_ACCOUNT_TYPES, arrayOf(DEFAULT_ACCOUNT_TYPE))
+            accountPickerLauncher.launch(pickerIntent)
+            return
         } else {
             accounts.first()
         }
@@ -124,21 +127,7 @@ class LoaderActivity : AppCompatActivity() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == REQUEST_ACCOUNT_PICKER) {
-            if (resultCode == RESULT_OK && data?.hasExtra(AccountManager.KEY_ACCOUNT_NAME) == true) {
-                intent.putExtra(EXTRA_ACCOUNT_NAME, data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME))
-                launchMain()
-            } else {
-                finishResult(resultCode)
-            }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data)
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
-        canAskForAccount = true
         val extras = intent?.extras?.also { it.keySet() }
         Log.d(TAG, "Invoked with ${intent.action} and extras $extras")
 

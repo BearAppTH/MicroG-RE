@@ -3,7 +3,9 @@ package org.microg.gms.gcm
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.net.NetworkInfo
+import android.os.Build
 import android.util.Log
 import org.microg.gms.gcm.TriggerReceiver.FORCE_TRY_RECONNECT
 import org.microg.gms.settings.SettingsContract
@@ -180,6 +182,21 @@ data class GcmPrefs(
     @Suppress("DEPRECATION")
     fun isEnabledFor(info: NetworkInfo?): Boolean {
         return isEnabled && info != null && getHeartbeatMsFor(info) >= 0
+    }
+
+    fun getNetworkPrefForCapabilities(caps: NetworkCapabilities?): String {
+        if (caps == null) return PREF_NETWORK_OTHER
+        val isRoaming = !caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_ROAMING)
+        return if (isRoaming) PREF_NETWORK_ROAMING
+        else when {
+            caps.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> PREF_NETWORK_MOBILE
+            caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> PREF_NETWORK_WIFI
+            else -> PREF_NETWORK_OTHER
+        }
+    }
+
+    fun isEnabledFor(caps: NetworkCapabilities?): Boolean {
+        return isEnabled && caps != null && getHeartbeatMsFor(getNetworkPrefForCapabilities(caps)) >= 0
     }
 
     fun extendLastPersistedId(context: Context, id: String) {
