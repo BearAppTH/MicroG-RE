@@ -9,6 +9,7 @@ import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.text.format.DateUtils
 import android.util.Log
 import android.view.View
@@ -44,7 +45,7 @@ class DeviceRegistrationFragment : PreferenceFragmentCompat() {
     private lateinit var statusCategory: PreferenceCategory
     private lateinit var status: Preference
     private lateinit var androidId: Preference
-    private val handler = Handler()
+    private val handler = Handler(Looper.getMainLooper())
     private val updateRunnable = Runnable { updateStatus() }
     private lateinit var profileFileImport: ActivityResultLauncher<String>
 
