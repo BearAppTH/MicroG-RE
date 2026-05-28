@@ -137,7 +137,7 @@ public class CheckinService extends Service {
         if (BIND_ACTION.equals(intent.getAction())) {
             return iface.asBinder();
         } else {
-            return super.onBind(intent);
+            return null;
         }
     }
 
