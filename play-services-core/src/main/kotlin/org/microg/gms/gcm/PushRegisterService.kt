@@ -17,6 +17,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import org.microg.gms.checkin.CheckinPreferences
 import org.microg.gms.checkin.CheckinService
 import org.microg.gms.checkin.LastCheckinInfo

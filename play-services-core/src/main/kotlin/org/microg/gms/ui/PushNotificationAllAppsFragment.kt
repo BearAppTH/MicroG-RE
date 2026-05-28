@@ -20,6 +20,7 @@ import com.google.android.gms.R
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.transition.MaterialSharedAxis
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.microg.gms.gcm.GcmDatabase
 
@@ -68,7 +69,7 @@ class PushNotificationAllAppsFragment : PreferenceFragmentCompat() {
     private fun updateContent() {
         val context = requireContext()
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 val apps = withContext(Dispatchers.IO) {
                     try {
                         database.appList.map { app ->

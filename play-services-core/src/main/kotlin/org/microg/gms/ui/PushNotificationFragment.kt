@@ -25,6 +25,7 @@ import com.google.android.gms.R
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.transition.MaterialSharedAxis
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.microg.gms.checkin.CheckinPreferences
 import org.microg.gms.gcm.GcmDatabase
@@ -103,7 +104,7 @@ class PushNotificationFragment : PreferenceFragmentCompat() {
         handler.postDelayed(updateRunnable, UPDATE_INTERVAL)
         val appContext = requireContext().applicationContext
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 val statusInfo = getGcmServiceInfo(appContext)
                 switchBarPreference.isChecked = statusInfo.configuration.enabled
                 pushStatusCategory.isVisible = true && statusInfo.configuration.enabled
@@ -118,7 +119,7 @@ class PushNotificationFragment : PreferenceFragmentCompat() {
 
     private fun updateContent() {
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 val context = requireContext()
                 val (apps, showAll) = withContext(Dispatchers.IO) {
                     try {

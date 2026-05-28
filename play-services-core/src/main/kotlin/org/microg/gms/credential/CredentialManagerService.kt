@@ -13,6 +13,7 @@ import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.Feature
 import com.google.android.gms.common.api.Status

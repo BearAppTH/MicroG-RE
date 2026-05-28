@@ -17,6 +17,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.launch
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
@@ -163,7 +164,7 @@ class DeviceRegistrationFragment : PreferenceFragmentCompat() {
         handler.postDelayed(updateRunnable, UPDATE_INTERVAL)
         val appContext = requireContext().applicationContext
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 configureProfilePreference()
                 serial.summary = ProfileManager.getSerial(appContext)
                 val serviceInfo = getCheckinServiceInfo(appContext)

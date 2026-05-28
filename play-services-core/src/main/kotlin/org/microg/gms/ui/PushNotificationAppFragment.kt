@@ -21,6 +21,7 @@ import com.google.android.gms.R
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.transition.MaterialSharedAxis
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.microg.gms.gcm.GcmDatabase
 import org.microg.gms.gcm.PushRegisterManager
@@ -105,7 +106,7 @@ class PushNotificationAppFragment : PreferenceFragmentCompat() {
 
     private fun unregister() {
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 withContext(Dispatchers.IO) {
                     for (registration in database.getRegistrationsByApp(packageName)) {
                         PushRegisterManager.unregister(context, registration.packageName, registration.signature, null, null)
@@ -123,7 +124,7 @@ class PushNotificationAppFragment : PreferenceFragmentCompat() {
 
     private fun updateDetails() {
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 try {
                     appHeadingPreference.packageName = packageName
                     val app = packageName?.let { database.getApp(it) }
