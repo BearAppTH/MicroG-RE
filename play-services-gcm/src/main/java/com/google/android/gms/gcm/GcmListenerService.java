@@ -20,7 +20,6 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Build;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -125,13 +124,7 @@ public abstract class GcmListenerService extends Service {
                 handlePendingNotification(intent);
                 finishCounter();
             } else if (ACTION_C2DM_RECEIVE.equals(intent.getAction())) {
-                new AsyncTask<Void, Void, Void>() {
-                    @Override
-                    protected Void doInBackground(Void... params) {
-                        handleC2dmMessage(intent);
-                        return null;
-                    }
-                }.execute();
+                new Thread(() -> handleC2dmMessage(intent)).start();
             } else {
                 Log.w(TAG, "Unknown intent action: " + intent.getAction());
 

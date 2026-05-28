@@ -19,17 +19,20 @@ package org.microg.gms.checkin;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
-import android.os.Build;
 import android.app.AlarmManager;
-import android.app.IntentService;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.os.ResultReceiver;
 import android.util.Log;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.google.android.gms.R;
 import com.google.android.gms.checkin.internal.ICheckinService;
@@ -41,7 +44,7 @@ import org.microg.gms.gcm.McsService;
 import org.microg.gms.people.PeopleManager;
 
 @ForegroundServiceInfo(value = "Google device registration", resName = "service_name_checkin", resPackage = "com.google.android.gms", foregroundServiceType = android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
-public class CheckinService extends IntentService {
+public class CheckinService extends Service {
     private static final String TAG = "GmsCheckinSvc";
     public static final long MAX_VALID_CHECKIN_AGE = 24 * 60 * 60 * 1000; // 12 hours
     public static final long REGULAR_CHECKIN_INTERVAL = 12 * 60 * 60 * 1000; // 12 hours
@@ -53,7 +56,9 @@ public class CheckinService extends IntentService {
     public static final String EXTRA_RESULT_RECEIVER = "receiver";
     public static final String EXTRA_NEW_CHECKIN_TIME = "checkin_time";
 
-    private ICheckinService iface = new ICheckinService.Stub() {
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+
+    private final ICheckinService.Stub iface = new ICheckinService.Stub() {
         @Override
         public String getDeviceDataVersionInfo() throws RemoteException {
             return LastCheckinInfo.read(CheckinService.this).getDeviceDataVersionInfo();
@@ -70,15 +75,22 @@ public class CheckinService extends IntentService {
         }
     };
 
-    public CheckinService() {
-        super(TAG);
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        ForegroundServiceContext.completeForegroundService(this, intent, TAG);
+        executor.execute(() -> onHandleIntent(intent));
+        return START_NOT_STICKY;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        executor.shutdown();
     }
 
     @SuppressWarnings("MissingPermission")
-    @Override
-    protected void onHandleIntent(Intent intent) {
+    private void onHandleIntent(Intent intent) {
         try {
-            ForegroundServiceContext.completeForegroundService(this, intent, TAG);
             if (CheckinPreferences.isEnabled(this)) {
                 LastCheckinInfo info = CheckinManager.checkin(this, intent.getBooleanExtra(EXTRA_FORCE_CHECKIN, false));
                 if (info != null) {
