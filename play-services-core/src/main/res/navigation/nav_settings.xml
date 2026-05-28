@@ -57,7 +57,11 @@
         android:id="@+id/checkinFragment"
         android:name="org.microg.gms.ui.DeviceRegistrationFragment"
         android:label="@string/service_name_checkin"
-        tools:layout="@layout/device_registration_fragment" />
+        tools:layout="@layout/device_registration_fragment">
+        <deepLink
+            android:id="@+id/deepLink_checkin"
+            app:uri="microg://settings/checkin" />
+    </fragment>
 
     <!-- Account manager -->
 
@@ -80,6 +84,9 @@
         android:name="org.microg.gms.ui.PushNotificationFragment"
         android:label="@string/gcm_enable_switch"
         tools:layout="@layout/push_notification_fragment">
+        <deepLink
+            android:id="@+id/deepLink_push"
+            app:uri="microg://settings/push" />
         <action
             android:id="@+id/openGcmAppDetails"
             app:destination="@id/gcmAppFragment" />

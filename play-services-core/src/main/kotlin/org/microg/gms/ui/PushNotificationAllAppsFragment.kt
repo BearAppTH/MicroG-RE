@@ -68,33 +68,35 @@ class PushNotificationAllAppsFragment : PreferenceFragmentCompat() {
         val context = requireContext()
         lifecycleScope.launchWhenResumed {
             val apps = withContext(Dispatchers.IO) {
-                val res = database.appList.map { app ->
-                    val pref = AppIconPreference(context)
-                    pref.packageName = app.packageName
-                    pref.summary = if (app.lastMessageTimestamp > 0) {
-                        getString(
-                            R.string.gcm_last_message_at,
-                            DateUtils.getRelativeTimeSpanString(app.lastMessageTimestamp)
-                        )
-                    } else null
-                    pref.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-                        findNavController().navigate(
-                            requireContext(),
-                            R.id.openGcmAppDetailsFromAll,
-                            bundleOf("package" to app.packageName)
-                        )
-                        true
+                try {
+                    database.appList.map { app ->
+                        val pref = AppIconPreference(context)
+                        pref.packageName = app.packageName
+                        pref.summary = if (app.lastMessageTimestamp > 0) {
+                            getString(
+                                R.string.gcm_last_message_at,
+                                DateUtils.getRelativeTimeSpanString(app.lastMessageTimestamp)
+                            )
+                        } else null
+                        pref.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+                            findNavController().navigate(
+                                requireContext(),
+                                R.id.openGcmAppDetailsFromAll,
+                                bundleOf("package" to app.packageName)
+                            )
+                            true
+                        }
+                        pref.key = "pref_push_app_" + app.packageName
+                        pref to database.getRegistrationsByApp(app.packageName)
+                    }.sortedBy {
+                        it.first.title.toString().lowercase()
+                    }.mapIndexed { idx, pair ->
+                        pair.first.order = idx
+                        pair
                     }
-                    pref.key = "pref_push_app_" + app.packageName
-                    pref to database.getRegistrationsByApp(app.packageName)
-                }.sortedBy {
-                    it.first.title.toString().lowercase()
-                }.mapIndexed { idx, pair ->
-                    pair.first.order = idx
-                    pair
+                } finally {
+                    database.close()
                 }
-                database.close()
-                res
             }
 
             registered.removeAll()

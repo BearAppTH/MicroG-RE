@@ -13,6 +13,7 @@
         android:shortcutLongLabel="@string/service_name_mcs">
         <intent
             android:action="android.intent.action.VIEW"
+            android:data="microg://settings/push"
             android:targetPackage="com.google.android.gms"
             android:targetClass="org.microg.gms.ui.MainSettingsActivity" />
         <categories android:name="android.shortcut.conversation" />
@@ -26,6 +27,7 @@
         android:shortcutLongLabel="@string/service_name_checkin">
         <intent
             android:action="android.intent.action.VIEW"
+            android:data="microg://settings/checkin"
             android:targetPackage="com.google.android.gms"
             android:targetClass="org.microg.gms.ui.MainSettingsActivity" />
         <categories android:name="android.shortcut.conversation" />
