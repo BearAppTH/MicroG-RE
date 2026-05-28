@@ -8,12 +8,14 @@ package org.microg.gms.ui
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.text.format.DateUtils
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.core.os.bundleOf
+import androidx.core.view.MenuProvider
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -32,7 +34,6 @@ import org.microg.gms.gcm.GcmDatabase
 import org.microg.gms.gcm.GcmPrefs
 import org.microg.gms.gcm.getGcmServiceInfo
 
-@Suppress("DEPRECATION")
 class PushNotificationFragment : PreferenceFragmentCompat() {
     private lateinit var switchBarPreference: SwitchBarPreference
     private lateinit var pushStatusCategory: PreferenceCategory
@@ -41,7 +42,7 @@ class PushNotificationFragment : PreferenceFragmentCompat() {
     private lateinit var pushAppsAll: Preference
     private lateinit var pushAppsNone: Preference
     private lateinit var database: GcmDatabase
-    private val handler = Handler()
+    private val handler = Handler(Looper.getMainLooper())
     private val updateRunnable = Runnable { updateStatus() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,6 +57,20 @@ class PushNotificationFragment : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         view.setBackgroundColor(MaterialColors.getColor(view, android.R.attr.colorBackground))
+        requireActivity().addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.gcm_menu_item, menu)
+            }
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    R.id.menu_settings -> {
+                        findNavController().navigate(R.id.openGcmAdvancedSettings)
+                        true
+                    }
+                    else -> false
+                }
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -185,27 +200,6 @@ class PushNotificationFragment : PreferenceFragmentCompat() {
                 total - 1 -> R.layout.preference_material_secondary_bottom
                 else -> R.layout.preference_material_secondary_middle
             }
-        }
-    }
-
-    init {
-        setHasOptionsMenu(true)
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.gcm_menu_item, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.menu_settings -> {
-                findNavController().navigate(R.id.openGcmAdvancedSettings)
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
         }
     }
 

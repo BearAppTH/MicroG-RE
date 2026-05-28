@@ -9,6 +9,7 @@ import android.accounts.Account
 import android.accounts.AccountManager
 import android.content.Intent
 import android.graphics.Bitmap
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -16,6 +17,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.getSystemService
 import androidx.lifecycle.lifecycleScope
@@ -39,7 +41,6 @@ import org.microg.gms.people.PeopleManager
 import org.microg.gms.utils.getApplicationLabel
 
 private const val TAG = "AuthSignInActivity"
-private const val REQUEST_CODE_ADD_ACCOUNT = 100
 
 /**
  * TODO: Get privacy policy / terms of service links via
@@ -48,8 +49,25 @@ private const val REQUEST_CODE_ADD_ACCOUNT = 100
 class AuthSignInActivity : AppCompatActivity() {
     private val config: SignInConfiguration?
         get() = runCatching {
-            intent?.extras?.also { it.classLoader = SignInConfiguration::class.java.classLoader }?.getParcelable<SignInConfiguration>("config")
+            val extras = intent?.extras?.also { it.classLoader = SignInConfiguration::class.java.classLoader }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                extras?.getParcelable("config", SignInConfiguration::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                extras?.getParcelable("config")
+            }
         }.getOrNull()
+
+    private val addAccountLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            val accountManager = getSystemService<AccountManager>() ?: return@registerForActivityResult finish()
+            val accounts = accountManager.getAccountsByType(DEFAULT_ACCOUNT_TYPE)
+            if (accounts.isNotEmpty()) {
+                openAccountPicker(config?.packageName!!)
+            } else {
+                finishResult(CommonStatusCodes.CANCELED, "No account and creation cancelled")
+            }
+        }
 
     private val Int.px: Int get() = (this * resources.displayMetrics.density).toInt()
 
@@ -82,7 +100,7 @@ class AuthSignInActivity : AppCompatActivity() {
     }
 
     private fun openAddAccount() {
-        startActivityForResult(Intent(this, LoginActivity::class.java), REQUEST_CODE_ADD_ACCOUNT)
+        addAccountLauncher.launch(Intent(this, LoginActivity::class.java))
     }
 
     private fun getDisplayName(account: Account): String? {
@@ -209,16 +227,4 @@ class AuthSignInActivity : AppCompatActivity() {
         finish()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CODE_ADD_ACCOUNT) {
-            val accountManager = getSystemService<AccountManager>() ?: return finish()
-            val accounts = accountManager.getAccountsByType(DEFAULT_ACCOUNT_TYPE)
-            if (accounts.isNotEmpty()) {
-                openAccountPicker(config?.packageName!!)
-            } else {
-                finishResult(CommonStatusCodes.CANCELED, "No account and creation cancelled")
-            }
-        }
-    }
 }
