@@ -46,11 +46,13 @@ class PushLogFragment : Fragment() {
         lifecycleScope.launch {
             val items = withContext(Dispatchers.IO) {
                 val db = GcmDatabase(requireContext().applicationContext)
-                val apps = db.appList
-                    .filter { it.lastMessageTimestamp > 0 }
-                    .sortedByDescending { it.lastMessageTimestamp }
-                db.close()
-                apps
+                try {
+                    db.appList
+                        .filter { it.lastMessageTimestamp > 0 }
+                        .sortedByDescending { it.lastMessageTimestamp }
+                } finally {
+                    db.close()
+                }
             }
 
             if (items.isEmpty()) {

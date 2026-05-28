@@ -116,28 +116,30 @@ class PushNotificationFragment : PreferenceFragmentCompat() {
         lifecycleScope.launchWhenResumed {
             val context = requireContext()
             val (apps, showAll) = withContext(Dispatchers.IO) {
-                val apps = database.appList.sortedByDescending { it.lastMessageTimestamp }
-                val res = apps.map { app ->
-                    app to context.packageManager.getApplicationInfoIfExists(app.packageName)
-                }.mapNotNull { (app, info) ->
-                    if (info == null) null else app to info
-                }.take(3).mapIndexed { idx, (app, applicationInfo) ->
-                    val pref = AppIconPreference(context)
-                    pref.order = idx
-                    pref.applicationInfo = applicationInfo
-                    pref.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-                        findNavController().navigate(
-                            requireContext(), R.id.openGcmAppDetails, bundleOf(
-                                "package" to app.packageName
+                try {
+                    val apps = database.appList.sortedByDescending { it.lastMessageTimestamp }
+                    apps.map { app ->
+                        app to context.packageManager.getApplicationInfoIfExists(app.packageName)
+                    }.mapNotNull { (app, info) ->
+                        if (info == null) null else app to info
+                    }.take(3).mapIndexed { idx, (app, applicationInfo) ->
+                        val pref = AppIconPreference(context)
+                        pref.order = idx
+                        pref.applicationInfo = applicationInfo
+                        pref.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+                            findNavController().navigate(
+                                requireContext(), R.id.openGcmAppDetails, bundleOf(
+                                    "package" to app.packageName
+                                )
                             )
-                        )
-                        true
-                    }
-                    pref.key = "pref_push_app_" + app.packageName
-                    pref
-                }.let { it to (it.size < apps.size) }
-                database.close()
-                res
+                            true
+                        }
+                        pref.key = "pref_push_app_" + app.packageName
+                        pref
+                    }.let { it to (it.size < apps.size) }
+                } finally {
+                    database.close()
+                }
             }
 
             pushApps.removeAll()

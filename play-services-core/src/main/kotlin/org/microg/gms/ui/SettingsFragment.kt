@@ -290,8 +290,11 @@ class SettingsFragment : ResourceSettingsFragment() {
 
         if (GcmPrefs.get(context).isEnabled) {
             val database = GcmDatabase(context)
-            val regCount = database.registrationList.size
-            database.close()
+            val regCount = try {
+                database.registrationList.size
+            } finally {
+                database.close()
+            }
             pref.summary =
                 context.getString(org.microg.gms.base.core.R.string.service_status_enabled_short) + " - " + context.resources.getQuantityString(
                     R.plurals.gcm_registered_apps_counter, regCount, regCount

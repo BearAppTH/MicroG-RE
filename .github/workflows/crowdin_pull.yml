@@ -8,7 +8,7 @@ on:
 jobs:
   pull:
     name: Pull translations from Crowdin
-    if: ${{ secrets.CROWDIN_PROJECT_ID != '' && secrets.CROWDIN_PERSONAL_TOKEN != '' }}
+    if: ${{ (github.event_name == 'schedule' || github.ref == 'refs/heads/dev') && secrets.CROWDIN_PROJECT_ID != '' && secrets.CROWDIN_PERSONAL_TOKEN != '' }}
     permissions:
       contents: write
     runs-on: ubuntu-latest
@@ -36,7 +36,7 @@ jobs:
 
   merge:
     name: Squash merge Crowdin into Dev
-    if: github.event_name == 'workflow_dispatch' && needs.pull.result == 'success'
+    if: ${{ github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/dev' && needs.pull.result == 'success' }}
     needs: pull
     permissions:
       contents: write
@@ -50,6 +50,7 @@ jobs:
           clean: true
 
       - name: Fetch and squash-merge crowdin into dev
+        id: merge
         run: |
           git config --local user.name "Crowdin Bot"
           git config --local user.email "support+bot@crowdin.com"
@@ -57,34 +58,44 @@ jobs:
           # Skip if crowdin branch does not exist yet
           if ! git fetch origin crowdin 2>/dev/null; then
             echo "crowdin branch does not exist yet. Nothing to merge."
+            echo "has_changes=false" >> $GITHUB_OUTPUT
             exit 0
           fi
 
           if ! git merge --squash origin/crowdin; then
             echo "⚠️ Merge conflicts between crowdin and dev. Manual resolution required."
-            git merge --abort 2>/dev/null || true
+            git reset --hard HEAD || true
+            echo "has_changes=false" >> $GITHUB_OUTPUT
             exit 0
           fi
 
+          if git diff --staged --quiet; then
+            echo "No staged changes after squash merge. Already up to date."
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+
       - name: Setup Java
+        if: steps.merge.outputs.has_changes == 'true'
         uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: "21"
 
       - name: Setup Gradle
+        if: steps.merge.outputs.has_changes == 'true'
         uses: gradle/actions/setup-gradle@v4
 
       - name: Compile Android app to verify merged translations
+        id: compile
+        if: steps.merge.outputs.has_changes == 'true'
         run: |
           chmod +x ./gradlew
           ./gradlew --no-daemon clean assembleDebug
 
       - name: Commit and push if translations changed
+        if: steps.merge.outputs.has_changes == 'true' && steps.compile.outcome == 'success'
         run: |
-          if ! git diff --staged --quiet; then
-            git commit -m "chore: Update translations from Crowdin"
-            git push origin dev
-          else
-            echo "No translation changes to commit."
-          fi
+          git commit -m "chore: Update translations from Crowdin"
+          git push origin dev
