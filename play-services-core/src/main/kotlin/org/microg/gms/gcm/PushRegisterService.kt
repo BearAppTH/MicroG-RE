@@ -2,17 +2,15 @@
  * SPDX-FileCopyrightText: 2020, microG Project Team
  * SPDX-License-Identifier: Apache-2.0
  */
-@file:Suppress("DEPRECATION")
-
 package org.microg.gms.gcm
 
 import android.app.Activity
 import android.app.PendingIntent
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.*
 import android.util.Log
-import androidx.legacy.content.WakefulBroadcastReceiver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleService
@@ -46,7 +44,7 @@ private suspend fun ensureCheckinIsUpToDate(context: Context) {
                 }
             })
             ForegroundServiceContext(context).startService(intent)
-            Handler().postDelayed({
+            Handler(Looper.getMainLooper()).postDelayed({
                 if (continued.compareAndSet(false, true)) continuation.resume(Bundle.EMPTY)
             }, 10000L)
         }
@@ -105,7 +103,12 @@ private val Intent.requestId: String?
     }
 
 private val Intent.app: PendingIntent?
-    get() = getParcelableExtra(EXTRA_APP)
+    get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        getParcelableExtra(EXTRA_APP, PendingIntent::class.java)
+    } else {
+        @Suppress("DEPRECATION")
+        getParcelableExtra(EXTRA_APP)
+    }
 
 private val Intent.appPackageName: String?
     get() = PackageUtils.packageFromPendingIntent(app)
@@ -124,7 +127,6 @@ class PushRegisterService : LifecycleService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent != null) {
-            WakefulBroadcastReceiver.completeWakefulIntent(intent)
             Log.d(TAG, "onStartCommand: $intent")
             lifecycleScope.launch {
                 handleIntent(intent)
@@ -199,7 +201,12 @@ class PushRegisterService : LifecycleService() {
 
     private fun sendReplyToMessenger(intent: Intent, outIntent: Intent): Boolean {
         try {
-            val messenger = intent.getParcelableExtra<Messenger>(EXTRA_MESSENGER) ?: return false
+            val messenger = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                intent.getParcelableExtra(EXTRA_MESSENGER, Messenger::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                intent.getParcelableExtra(EXTRA_MESSENGER)
+            } ?: return false
             val message = Message.obtain()
             message.obj = outIntent
             messenger.send(message)
@@ -225,7 +232,7 @@ internal class PushRegisterHandler(
     private val context: Context,
     private val database: GcmDatabase,
     override val lifecycle: Lifecycle
-) : Handler(), LifecycleOwner {
+) : Handler(Looper.getMainLooper()), LifecycleOwner {
 
     private var callingUid = 0
     override fun sendMessageAtTime(msg: Message, uptimeMillis: Long): Boolean {
@@ -288,7 +295,6 @@ internal class PushRegisterHandler(
             return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         }
 
-    @Suppress("DEPRECATION")
     override fun handleMessage(msg: Message) {
         var msg = msg
         val obj = msg.obj
@@ -374,8 +380,7 @@ internal class PushRegisterHandler(
     }
 }
 
-@Suppress("DEPRECATION")
-class PushRegisterReceiver : WakefulBroadcastReceiver() {
+class PushRegisterReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val intent2 = Intent(context, PushRegisterService::class.java)
         if (intent.extras!!.get("delete") != null) {
@@ -384,6 +389,6 @@ class PushRegisterReceiver : WakefulBroadcastReceiver() {
             intent2.action = ACTION_C2DM_REGISTER
         }
         intent2.putExtras(intent.extras!!)
-        startWakefulService(context, intent2)
+        context.startService(intent2)
     }
 }
