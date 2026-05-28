@@ -122,13 +122,13 @@ Da li želite da je sada de-registrujete da ne dobija obaveštenja u budućnosti
     <string name="self_check_cat_gms_packages">Уграђени пакети</string>
     <string name="self_check_cat_fake_sig">Подршка за имитацију потписа</string>
     <!--self check: patched apps-->
-    <string name="self_check_source_morphe">Морфе патчи</string>
+    <string name="self_check_source_bear">Морфе патчи</string>
     <string name="self_check_source_alternative">Алтернативни патчи</string>
-    <!-- %1$s is an app name, such as "Morphe" -->
+    <!-- %1$s is an app name, such as "BearAppTH" -->
     <string name="self_check_patched_app_installed">Ради са %1$s</string>
     <!-- %1$s is an app name, such as "YouTube" -->
     <string name="self_check_resolution_patched_app_installed">Апликације које користе %1$s не могу се наћи. Молимо вас да патчирате и инсталирате модификовану апликацију</string>
-    <string name="self_check_action_download_morphe">Преузимање Morphe</string>
+    <string name="self_check_action_download_bear">Преузимање BearAppTH</string>
     <!--self check: permission-->
     <string name="self_check_name_notifications">Дозволе и делити поруке</string>
     <string name="self_check_resolution_notifications">Тукујте овде да отворите подешавања за поруке. Поруке се користе да би се GcmService одржао у фону када је оптимизација батерије укључена или под другим условима</string>

@@ -133,12 +133,18 @@ public abstract class AbstractAboutFragment extends Fragment {
             View appCard = inflater.inflate(R.layout.about_app, appCardContainer, true);
 //            ((ImageView) appCard.findViewById(R.id.app_icon)).setImageDrawable(getIcon(requireContext()));
 //            ((TextView) appCard.findViewById(R.id.app_title)).setText(getAppName());
-            ((TextView) appCard.findViewById(R.id.app_version)).setText(appCard.getContext().getString(R.string.about_version_str, getAppVersion()));
+            TextView appVersion = appCard.findViewById(R.id.app_version);
+            if (appVersion != null) {
+                appVersion.setText(appCard.getContext().getString(R.string.about_version_str, getAppVersion()));
+            }
 
-            appCard.findViewById(R.id.app_check_updates).setOnClickListener(v -> {
-                new UpdateChecker(requireContext()).checkForUpdates(v, () -> {
+            View checkUpdates = appCard.findViewById(R.id.app_check_updates);
+            if (checkUpdates != null) {
+                checkUpdates.setOnClickListener(v -> {
+                    new UpdateChecker(requireContext()).checkForUpdates(v, () -> {
+                    });
                 });
-            });
+            }
 
             View appInfo = appCard.findViewById(R.id.app_info);
             if (appInfo != null) {
@@ -151,14 +157,37 @@ public abstract class AbstractAboutFragment extends Fragment {
                     }
                 });
             }
+
+            TextView gmsVersion = appCard.findViewById(R.id.gms_version);
+            if (gmsVersion != null) {
+                gmsVersion.setText(appCard.getContext().getString(R.string.about_gms_version_str, getGmsVersion()));
+            }
         }
 
-        ViewGroup morpheCardContainer = aboutRoot.findViewById(R.id.morphe_card_container);
-        if (morpheCardContainer != null) {
-            View morpheCard = inflater.inflate(R.layout.about_morphe, morpheCardContainer, true);
+        ViewGroup bearCardContainer = aboutRoot.findViewById(R.id.bear_card_container);
+        if (bearCardContainer != null) {
+            View bearCard = inflater.inflate(R.layout.about_bear, bearCardContainer, true);
 
-            morpheCard.findViewById(R.id.morphe_github).setOnClickListener(v -> openUrl("https://github.com/BearAppTH"));
-            morpheCard.findViewById(R.id.morphe_website).setOnClickListener(v -> openUrl("https://www.bearappth.online"));
+            bearCard.findViewById(R.id.bear_github).setOnClickListener(v -> openUrl("https://github.com/BearAppTH"));
+            bearCard.findViewById(R.id.bear_website).setOnClickListener(v -> openUrl("https://www.bearappth.online"));
+        }
+
+        ViewGroup changelogContainer = aboutRoot.findViewById(R.id.changelog_container);
+        if (changelogContainer != null) {
+            String[] entries = getResources().getStringArray(R.array.about_changelog_entries);
+            for (int i = 0; i < entries.length; i++) {
+                View item = inflater.inflate(R.layout.library_item, changelogContainer, false);
+                TextView title = item.findViewById(android.R.id.text1);
+                TextView subtitle = item.findViewById(android.R.id.text2);
+                String[] parts = entries[i].split("\\|", 2);
+                title.setText(parts[0].trim());
+                subtitle.setText(parts.length > 1 ? parts[1].trim() : "");
+                ListItemLayout listItemLayout = item.findViewById(R.id.list_item_library);
+                if (listItemLayout != null) {
+                    listItemLayout.updateAppearance(i, entries.length);
+                }
+                changelogContainer.addView(item);
+            }
         }
 
         List<Library> libraries = new ArrayList<>();

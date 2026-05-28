@@ -41,16 +41,23 @@
 
         <Preference
             android:key="pref_push_status"
-            android:layout="@layout/preference_material_single"
+            android:layout="@layout/preference_material_top"
             android:title="@string/pref_info_status"
             app:iconSpaceReserved="false"
             app:selectable="false"
             tools:summary="Connected since 15 minutes ago" />
 
         <Preference
-            android:icon="@drawable/ic_information"
-            android:layout="@layout/preference_material_information"
-            android:selectable="false"
-            android:title="@string/pref_gcm_enable_mcs_summary" />
+            android:icon="@drawable/ic_cloud_messaging"
+            android:key="pref_push_log"
+            android:layout="@layout/preference_material_bottom"
+            android:summary="@string/pref_push_log_summary"
+            android:title="@string/pref_push_log_title" />
     </PreferenceCategory>
+
+    <Preference
+        android:icon="@drawable/ic_information"
+        android:layout="@layout/preference_material_information"
+        android:selectable="false"
+        android:title="@string/pref_gcm_enable_mcs_summary" />
 </PreferenceScreen>

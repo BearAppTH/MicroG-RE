@@ -34,7 +34,7 @@
 
     <!--Patchers names-->
 
-    <string name="morphe" translatable="false">Morphe</string>
+    <string name="bear" translatable="false">Bear</string>
     <string name="vanced" translatable="false">Vanced</string>
     <string name="revanced" translatable="false">ReVanced</string>
     <string name="youtube_advanced" translatable="false">YT Advanced</string>

@@ -58,12 +58,43 @@
         android:layout="@layout/preference_material_middle"
         android:title="@string/pref_hide_launcher_icon" />
 
+    <ListPreference
+        android:defaultValue="system"
+        android:entries="@array/dark_mode_entries"
+        android:entryValues="@array/dark_mode_values"
+        android:icon="@drawable/ic_dark_mode"
+        android:key="pref_dark_mode"
+        android:layout="@layout/preference_material_middle"
+        android:title="@string/pref_dark_mode_title"
+        app:useSimpleSummaryProvider="true" />
+
     <Preference
         android:icon="@drawable/ic_self_check"
         android:layout="@layout/preference_material_middle"
         android:title="@string/self_check_title"
         android:summary="@string/self_check_desc"
         android:key="pref_self_check" />
+
+    <Preference
+        android:icon="@drawable/ic_diagnostics"
+        android:key="pref_network_diagnostics"
+        android:layout="@layout/preference_material_middle"
+        android:summary="@string/pref_network_diagnostics_summary"
+        android:title="@string/pref_network_diagnostics_title" />
+
+    <Preference
+        android:icon="@drawable/ic_download"
+        android:key="pref_export_settings"
+        android:layout="@layout/preference_material_middle"
+        android:summary="@string/pref_export_settings_summary"
+        android:title="@string/pref_export_settings_title" />
+
+    <Preference
+        android:icon="@drawable/ic_add"
+        android:key="pref_import_settings"
+        android:layout="@layout/preference_material_middle"
+        android:summary="@string/pref_import_settings_summary"
+        android:title="@string/pref_import_settings_title" />
 
     <Preference
         android:icon="@drawable/ic_github"

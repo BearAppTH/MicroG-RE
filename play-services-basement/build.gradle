@@ -20,12 +20,9 @@ apply plugin: 'signing'
 
 dependencies {
     // Dependencies from play-services-basement:18.1.0
-    //noinspection GradleDependency
-    api "androidx.collection:collection:1.0.0"
-    //noinspection GradleDependency
-    api "androidx.core:core:1.2.0"
-    //noinspection OutdatedLibrary
-    api "androidx.fragment:fragment:1.0.0"
+    api "androidx.collection:collection:$collectionVersion"
+    api "androidx.core:core:$coreVersion"
+    api "androidx.fragment:fragment:$fragmentVersion"
 
     annotationProcessor project(':safe-parcel-processor')
 }
@@ -34,7 +31,6 @@ android {
     namespace "com.google.android.gms.common"
 
     compileSdkVersion androidCompileSdk
-//    buildToolsVersion "$androidBuildVersionTools"
 
     aidlPackagedList "com/google/android/gms/common/api/Status.aidl"
     aidlPackagedList "com/google/android/gms/common/ConnectionResult.aidl"

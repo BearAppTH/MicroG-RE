@@ -20,7 +20,6 @@ android {
     namespace "org.microg.tools.ui"
 
     compileSdkVersion androidCompileSdk
-//    buildToolsVersion "$androidBuildVersionTools"
 
     defaultConfig {
         minSdkVersion androidMinSdk
@@ -52,4 +51,3 @@ dependencies {
     //noinspection NewerVersionAvailable
     implementation "com.squareup.okhttp3:okhttp:$okhttpVersion"
 }
-

@@ -49,7 +49,7 @@
     <!--self check: categories-->
     <string name="self_check_cat_system">Sistem</string>
     <!--self check: patched apps-->
-    <!-- %1$s is an app name, such as "Morphe" -->
+    <!-- %1$s is an app name, such as "BearAppTH" -->
     <!-- %1$s is an app name, such as "YouTube" -->
     <!--self check: permission-->
     <!--self check: system-->

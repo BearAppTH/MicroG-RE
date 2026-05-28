@@ -61,14 +61,18 @@ class PushNotificationFragment : PreferenceFragmentCompat() {
 
     @SuppressLint("RestrictedApi")
     override fun onBindPreferences() {
-        switchBarPreference = preferenceScreen.findPreference("pref_push_enabled") ?: switchBarPreference
-        pushStatusCategory = preferenceScreen.findPreference("prefcat_push_status") ?: pushStatusCategory
-        pushStatus = preferenceScreen.findPreference("pref_push_status") ?: pushStatus
-        pushApps = preferenceScreen.findPreference("prefcat_push_apps") ?: pushApps
-        pushAppsAll = preferenceScreen.findPreference("pref_push_apps_all") ?: pushAppsAll
-        pushAppsNone = preferenceScreen.findPreference("pref_push_apps_none") ?: pushAppsNone
+        switchBarPreference = preferenceScreen.findPreference("pref_push_enabled") ?: return
+        pushStatusCategory = preferenceScreen.findPreference("prefcat_push_status") ?: return
+        pushStatus = preferenceScreen.findPreference("pref_push_status") ?: return
+        pushApps = preferenceScreen.findPreference("prefcat_push_apps") ?: return
+        pushAppsAll = preferenceScreen.findPreference("pref_push_apps_all") ?: return
+        pushAppsNone = preferenceScreen.findPreference("pref_push_apps_none") ?: return
         pushAppsAll.setOnPreferenceClickListener {
             findNavController().navigate(requireContext(), R.id.openAllGcmApps)
+            true
+        }
+        preferenceScreen.findPreference<androidx.preference.Preference>("pref_push_log")?.setOnPreferenceClickListener {
+            findNavController().navigate(requireContext(), R.id.openPushLog)
             true
         }
         switchBarPreference.setOnPreferenceChangeListener { _, newValue ->
@@ -112,28 +116,30 @@ class PushNotificationFragment : PreferenceFragmentCompat() {
         lifecycleScope.launchWhenResumed {
             val context = requireContext()
             val (apps, showAll) = withContext(Dispatchers.IO) {
-                val apps = database.appList.sortedByDescending { it.lastMessageTimestamp }
-                val res = apps.map { app ->
-                    app to context.packageManager.getApplicationInfoIfExists(app.packageName)
-                }.mapNotNull { (app, info) ->
-                    if (info == null) null else app to info
-                }.take(3).mapIndexed { idx, (app, applicationInfo) ->
-                    val pref = AppIconPreference(context)
-                    pref.order = idx
-                    pref.applicationInfo = applicationInfo
-                    pref.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-                        findNavController().navigate(
-                            requireContext(), R.id.openGcmAppDetails, bundleOf(
-                                "package" to app.packageName
+                try {
+                    val apps = database.appList.sortedByDescending { it.lastMessageTimestamp }
+                    apps.map { app ->
+                        app to context.packageManager.getApplicationInfoIfExists(app.packageName)
+                    }.mapNotNull { (app, info) ->
+                        if (info == null) null else app to info
+                    }.take(3).mapIndexed { idx, (app, applicationInfo) ->
+                        val pref = AppIconPreference(context)
+                        pref.order = idx
+                        pref.applicationInfo = applicationInfo
+                        pref.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+                            findNavController().navigate(
+                                requireContext(), R.id.openGcmAppDetails, bundleOf(
+                                    "package" to app.packageName
+                                )
                             )
-                        )
-                        true
-                    }
-                    pref.key = "pref_push_app_" + app.packageName
-                    pref
-                }.let { it to (it.size < apps.size) }
-                database.close()
-                res
+                            true
+                        }
+                        pref.key = "pref_push_app_" + app.packageName
+                        pref
+                    }.let { it to (it.size < apps.size) }
+                } finally {
+                    database.close()
+                }
             }
 
             pushApps.removeAll()

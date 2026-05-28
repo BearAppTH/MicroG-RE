@@ -8,7 +8,25 @@
     <!--App Names-->
 
     <string name="gms_app_name" translatable="false">Bear MicroG</string>
-    <string name="gms_settings_name">microG Settings</string>
+    <string name="gms_settings_name" translatable="false">Bear MicroG</string>
+
+    <!--Bottom Navigation-->
+    <string name="nav_home">Home</string>
+    <string name="nav_settings_tab_label">Settings</string>
+
+    <!--Home Dashboard-->
+    <string name="home_status_ok">System Running</string>
+    <string name="home_status_not_registered">Not Registered</string>
+    <string name="home_status_disabled">Service Disabled</string>
+    <string name="home_status_disabled_hint">Enable device registration to use Google Services</string>
+    <string name="home_device_card_title">Device</string>
+    <string name="home_profile_label">Profile: %1$s</string>
+    <string name="home_serial_label">Serial: %1$s</string>
+    <string name="home_self_check_hint">Tap to check system</string>
+    <string name="home_account_none">No account signed in</string>
+    <string name="home_push_connected">Connected</string>
+    <string name="home_push_disconnected">Disconnected</string>
+    <string name="home_push_disabled">Disabled</string>
 
     <!--Authentication-->
 
@@ -32,12 +50,12 @@
     <!--auth: messages-->
     <string name="auth_before_connect">"Connect Google account with microG.
 
-Let's connect to a Google account, use the <b>Sign in</b> button or use the <b>Huawei</b> button if you have a device with this manufacturer. By pressing one of the buttons you will be redirected to the page to login to your account."</string>
+Let\'s connect to a Google account, use the <b>Sign in</b> button or use the <b>Huawei</b> button if you have a device with this manufacturer. By pressing one of the buttons you will be redirected to the page to login to your account."</string>
 
-    <string name="auth_connecting">"Your device is establishing a connection to Google’s servers to sign you in.
+    <string name="auth_connecting">"Your device is establishing a connection to Google\'s servers to sign you in.
 
 This can take a few seconds"</string>
-    <string name="auth_no_network_error_desc">"You don’t have a network connection.
+    <string name="auth_no_network_error_desc">"You don\'t have a network connection.
 
 This could be a temporary problem or your Android device may not be provisioned for data services. Try again when connected to a mobile network, or connect to a Wi-Fi network"</string>
     <string name="auth_general_error_desc">"There was a problem communicating with Google servers.
@@ -142,13 +160,13 @@ Do you want to unregister it now so it does not receive push messages in the fut
     <string name="self_check_cat_gms_packages">Installed packages</string>
     <string name="self_check_cat_fake_sig">Signature spoofing support</string>
     <!--self check: patched apps-->
-    <string name="self_check_source_morphe">Morphe patches</string>
+    <string name="self_check_source_bear">Bear patches</string>
     <string name="self_check_source_alternative">alternative patches</string>
-    <!-- %1$s is an app name, such as "Morphe" -->
+    <!-- %1$s is an app name, such as "BearAppTH" -->
     <string name="self_check_patched_app_installed">Running with %1$s</string>
     <!-- %1$s is an app name, such as "YouTube" -->
     <string name="self_check_resolution_patched_app_installed">Apps using %1$s not found. Please patch and install the modified app</string>
-    <string name="self_check_action_download_morphe">Download Morphe</string>
+    <string name="self_check_action_download_bear">Download Bear</string>
     <!--self check: permission-->
     <string name="self_check_name_notifications">Notifications allowed</string>
     <string name="self_check_resolution_notifications">Tap here to open notification settings. Notifications are used to keep GcmService running in the background when battery optimization is enabled or under other conditions</string>
@@ -158,7 +176,7 @@ Do you want to unregister it now so it does not receive push messages in the fut
     <string name="self_check_name_battery_optimizations">Battery optimizations disabled</string>
     <string name="self_check_resolution_battery_optimizations">Tap here to disable battery optimizations. If not disabled, you may experience issues receiving notifications from YouTube and other registered apps</string>
     <string name="self_check_name_oem_restriction">Background process restrictions</string>
-    <string name="self_check_resolution_oem_restriction">Your system may restrict background processes. Tap here to open Don’t Kill My App! site and learn how to disable these restrictions</string>
+    <string name="self_check_resolution_oem_restriction">Your system may restrict background processes. Tap here to open Don\'t Kill My App! site and learn how to disable these restrictions</string>
     <!--self check: signature-->
     <string name="self_check_name_system_spoofs">System spoofs signature</string>
     <string name="self_check_resolution_system_spoofs">Please check the documentation on which steps might be required</string>
@@ -251,4 +269,60 @@ Not yet supported"</string>
     <string name="cond_gcm_bat_summary">You enabled Cloud messaging but have battery optimizations active for microG Services. For push notifications to arrive you should ignore battery optimizations</string>
     <string name="cond_gcm_bat_action">Ignore optimizations</string>
     <string name="cond_perm_title">Permission missing</string>
+
+    <plurals name="home_push_apps_count">
+        <item quantity="one">%d app registered</item>
+        <item quantity="other">%d apps registered</item>
+    </plurals>
+
+    <!--Dark Mode-->
+    <string name="pref_dark_mode_title">Dark Mode</string>
+    <string-array name="dark_mode_entries">
+        <item>System default</item>
+        <item>Light</item>
+        <item>Dark</item>
+    </string-array>
+    <string-array name="dark_mode_values">
+        <item>system</item>
+        <item>light</item>
+        <item>dark</item>
+    </string-array>
+
+    <!--Export / Import-->
+    <string name="pref_export_settings_title">Export settings</string>
+    <string name="pref_export_settings_summary">Save settings to a JSON file</string>
+    <string name="pref_import_settings_title">Import settings</string>
+    <string name="pref_import_settings_summary">Restore settings from a JSON file</string>
+    <string name="export_success">Settings exported successfully</string>
+    <string name="export_failed">Export failed</string>
+    <string name="import_success">Settings imported successfully</string>
+    <string name="import_failed">Import failed — invalid file</string>
+
+    <!--Network Diagnostics-->
+    <string name="pref_network_diagnostics_title">Network Diagnostics</string>
+    <string name="pref_network_diagnostics_summary">Test connectivity to Google services</string>
+    <string name="diagnostics_run_button">Run Diagnostics</string>
+    <string name="diagnostics_running">Running…</string>
+    <string name="diagnostics_result_ok">OK — %d ms</string>
+    <string name="diagnostics_result_failed">Failed — %s</string>
+    <string name="diagnostics_checkin_host">Device registration (checkin.googleapis.com)</string>
+    <string name="diagnostics_mcs_host">Cloud messaging (mtalk.google.com)</string>
+    <string name="diagnostics_googleapis_host">Google APIs (www.googleapis.com)</string>
+
+    <!--Push Activity Log-->
+    <string name="pref_push_log_title">Push Activity Log</string>
+    <string name="pref_push_log_summary">View per-app push message history</string>
+    <string name="push_log_empty">No push activity recorded</string>
+    <string name="push_log_last_message">Last message: %s</string>
+    <plurals name="push_log_message_count">
+        <item quantity="one">%d message received</item>
+        <item quantity="other">%d messages received</item>
+    </plurals>
+
+    <!--Widget-->
+    <string name="widget_title">MicroG Status</string>
+    <string name="widget_status_ok">Running</string>
+    <string name="widget_status_off">Offline</string>
+    <string name="widget_gcm_on">Push: On</string>
+    <string name="widget_gcm_off">Push: Off</string>
 </resources>

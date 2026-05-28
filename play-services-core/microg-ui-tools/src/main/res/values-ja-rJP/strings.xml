@@ -24,7 +24,7 @@
     <string name="update_checker_no_internet">インターネットに接続されていません</string>
     <string name="update_checker_generic_error">何か問題が発生しました… 後で再度お試しください</string>
     <!--Settings About-->
-    <string name="about_morphe_description">Morphe は、パッチを通じて Android アプリを改変するために設計されたオープンソース プロジェクトです</string>
+    <string name="about_bear_description">BearAppTH は、パッチを通じて Android アプリを改変するために設計されたオープンソース プロジェクトです</string>
     <string name="about_version_str">バージョン %1$s</string>
     <string name="about_default_license">全ての権利所有</string>
     <!--Self Check-->

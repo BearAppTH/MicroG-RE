@@ -53,7 +53,6 @@ android {
     namespace "$applicationNamespace"
 
     compileSdkVersion androidCompileSdk
-//    buildToolsVersion "$androidBuildVersionTools"
 
     buildFeatures {
         buildConfig = true
@@ -151,5 +150,83 @@ if (file('user.gradle').exists()) {
 android.applicationVariants.configureEach { variant ->
     variant.outputs.each { output ->
         output.outputFileName = "microg-${variant.buildType.name}-${appVersionName}.apk"
+    }
+}
+
+// Auto-patch merged manifest: add android:exported="false" to any component with an
+// intent-filter but no explicit exported attribute. Fixes MIUI/HyperOS install rejection
+// caused by binary AAR dependencies that predate the Android 12 (API 31) requirement.
+project.afterEvaluate {
+    android.applicationVariants.configureEach { variant ->
+        def taskName = "process${variant.name.capitalize()}Manifest"
+        tasks.matching { it.name == taskName }.configureEach { task ->
+            task.notCompatibleWithConfigurationCache("manifest auto-patch uses Groovy closure")
+            task.doLast {
+                // Resolve manifest directly from task outputs — works regardless of AGP path layout
+                def manifests = task.outputs.files.asFileTree
+                    .matching { include '**/AndroidManifest.xml' }
+                    .files
+
+                println "  [manifest-fix] task=${task.name} found ${manifests.size()} manifest(s)"
+
+                if (manifests.isEmpty()) {
+                    // Fallback: scan common intermediate paths
+                    def buildDir = task.project.buildDir
+                    def varName  = task.name
+                        .replaceFirst(/^process/, '')
+                        .replaceFirst(/Manifest$/, '')
+                        .uncapitalize()
+                    ["intermediates/merged_manifests/${varName}",
+                     "intermediates/packaged_manifests/${varName}"].each { rel ->
+                        def dir = new File(buildDir, rel)
+                        if (dir.exists()) dir.eachFileRecurse { f ->
+                            if (f.name == 'AndroidManifest.xml') manifests.add(f)
+                        }
+                    }
+                    println "  [manifest-fix] fallback scan found ${manifests.size()} manifest(s)"
+                }
+
+                manifests.each { file ->
+                    try {
+                        def content = file.text
+                        def changed = false
+                        def root = new groovy.xml.XmlSlurper(false, false).parseText(content)
+
+                        ['activity', 'service', 'receiver', 'activity-alias'].each { type ->
+                            root.application."${type}".each { comp ->
+                                if (comp.'intent-filter'.isEmpty()) return
+                                if (comp.@'android:exported'.toString()) return
+                                def name = comp.@'android:name'.toString()
+                                if (!name) return
+                                def escapedName = java.util.regex.Pattern.quote(name)
+                                def pat = java.util.regex.Pattern.compile(
+                                    "<${type}[^>]*android:name=\\\"${escapedName}\\\"[^>]*>",
+                                    java.util.regex.Pattern.DOTALL
+                                )
+                                def m = pat.matcher(content)
+                                if (m.find()) {
+                                    def tag = m.group(0)
+                                    if (!tag.contains('android:exported')) {
+                                        def fixed = tag.replaceFirst(/>$/, ' android:exported="false">')
+                                        content = content.replace(tag, fixed)
+                                        changed = true
+                                        println "  [manifest-fix] PATCHED <${type}> ${name} → android:exported=false"
+                                    }
+                                }
+                            }
+                        }
+
+                        if (changed) {
+                            file.text = content
+                            println "  [manifest-fix] Written: ${file.canonicalPath}"
+                        } else {
+                            println "  [manifest-fix] CLEAN (no missing exported): ${file.canonicalPath}"
+                        }
+                    } catch (Exception e) {
+                        println "  [manifest-fix] ERROR processing ${file}: ${e.message}"
+                    }
+                }
+            }
+        }
     }
 }

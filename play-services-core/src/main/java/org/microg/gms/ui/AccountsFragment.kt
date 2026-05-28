@@ -9,6 +9,8 @@ import android.accounts.Account
 import android.accounts.AccountManager
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.provider.Settings
@@ -222,7 +224,8 @@ class AccountsFragment : PreferenceFragmentCompat() {
     private fun getCircleDrawable(bmp: Bitmap?): Drawable {
         return bmp?.let {
             RoundedBitmapDrawableFactory.create(resources, it).apply { isCircular = true }
-        } ?: AppCompatResources.getDrawable(requireContext(), R.drawable.ic_account_avatar)!!
+        } ?: AppCompatResources.getDrawable(requireContext(), R.drawable.ic_account_avatar)
+        ?: ColorDrawable(Color.TRANSPARENT)
     }
 
     private fun addAccountFab() {

@@ -9,9 +9,9 @@ on:
         description: "Version name (e.g. 1.0.2)"
         required: true
       release_notes:
-        description: "Release notes"
+        description: "Release notes (ถ้าเว้นว่างจะ auto-generate จาก git log)"
         required: false
-        default: "Bug fixes and improvements."
+        default: ""
 
 jobs:
   build:
@@ -20,13 +20,15 @@ jobs:
 
     steps:
       - name: "Checkout sources"
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: "Update version in build.gradle"
+        env:
+          VERSION_INPUT: "${{ github.event.inputs.version }}"
         run: |
-          sed -i "s/ext\.appVersionName = '[^']*'/ext.appVersionName = '${{ github.event.inputs.version }}'/" build.gradle
+          sed -i "s/ext\.appVersionName = '[^']*'/ext.appVersionName = '$VERSION_INPUT'/" build.gradle
 
       - name: "Read version from build.gradle"
         id: version
@@ -34,8 +36,42 @@ jobs:
           VERSION=$(grep -oP "(?<=ext\.appVersionName = ')[^']+" build.gradle)
           echo "name=$VERSION" >> $GITHUB_OUTPUT
 
+      - name: "Commit and push version bump"
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git add build.gradle
+          if ! git diff --staged --quiet; then
+            git commit -m "chore: bump version to ${{ steps.version.outputs.name }} [skip ci]"
+            git push origin HEAD
+          fi
+
+      - name: "Generate changelog"
+        id: changelog
+        env:
+          RELEASE_NOTES: "${{ github.event.inputs.release_notes }}"
+        run: |
+          NOTES="$RELEASE_NOTES"
+          if [ -z "$NOTES" ]; then
+            LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+            if [ -n "$LAST_TAG" ]; then
+              NOTES=$(git log "$LAST_TAG"..HEAD --pretty=format:"- %s" --no-merges)
+            else
+              NOTES=$(git log --pretty=format:"- %s" --no-merges -20)
+            fi
+            if [ -z "$NOTES" ]; then
+              NOTES="Bug fixes and improvements."
+            fi
+          fi
+          DELIM=$(openssl rand -hex 16)
+          {
+            echo "notes<<$DELIM"
+            printf '%s\n' "$NOTES"
+            echo "$DELIM"
+          } >> $GITHUB_OUTPUT
+
       - name: "Setup Java"
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: "21"
@@ -43,7 +79,6 @@ jobs:
       - name: "Setup Gradle"
         uses: gradle/actions/setup-gradle@v4
         with:
-          cache-encryption-key: ${{ secrets.GradleEncryptionKey }}
           build-scan-publish: true
           build-scan-terms-of-use-url: "https://gradle.com/help/legal-terms-of-use"
           build-scan-terms-of-use-agree: "yes"
@@ -79,17 +114,18 @@ jobs:
 
       - name: "Rename APK"
         run: |
-          mv ${{ steps.sign_app.outputs.signedFile }} bear-microg-v${{ steps.version.outputs.name }}.apk
+          mv "${{ steps.sign_app.outputs.signedFile }}" "bear-microg-v${{ steps.version.outputs.name }}.apk"
 
       - name: "Create GitHub Release"
         uses: softprops/action-gh-release@v2
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           tag_name: "v${{ steps.version.outputs.name }}"
           name: "Bear MicroG v${{ steps.version.outputs.name }}"
           body: |
             ## 🐻 Bear MicroG v${{ steps.version.outputs.name }}
 
-            ${{ github.event.inputs.release_notes }}
+            ${{ steps.changelog.outputs.notes }}
 
             ---
 

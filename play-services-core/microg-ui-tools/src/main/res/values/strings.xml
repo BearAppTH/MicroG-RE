@@ -29,8 +29,8 @@
     <!--Settings About-->
 
     <string name="about_microg_re" translatable="false">Bear MicroG</string>
-    <string name="about_morphe" translatable="false">BearAppTH</string>
-    <string name="about_morphe_description">Bear MicroG is a custom build of microG GmsCore for BearAppTH</string>
+    <string name="about_bear" translatable="false">BearAppTH</string>
+    <string name="about_bear_description">Bear MicroG is a custom build of microG GmsCore for BearAppTH</string>
     <string name="about_version_str">Version %1$s</string>
     <string name="about_name_version_str" translatable="false">%1$s %2$s</string>
     <string name="about_default_license">All rights reserved</string>
@@ -53,4 +53,15 @@
     <string name="about_root_title">microG UI Demo</string>
     <string name="about_root_version">Version v0.1.0</string>
     <string name="about_root_libraries">Included libraries</string>
+
+    <!--About: version-->
+    <string name="about_gms_version_str">GMS API %1$s</string>
+    <!--About: changelog-->
+    <string name="about_changelog_title">What\'s New</string>
+    <string-array name="about_changelog_entries">
+        <item>v3.0.0 — UX/UI Redesign|New bottom navigation, Home dashboard with service status cards</item>
+        <item>New app icon|Professional Bear logo with dark background, adaptive icon support</item>
+        <item>Dynamic Color (Material You)|Wallpaper-based color theme on Android 12+</item>
+        <item>Navigation fixes|Resolved Settings tab crash and missing nav actions</item>
+    </string-array>
 </resources>

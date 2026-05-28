@@ -90,11 +90,11 @@
     <string name="self_check_cat_patched_apps">កម្មវិធីដែលបានបំណះ</string>
     <string name="self_check_cat_gms_packages">កញ្ចប់ដែលបានដំឡើង</string>
     <!--self check: patched apps-->
-    <string name="self_check_source_morphe">Morphe បំណះ</string>
-    <!-- %1$s is an app name, such as "Morphe" -->
+    <string name="self_check_source_bear">BearAppTH បំណះ</string>
+    <!-- %1$s is an app name, such as "BearAppTH" -->
     <string name="self_check_patched_app_installed">កំពុងប្រតិបត្តិជាមួយ %1$s</string>
     <!-- %1$s is an app name, such as "YouTube" -->
-    <string name="self_check_action_download_morphe">ដោនឡូដ Morphe</string>
+    <string name="self_check_action_download_bear">ដោនឡូដ BearAppTH</string>
     <!--self check: permission-->
     <string name="self_check_name_notifications">ការជូនដំណឹងត្រូវបានអនុញ្ញាត</string>
     <!--self check: system-->

@@ -2,14 +2,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_settings"
-    app:startDestination="@id/settingsFragment">
+    app:startDestination="@id/homeFragment">
 
-    <!-- Start -->
+    <!-- Home Dashboard -->
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="org.microg.gms.ui.HomeFragment"
+        android:label="@string/gms_settings_name">
+        <action
+            android:id="@+id/openCheckinFromHome"
+            app:destination="@id/checkinFragment" />
+        <action
+            android:id="@+id/openSelfCheckFromHome"
+            app:destination="@id/selfcheckFragment" />
+    </fragment>
+
+    <!-- Settings tab -->
 
     <fragment
         android:id="@+id/settingsFragment"
         android:name="org.microg.gms.ui.SettingsFragment"
-        android:label="@string/gms_settings_name">
+        android:label="@string/nav_settings_tab_label">
         <action
             android:id="@+id/openCheckinSettings"
             app:destination="@id/checkinFragment" />
@@ -19,6 +33,15 @@
         <action
             android:id="@+id/openAbout"
             app:destination="@id/aboutFragment" />
+        <action
+            android:id="@+id/openPrivacy"
+            app:destination="@id/privacyFragment" />
+        <action
+            android:id="@+id/openSelfCheck"
+            app:destination="@id/selfcheckFragment" />
+        <action
+            android:id="@+id/openNetworkDiagnostics"
+            app:destination="@id/networkDiagnosticsFragment" />
     </fragment>
 
     <!-- Self-Check -->
@@ -34,16 +57,20 @@
         android:id="@+id/checkinFragment"
         android:name="org.microg.gms.ui.DeviceRegistrationFragment"
         android:label="@string/service_name_checkin"
-        tools:layout="@layout/device_registration_fragment" />
+        tools:layout="@layout/device_registration_fragment">
+        <deepLink
+            android:id="@+id/deepLink_checkin"
+            app:uri="microg://settings/checkin" />
+    </fragment>
 
-    <!-- Account manager-->
+    <!-- Account manager -->
 
     <fragment
         android:id="@+id/accountManagerFragment"
         android:name="org.microg.gms.ui.AccountsFragment"
         android:label="@string/pref_account_title" />
 
-    <!-- Privacy-->
+    <!-- Privacy -->
 
     <fragment
         android:id="@+id/privacyFragment"
@@ -55,8 +82,11 @@
     <fragment
         android:id="@+id/gcmFragment"
         android:name="org.microg.gms.ui.PushNotificationFragment"
-        android:label="@string/service_name_mcs"
+        android:label="@string/gcm_enable_switch"
         tools:layout="@layout/push_notification_fragment">
+        <deepLink
+            android:id="@+id/deepLink_push"
+            app:uri="microg://settings/push" />
         <action
             android:id="@+id/openGcmAppDetails"
             app:destination="@id/gcmAppFragment" />
@@ -66,6 +96,9 @@
         <action
             android:id="@+id/openGcmAdvancedSettings"
             app:destination="@id/gcmAdvancedFragment" />
+        <action
+            android:id="@+id/openPushLog"
+            app:destination="@id/pushLogFragment" />
     </fragment>
 
     <fragment
@@ -80,7 +113,7 @@
     <fragment
         android:id="@+id/gcmAppFragment"
         android:name="org.microg.gms.ui.PushNotificationAppFragment"
-        android:label="@string/service_name_mcs"
+        android:label="@string/gcm_enable_switch"
         tools:layout="@layout/push_notification_app_fragment">
         <argument
             android:name="package"
@@ -92,6 +125,18 @@
         android:name="org.microg.gms.ui.PushNotificationAdvancedFragment"
         android:label="@string/menu_settings" />
 
+    <fragment
+        android:id="@+id/pushLogFragment"
+        android:name="org.microg.gms.ui.PushLogFragment"
+        android:label="@string/pref_push_log_title" />
+
+    <!-- Network Diagnostics -->
+
+    <fragment
+        android:id="@+id/networkDiagnosticsFragment"
+        android:name="org.microg.gms.ui.NetworkDiagnosticsFragment"
+        android:label="@string/pref_network_diagnostics_title" />
+
     <!-- About -->
 
     <fragment
@@ -99,4 +144,5 @@
         android:name="org.microg.gms.ui.AboutFragment"
         android:label="@string/prefcat_about"
         tools:layout="@layout/about_root" />
+
 </navigation>
