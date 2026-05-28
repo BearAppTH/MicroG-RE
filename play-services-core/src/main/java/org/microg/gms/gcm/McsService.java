@@ -336,13 +336,27 @@ public class McsService extends Service implements Handler.Callback {
         String messageId = intent.getStringExtra(EXTRA_MESSAGE_ID);
         String collapseKey = intent.getStringExtra(EXTRA_COLLAPSE_KEY);
 
-        Messenger messenger = intent.getParcelableExtra(EXTRA_MESSENGER);
+        Messenger messenger;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            messenger = intent.getParcelableExtra(EXTRA_MESSENGER, Messenger.class);
+        } else {
+            @SuppressWarnings("deprecation")
+            Messenger _messenger = intent.getParcelableExtra(EXTRA_MESSENGER);
+            messenger = _messenger;
+        }
         intent.removeExtra(EXTRA_MESSENGER);
 
-        Parcelable app = intent.getParcelableExtra(EXTRA_APP);
+        PendingIntent app;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            app = intent.getParcelableExtra(EXTRA_APP, PendingIntent.class);
+        } else {
+            @SuppressWarnings("deprecation")
+            Parcelable _app = intent.getParcelableExtra(EXTRA_APP);
+            app = _app instanceof PendingIntent ? (PendingIntent) _app : null;
+        }
         String packageName = null;
-        if (app instanceof PendingIntent) {
-            packageName = PackageUtils.packageFromPendingIntent((PendingIntent) app);
+        if (app != null) {
+            packageName = PackageUtils.packageFromPendingIntent(app);
         }
         if (packageName == null) {
             Log.w(TAG, "Failed to send message, missing package name");

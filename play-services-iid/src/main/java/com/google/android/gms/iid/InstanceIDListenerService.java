@@ -20,6 +20,7 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.IBinder;
@@ -95,7 +96,12 @@ public class InstanceIDListenerService extends Service {
         try {
             if (intent != null) {
                 if (ACTION_INSTANCE_ID.equals(intent.getAction()) && intent.hasExtra(EXTRA_GSF_INTENT)) {
-                    startService((Intent) intent.getParcelableExtra(EXTRA_GSF_INTENT));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        startService(intent.getParcelableExtra(EXTRA_GSF_INTENT, Intent.class));
+                    } else {
+                        //noinspection deprecation
+                        startService((Intent) intent.getParcelableExtra(EXTRA_GSF_INTENT));
+                    }
                     return START_STICKY;
                 }
 

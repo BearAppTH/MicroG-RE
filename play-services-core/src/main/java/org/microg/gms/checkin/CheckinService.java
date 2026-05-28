@@ -19,6 +19,7 @@ package org.microg.gms.checkin;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.os.Build;
 import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.PendingIntent;
@@ -88,10 +89,21 @@ public class CheckinService extends IntentService {
                     }
                     McsService.scheduleReconnect(this);
                     if (intent.hasExtra(EXTRA_CALLBACK_INTENT)) {
-                        startService((Intent) intent.getParcelableExtra(EXTRA_CALLBACK_INTENT));
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            startService(intent.getParcelableExtra(EXTRA_CALLBACK_INTENT, Intent.class));
+                        } else {
+                            //noinspection deprecation
+                            startService((Intent) intent.getParcelableExtra(EXTRA_CALLBACK_INTENT));
+                        }
                     }
                     if (intent.hasExtra(EXTRA_RESULT_RECEIVER)) {
-                        ResultReceiver receiver = intent.getParcelableExtra(EXTRA_RESULT_RECEIVER);
+                        ResultReceiver receiver;
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            receiver = intent.getParcelableExtra(EXTRA_RESULT_RECEIVER, ResultReceiver.class);
+                        } else {
+                            //noinspection deprecation
+                            receiver = intent.getParcelableExtra(EXTRA_RESULT_RECEIVER);
+                        }
                         if (receiver != null) {
                             Bundle bundle = new Bundle();
                             bundle.putLong(EXTRA_NEW_CHECKIN_TIME, info.getLastCheckin());
