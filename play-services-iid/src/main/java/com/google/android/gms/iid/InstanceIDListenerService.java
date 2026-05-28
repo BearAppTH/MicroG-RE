@@ -22,6 +22,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.content.IntentFilter;
+
+import androidx.core.content.ContextCompat;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -81,7 +83,7 @@ public class InstanceIDListenerService extends Service {
     public void onCreate() {
         IntentFilter filter = new IntentFilter(ACTION_C2DM_REGISTRATION);
         filter.addCategory(getPackageName());
-        registerReceiver(registrationReceiver, filter);
+        ContextCompat.registerReceiver(this, registrationReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED);
     }
 
     public void onDestroy() {

@@ -9,7 +9,9 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
 import android.util.Log
+import androidx.core.content.ContextCompat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.Serializable
@@ -51,11 +53,17 @@ class ServiceInfoReceiver : BroadcastReceiver() {
 }
 
 private suspend fun sendToServiceInfoReceiver(intent: Intent, context: Context): ServiceInfo = suspendCoroutine {
-    context.registerReceiver(object : BroadcastReceiver() {
+    ContextCompat.registerReceiver(context, object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             context.unregisterReceiver(this)
             val serviceInfo = try {
-                intent.getSerializableExtra(EXTRA_SERVICE_INFO) as ServiceInfo
+                @Suppress("DEPRECATION")
+                val raw = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    intent.getSerializableExtra(EXTRA_SERVICE_INFO, ServiceInfo::class.java)
+                } else {
+                    intent.getSerializableExtra(EXTRA_SERVICE_INFO) as? ServiceInfo
+                }
+                raw ?: throw Exception("ServiceInfo was null")
             } catch (e: Exception) {
                 it.resumeWithException(e)
                 return
@@ -66,7 +74,7 @@ private suspend fun sendToServiceInfoReceiver(intent: Intent, context: Context):
                 Log.w(TAG, e)
             }
         }
-    }, IntentFilter(ACTION_SERVICE_INFO_RESPONSE))
+    }, IntentFilter(ACTION_SERVICE_INFO_RESPONSE), ContextCompat.RECEIVER_NOT_EXPORTED)
     try {
         context.sendOrderedBroadcast(intent, null)
     } catch (e: Exception) {

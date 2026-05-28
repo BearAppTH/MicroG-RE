@@ -20,6 +20,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+
+import androidx.core.content.ContextCompat;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
@@ -48,7 +50,7 @@ public class TriggerReceiver extends BroadcastReceiver {
     public synchronized static void register(Context context) {
         if (SDK_INT >= N && !registered) {
             IntentFilter intentFilter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
-            context.getApplicationContext().registerReceiver(new TriggerReceiver(), intentFilter);
+            ContextCompat.registerReceiver(context.getApplicationContext(), new TriggerReceiver(), intentFilter, ContextCompat.RECEIVER_NOT_EXPORTED);
             registered = true;
         }
     }
