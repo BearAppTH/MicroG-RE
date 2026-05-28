@@ -2,6 +2,7 @@ package org.microg.gms.ui;
 
 import android.app.Activity;
 import android.content.pm.ApplicationInfo;
+import android.os.Build;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -38,7 +39,12 @@ public class AskPushPermissionActivity extends AppCompatActivity {
 
         database = new GcmDatabase(this);
         packageName = getIntent().getStringExtra(EXTRA_REQUESTED_PACKAGE);
-        resultReceiver = getIntent().getParcelableExtra(EXTRA_RESULT_RECEIVER);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            resultReceiver = getIntent().getParcelableExtra(EXTRA_RESULT_RECEIVER, ResultReceiver.class);
+        } else {
+            //noinspection deprecation
+            resultReceiver = getIntent().getParcelableExtra(EXTRA_RESULT_RECEIVER);
+        }
 
         if (packageName == null || database.getApp(packageName) != null) {
             if (packageName != null) sendResult(Activity.RESULT_OK, true);

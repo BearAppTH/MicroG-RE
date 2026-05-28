@@ -50,6 +50,7 @@ import java.util.Map;
 import java.util.Random;
 
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+import android.os.Build;
 import static android.os.Build.VERSION.SDK_INT;
 import static com.google.android.gms.iid.InstanceID.ERROR_BACKOFF;
 import static com.google.android.gms.iid.InstanceID.ERROR_MISSING_INSTANCEID_SERVICE;
@@ -164,11 +165,21 @@ public class InstanceIdRpc {
                     Intent intent = (Intent) msg.obj;
                     intent.setExtrasClassLoader(MessengerCompat.class.getClassLoader());
                     if (intent.hasExtra(EXTRA_MESSENGER)) {
-                        Parcelable messengerCandidate = intent.getParcelableExtra(EXTRA_MESSENGER);
-                        if (messengerCandidate instanceof MessengerCompat) {
-                            messengerCompat = (MessengerCompat) messengerCandidate;
-                        } else if (messengerCandidate instanceof Messenger) {
-                            messenger = (Messenger) messengerCandidate;
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            MessengerCompat mc = intent.getParcelableExtra(EXTRA_MESSENGER, MessengerCompat.class);
+                            if (mc != null) {
+                                messengerCompat = mc;
+                            } else {
+                                messenger = intent.getParcelableExtra(EXTRA_MESSENGER, Messenger.class);
+                            }
+                        } else {
+                            //noinspection deprecation
+                            Parcelable messengerCandidate = intent.getParcelableExtra(EXTRA_MESSENGER);
+                            if (messengerCandidate instanceof MessengerCompat) {
+                                messengerCompat = (MessengerCompat) messengerCandidate;
+                            } else if (messengerCandidate instanceof Messenger) {
+                                messenger = (Messenger) messengerCandidate;
+                            }
                         }
                     }
                     handleResponseInternal(intent);

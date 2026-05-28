@@ -11,6 +11,7 @@ package com.google.android.gms.cast.framework.media;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.view.KeyEvent;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
@@ -117,7 +118,13 @@ public class MediaIntentReceiver extends BroadcastReceiver {
     protected void onReceiveActionMediaButton(Session currentSession, Intent intent) {
         if (!(currentSession instanceof CastSession)) return;
         if (intent.hasExtra(Intent.EXTRA_KEY_EVENT)) {
-            KeyEvent keyEvent = intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
+            KeyEvent keyEvent;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                keyEvent = intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT, KeyEvent.class);
+            } else {
+                //noinspection deprecation
+                keyEvent = intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
+            }
             if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyEvent.getKeyCode() == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
                 // TODO Toggle Playback
             }

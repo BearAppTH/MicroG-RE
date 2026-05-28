@@ -19,6 +19,7 @@ package com.google.android.gms.gcm;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.os.Build;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -165,7 +166,13 @@ public abstract class GcmListenerService extends Service {
     }
 
     private void handlePendingNotification(Intent intent) {
-        PendingIntent pendingIntent = intent.getParcelableExtra(EXTRA_PENDING_INTENT);
+        PendingIntent pendingIntent;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            pendingIntent = intent.getParcelableExtra(EXTRA_PENDING_INTENT, PendingIntent.class);
+        } else {
+            //noinspection deprecation
+            pendingIntent = intent.getParcelableExtra(EXTRA_PENDING_INTENT);
+        }
         if (pendingIntent != null) {
             try {
                 pendingIntent.send();

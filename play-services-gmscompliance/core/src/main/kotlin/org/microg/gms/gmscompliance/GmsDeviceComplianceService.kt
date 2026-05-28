@@ -9,6 +9,7 @@ import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import com.google.android.gms.common.Feature
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Status
@@ -36,7 +37,7 @@ class GmsDeviceComplianceService : BaseService(TAG, GmsService.GMS_COMPLIANCE) {
 class GmsDeviceComplianceServiceImpl(override val lifecycle: Lifecycle) : IGmsDeviceComplianceService.Stub(), LifecycleOwner {
     override fun getDeviceCompliance(callback: IGmsDeviceComplianceServiceCallback?) {
         Log.d(TAG, "getDeviceCompliance()")
-        lifecycleScope.launchWhenStarted {
+        lifecycleScope.launch {
             try {
                 callback?.onResponse(Status.SUCCESS, GmsDeviceComplianceResponse().apply { compliant = true })
             } catch (e: Exception) {
