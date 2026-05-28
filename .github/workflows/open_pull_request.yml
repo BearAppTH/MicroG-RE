@@ -19,18 +19,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check if there are commits ahead of main
+        id: check
+        run: |
+          git fetch origin main
+          AHEAD=$(git rev-list --count origin/main..HEAD)
+          echo "ahead=$AHEAD" >> $GITHUB_OUTPUT
+          if [ "$AHEAD" -eq 0 ]; then
+            echo "dev is already up-to-date with main. Skipping PR."
+          fi
 
       - name: Open pull request
+        if: steps.check.outputs.ahead != '0'
         uses: repo-sync/pull-request@v2
         with:
-          destination_branch: main
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          destination_branch: main
           pr_title: 'chore: ${{ env.MESSAGE }}'
           pr_body: |
             This pull request will ${{ env.MESSAGE }}.
-
-            ## Before merging this PR
-
-            - [ ] Pull & merge translations from Crowdin
           pr_draft: true
