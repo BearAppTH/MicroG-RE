@@ -20,6 +20,7 @@ import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.internal.GetServiceRequest
 import com.google.android.gms.common.internal.IGmsCallbacks
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.microg.gms.BaseService
 import org.microg.gms.auth.appcert.AppCertManager
@@ -43,14 +44,14 @@ class AuthProxyService : BaseService(TAG, GmsService.AUTH_PROXY) {
 class AuthServiceImpl(private val context: Context, override val lifecycle: Lifecycle, private val packageName: String) : IAuthService.Stub(), LifecycleOwner {
     override fun performProxyRequest(callbacks: IAuthCallbacks, request: ProxyRequest) {
         Log.d(TAG, "performProxyRequest($packageName, $request)")
-        lifecycleScope.launchWhenStarted {
+        lifecycleScope.launch {
             callbacks.onProxyResponse(ProxyResponse().apply { gmsStatusCode = CommonStatusCodes.CANCELED })
         }
     }
 
     override fun getSpatulaHeader(callbacks: IAuthCallbacks) {
         Log.d(TAG, "getSpatulaHeader($packageName)")
-        lifecycleScope.launchWhenStarted {
+        lifecycleScope.launch {
             val result = withContext(Dispatchers.IO) { AppCertManager(context).getSpatulaHeader(packageName) }
             Log.d(TAG, "Result: $result")
             callbacks.onSpatulaHeader(result)

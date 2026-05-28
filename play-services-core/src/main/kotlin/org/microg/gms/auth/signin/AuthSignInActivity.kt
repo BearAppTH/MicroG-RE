@@ -29,6 +29,7 @@ import com.google.android.gms.common.api.Status
 import com.google.android.gms.databinding.SigninConfirmBinding
 import com.google.android.gms.databinding.SigninPickerBinding
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.microg.gms.auth.AuthConstants.DEFAULT_ACCOUNT
 import org.microg.gms.auth.AuthConstants.DEFAULT_ACCOUNT_TYPE
@@ -104,7 +105,7 @@ class AuthSignInActivity : AppCompatActivity() {
         if (account.name != DEFAULT_ACCOUNT) {
             val photo = PeopleManager.getOwnerAvatarBitmap(this@AuthSignInActivity, account.name, false)
             if (photo == null) {
-                lifecycleScope.launchWhenStarted {
+                lifecycleScope.launch {
                     withContext(Dispatchers.IO) {
                         PeopleManager.getOwnerAvatarBitmap(this@AuthSignInActivity, account.name, true)
                     }?.let {
@@ -146,7 +147,7 @@ class AuthSignInActivity : AppCompatActivity() {
             if (accounts[position].name == DEFAULT_ACCOUNT) {
                 openAddAccount()
             } else {
-                lifecycleScope.launchWhenStarted {
+                lifecycleScope.launch {
                     try {
                         signIn(accounts[position])
                     } catch (e: Exception) {
@@ -170,7 +171,7 @@ class AuthSignInActivity : AppCompatActivity() {
         binding.button1.setOnClickListener {
             binding.button1.isEnabled = false
             binding.button2.isEnabled = false
-            lifecycleScope.launchWhenStarted {
+            lifecycleScope.launch {
                 try {
                     signIn(account)
                 } catch (e: Exception) {

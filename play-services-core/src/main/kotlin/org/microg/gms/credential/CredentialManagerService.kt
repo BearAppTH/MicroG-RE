@@ -13,6 +13,7 @@ import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.Feature
 import com.google.android.gms.common.api.Status
@@ -54,7 +55,7 @@ private class CredentialManagerServiceImpl(private val context: Context, overrid
 
     override fun getCredentialManagerIntent(callback: IPendingIntentCallback?, params: CredentialManagerInvocationParams?) {
         Log.d(TAG, "Not yet implemented: getCredentialManagerIntent $params")
-        lifecycleScope.launchWhenStarted {
+        lifecycleScope.launch {
             try {
                 callback?.onPendingIntent(Status.INTERNAL_ERROR, null)
             } catch (e: Exception) {
@@ -65,7 +66,7 @@ private class CredentialManagerServiceImpl(private val context: Context, overrid
 
     override fun getSetting(callback: ISettingsCallback?, key: String?) {
         Log.d(TAG, "Not yet implemented: getSetting $key")
-        lifecycleScope.launchWhenStarted {
+        lifecycleScope.launch {
             try {
                 callback?.onSetting(Status.INTERNAL_ERROR, null)
             } catch (e: Exception) {
@@ -76,7 +77,7 @@ private class CredentialManagerServiceImpl(private val context: Context, overrid
 
     override fun setSetting(callback: IStatusCallback?, key: String?, value: ByteArray?) {
         Log.d(TAG, "Not yet implemented: setSetting $key ${value?.toBase64(Base64.NO_WRAP)}")
-        lifecycleScope.launchWhenStarted {
+        lifecycleScope.launch {
             try {
                 callback?.onResult(Status.INTERNAL_ERROR)
             } catch (e: Exception) {

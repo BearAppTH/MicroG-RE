@@ -23,6 +23,7 @@ import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -74,7 +75,7 @@ class AuthSignInServiceImpl(
             Log.d(TAG, "Result[$status]: $account")
             runCatching { callbacks.onSignIn(account, status) }
         }
-        lifecycleScope.launchWhenStarted {
+        lifecycleScope.launch {
             try {
                 val account = account ?: options?.account ?: SignInConfigurationService.getDefaultAccount(context, packageName)
                 if (account != null && options?.isForceCodeForRefreshToken != true) {
@@ -100,7 +101,7 @@ class AuthSignInServiceImpl(
 
     override fun signOut(callbacks: ISignInCallbacks, options: GoogleSignInOptions?) {
         Log.d(TAG, "$packageName:signOut($options)")
-        lifecycleScope.launchWhenStarted {
+        lifecycleScope.launch {
             try {
                 val account = account ?: options?.account ?: SignInConfigurationService.getDefaultAccount(context, packageName)
                 if (account != null) {
@@ -119,7 +120,7 @@ class AuthSignInServiceImpl(
 
     override fun revokeAccess(callbacks: ISignInCallbacks, options: GoogleSignInOptions?) {
         Log.d(TAG, "$packageName:revokeAccess($options)")
-        lifecycleScope.launchWhenStarted {
+        lifecycleScope.launch {
             val account = account ?: options?.account ?: SignInConfigurationService.getDefaultAccount(context, packageName)
             if (account != null) {
                 try {

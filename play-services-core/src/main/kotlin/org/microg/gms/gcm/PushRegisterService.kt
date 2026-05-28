@@ -17,6 +17,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import org.microg.gms.checkin.CheckinPreferences
 import org.microg.gms.checkin.CheckinService
 import org.microg.gms.checkin.LastCheckinInfo
@@ -125,7 +126,7 @@ class PushRegisterService : LifecycleService() {
         if (intent != null) {
             WakefulBroadcastReceiver.completeWakefulIntent(intent)
             Log.d(TAG, "onStartCommand: $intent")
-            lifecycleScope.launchWhenStarted {
+            lifecycleScope.launch {
                 handleIntent(intent)
             }
         }
@@ -328,7 +329,7 @@ internal class PushRegisterHandler(
         val oneWay = data.getBoolean("oneWay", false)
         when (what) {
             0, 1 -> {
-                lifecycleScope.launchWhenStarted {
+                lifecycleScope.launch {
                     try {
                         val sender = subdata?.getString("sender")
                         val delete = subdata?.get("delete") != null
