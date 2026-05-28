@@ -30,8 +30,6 @@ import android.os.RemoteException;
 import android.os.ResultReceiver;
 import android.util.Log;
 
-import androidx.legacy.content.WakefulBroadcastReceiver;
-
 import com.google.android.gms.R;
 import com.google.android.gms.checkin.internal.ICheckinService;
 
@@ -105,9 +103,6 @@ public class CheckinService extends IntentService {
         } catch (Exception e) {
             Log.w(TAG, e);
         } finally {
-            if (intent != null) {
-                WakefulBroadcastReceiver.completeWakefulIntent(intent);
-            }
             schedule(this);
             stopSelf();
         }
