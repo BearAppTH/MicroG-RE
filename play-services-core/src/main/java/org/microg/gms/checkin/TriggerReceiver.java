@@ -17,14 +17,16 @@
 package org.microg.gms.checkin;
 
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 import android.net.NetworkRequest;
+import android.os.Build;
 import android.util.Log;
-
-import androidx.legacy.content.WakefulBroadcastReceiver;
 
 import org.microg.gms.common.ForegroundServiceContext;
 
@@ -34,7 +36,7 @@ import static android.os.Build.VERSION.SDK_INT;
 import static org.microg.gms.checkin.CheckinService.EXTRA_FORCE_CHECKIN;
 import static org.microg.gms.checkin.CheckinService.REGULAR_CHECKIN_INTERVAL;
 
-public class TriggerReceiver extends WakefulBroadcastReceiver {
+public class TriggerReceiver extends BroadcastReceiver {
     private static final String TAG = "GmsCheckinTrigger";
     private static boolean registered = false;
 
@@ -50,11 +52,20 @@ public class TriggerReceiver extends WakefulBroadcastReceiver {
                 }
 
                 ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-                NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-                if (networkInfo != null && networkInfo.isConnected() || force) {
+                boolean isConnected;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    Network network = cm.getActiveNetwork();
+                    NetworkCapabilities caps = network != null ? cm.getNetworkCapabilities(network) : null;
+                    isConnected = caps != null && caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
+                } else {
+                    @SuppressWarnings("deprecation")
+                    NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+                    isConnected = networkInfo != null && networkInfo.isConnected();
+                }
+                if (isConnected || force) {
                     Intent subIntent = new Intent(context, CheckinService.class);
                     subIntent.putExtra(EXTRA_FORCE_CHECKIN, force);
-                    startWakefulService(new ForegroundServiceContext(context), subIntent);
+                    new ForegroundServiceContext(context).startService(subIntent);
                 } else if (SDK_INT >= 23) {
                     // no network, register a network callback to retry when we have internet
                     NetworkRequest networkRequest = new NetworkRequest.Builder()
