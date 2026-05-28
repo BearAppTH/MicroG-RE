@@ -14,7 +14,7 @@ on:
 jobs:
   push:
     name: Push strings
-    if: ${{ secrets.CROWDIN_PROJECT_ID != '' && secrets.CROWDIN_PERSONAL_TOKEN != '' }}
+    if: ${{ github.ref == 'refs/heads/dev' && secrets.CROWDIN_PROJECT_ID != '' && secrets.CROWDIN_PERSONAL_TOKEN != '' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -27,6 +27,7 @@ jobs:
           clean: true
 
       - name: Push strings
+        continue-on-error: true
         uses: crowdin/github-action@v2
         with:
           config: crowdin.yml

@@ -8,7 +8,7 @@ on:
 jobs:
   pull:
     name: Pull translations from Crowdin
-    if: ${{ secrets.CROWDIN_PROJECT_ID != '' && secrets.CROWDIN_PERSONAL_TOKEN != '' }}
+    if: ${{ (github.event_name == 'schedule' || github.ref == 'refs/heads/dev') && secrets.CROWDIN_PROJECT_ID != '' && secrets.CROWDIN_PERSONAL_TOKEN != '' }}
     permissions:
       contents: write
     runs-on: ubuntu-latest
@@ -21,6 +21,7 @@ jobs:
           clean: true
 
       - name: Pull strings from Crowdin
+        continue-on-error: true
         uses: crowdin/github-action@v2
         with:
           config: crowdin.yml
@@ -36,7 +37,7 @@ jobs:
 
   merge:
     name: Squash merge Crowdin into Dev
-    if: github.event_name == 'workflow_dispatch' && needs.pull.result == 'success'
+    if: ${{ github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/dev' && needs.pull.result == 'success' }}
     needs: pull
     permissions:
       contents: write
