@@ -36,7 +36,6 @@ import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.READ_PHONE_STATE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
-import static android.os.Build.VERSION.SDK_INT;
 
 public class Conditions {
     public static final Condition GCM_BATTERY_OPTIMIZATIONS = new Condition.Builder()
@@ -45,16 +44,14 @@ public class Conditions {
             .evaluation(new Condition.Evaluation() {
                 @Override
                 public boolean isActive(Context context) {
-                    if (SDK_INT < 23) return false;
                     if (!GcmPrefs.get(context).isEnabled()) return false;
                     PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
                     return !pm.isIgnoringBatteryOptimizations(context.getPackageName());
                 }
             })
-            .firstAction(R.string.cond_gcm_bat_action, v -> {
-                if (SDK_INT < 23) return;
-                ForegroundServiceOemUtils.openBatteryOptimizationSettings(v.getContext(), intent -> v.getContext().startActivity(intent));
-            }).build();
+            .firstAction(R.string.cond_gcm_bat_action, v ->
+                ForegroundServiceOemUtils.openBatteryOptimizationSettings(v.getContext(), intent -> v.getContext().startActivity(intent))
+            ).build();
 
     private static final String[] REQUIRED_PERMISSIONS = new String[]{ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE, GET_ACCOUNTS, READ_PHONE_STATE};
     public static final Condition PERMISSIONS = new Condition.Builder()

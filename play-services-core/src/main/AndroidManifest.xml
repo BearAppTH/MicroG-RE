@@ -24,17 +24,14 @@
     <permission
         android:name="${basePackageName}.android.c2dm.permission.RECEIVE"
         android:label="@string/perm_c2dm_receive_label"
-        android:permissionGroup="android.permission-group.NETWORK"
         android:protectionLevel="normal" />
     <permission
         android:name="${basePackageName}.android.c2dm.permission.SEND"
         android:label="@string/perm_c2dm_send_label"
-        android:permissionGroup="android.permission-group.NETWORK"
         android:protectionLevel="signature" />
     <permission
         android:name="${basePackageName}.android.gtalkservice.permission.GTALK_SERVICE"
         android:label="@string/perm_gtalk_svc_label"
-        android:permissionGroup="android.permission-group.MESSAGES"
         android:protectionLevel="signature" />
 
     <permission-tree
@@ -53,18 +50,23 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"
+        android:maxSdkVersion="22" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
-    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS"
+        android:maxSdkVersion="22" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS"
+        android:maxSdkVersion="22" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
     <uses-permission android:name="android.permission.READ_SYNC_STATS" />
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28"
         tools:ignore="ScopedStorage" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
 
     <uses-permission android:name="${basePackageName}.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="${basePackageName}.android.c2dm.permission.SEND" />
@@ -72,6 +74,7 @@
 
     <uses-permission android:name="${basePackageName}.microg.gms.STATUS_BROADCAST" />
 
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -248,7 +251,8 @@
 
         <service
             android:name="org.microg.gms.people.ContactSyncService"
-            android:exported="false">
+            android:exported="true"
+            tools:ignore="ExportedService">
             <intent-filter>
                 <action android:name="android.content.SyncAdapter" />
             </intent-filter>
