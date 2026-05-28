@@ -74,7 +74,7 @@ class AuthSignInServiceImpl(
             Log.d(TAG, "Result[$status]: $account")
             runCatching { callbacks.onSignIn(account, status) }
         }
-        lifecycleScope.launchWhenStarted {
+        lifecycleScope.launch {
             try {
                 val account = account ?: options?.account ?: SignInConfigurationService.getDefaultAccount(context, packageName)
                 if (account != null && options?.isForceCodeForRefreshToken != true) {
@@ -100,7 +100,7 @@ class AuthSignInServiceImpl(
 
     override fun signOut(callbacks: ISignInCallbacks, options: GoogleSignInOptions?) {
         Log.d(TAG, "$packageName:signOut($options)")
-        lifecycleScope.launchWhenStarted {
+        lifecycleScope.launch {
             try {
                 val account = account ?: options?.account ?: SignInConfigurationService.getDefaultAccount(context, packageName)
                 if (account != null) {
@@ -119,7 +119,7 @@ class AuthSignInServiceImpl(
 
     override fun revokeAccess(callbacks: ISignInCallbacks, options: GoogleSignInOptions?) {
         Log.d(TAG, "$packageName:revokeAccess($options)")
-        lifecycleScope.launchWhenStarted {
+        lifecycleScope.launch {
             val account = account ?: options?.account ?: SignInConfigurationService.getDefaultAccount(context, packageName)
             if (account != null) {
                 try {

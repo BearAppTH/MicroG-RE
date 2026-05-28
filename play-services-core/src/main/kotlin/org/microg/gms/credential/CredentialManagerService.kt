@@ -54,7 +54,7 @@ private class CredentialManagerServiceImpl(private val context: Context, overrid
 
     override fun getCredentialManagerIntent(callback: IPendingIntentCallback?, params: CredentialManagerInvocationParams?) {
         Log.d(TAG, "Not yet implemented: getCredentialManagerIntent $params")
-        lifecycleScope.launchWhenStarted {
+        lifecycleScope.launch {
             try {
                 callback?.onPendingIntent(Status.INTERNAL_ERROR, null)
             } catch (e: Exception) {
@@ -65,7 +65,7 @@ private class CredentialManagerServiceImpl(private val context: Context, overrid
 
     override fun getSetting(callback: ISettingsCallback?, key: String?) {
         Log.d(TAG, "Not yet implemented: getSetting $key")
-        lifecycleScope.launchWhenStarted {
+        lifecycleScope.launch {
             try {
                 callback?.onSetting(Status.INTERNAL_ERROR, null)
             } catch (e: Exception) {
@@ -76,7 +76,7 @@ private class CredentialManagerServiceImpl(private val context: Context, overrid
 
     override fun setSetting(callback: IStatusCallback?, key: String?, value: ByteArray?) {
         Log.d(TAG, "Not yet implemented: setSetting $key ${value?.toBase64(Base64.NO_WRAP)}")
-        lifecycleScope.launchWhenStarted {
+        lifecycleScope.launch {
             try {
                 callback?.onResult(Status.INTERNAL_ERROR)
             } catch (e: Exception) {
