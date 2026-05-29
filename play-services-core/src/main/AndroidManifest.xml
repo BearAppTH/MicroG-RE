@@ -181,6 +181,7 @@
 
         <service
             android:name="org.microg.gms.gcm.McsService"
+            android:exported="false"
             android:foregroundServiceType="connectedDevice"
             android:process=":persistent" />
 
@@ -456,6 +457,7 @@
 
         <activity
             android:name="org.microg.gms.ui.SettingsDashboardActivity"
+            android:exported="false"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/gms_settings_name"
             android:process=":ui"
@@ -495,18 +497,21 @@
             android:name="org.microg.gms.ui.AskPushPermissionActivity"
             android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
             android:excludeFromRecents="true"
+            android:exported="false"
             android:noHistory="true"
             android:process=":ui"
             android:theme="@style/AppTheme.Transparent" />
 
         <activity
             android:name="org.microg.gms.ui.SelfCheckFragment$AsActivity"
+            android:exported="false"
             android:label="@string/self_check_title"
             android:process=":ui"
             android:taskAffinity="org.microg.gms.settings" />
 
         <activity
             android:name="org.microg.gms.ui.AccountManagerActivity"
+            android:exported="false"
             android:label="@string/pref_account_title"
             android:process=":ui"
             android:taskAffinity="org.microg.gms.settings"
@@ -514,6 +519,7 @@
 
         <activity
             android:name="org.microg.gms.ui.PrivacySettingsActivity"
+            android:exported="false"
             android:label="@string/pref_privacy_title"
             android:process=":ui"
             android:taskAffinity="org.microg.gms.settings" />
