@@ -45,9 +45,9 @@ jobs:
           done
       - name: "Build debug APKs"
         run: "./gradlew --no-daemon assembleDebug"
-      - name: "Run lint (non-blocking)"
+      - name: "Run lint"
         run: "./gradlew --no-daemon lint"
-        continue-on-error: true
+        continue-on-error: ${{ github.event_name != 'pull_request' }}
       - name: "Upload APK artifacts"
         uses: actions/upload-artifact@v4
         with:

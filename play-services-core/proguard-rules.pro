@@ -24,3 +24,12 @@
     public static **[] values();
     public static ** valueOf(java.lang.String);
 }
+
+# Strip verbose logs from release builds (Log.d, Log.v, Log.i)
+# Activate by setting minifyEnabled=true in build.gradle release block
+-assumenosideeffects class android.util.Log {
+    public static boolean isLoggable(java.lang.String, int);
+    public static int d(...);
+    public static int v(...);
+    public static int i(...);
+}

@@ -20,3 +20,8 @@ play-services-core/default/release/
 .externalNativeBuild
 .cxx
 package.properties
+
+# Signing keystores — never commit credentials
+*.keystore
+*.jks
+*.p12
