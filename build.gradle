@@ -18,7 +18,6 @@ buildscript {
     ext.loaderVersion = '1.1.0'
     ext.materialVersion = '1.14.0'
     ext.mediarouterVersion = '1.8.1'
-    ext.multidexVersion = '2.0.1'
     ext.navigationVersion = '2.9.8'
     ext.preferenceVersion = '1.2.1'
     ext.recyclerviewVersion = '1.4.0'

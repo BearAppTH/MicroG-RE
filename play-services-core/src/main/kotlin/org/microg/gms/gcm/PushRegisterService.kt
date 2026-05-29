@@ -382,13 +382,14 @@ internal class PushRegisterHandler(
 
 class PushRegisterReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
+        val extras = intent.extras ?: return
         val intent2 = Intent(context, PushRegisterService::class.java)
-        if (intent.extras!!.containsKey("delete")) {
+        if (extras.containsKey("delete")) {
             intent2.action = ACTION_C2DM_UNREGISTER
         } else {
             intent2.action = ACTION_C2DM_REGISTER
         }
-        intent2.putExtras(intent.extras!!)
+        intent2.putExtras(extras)
         context.startService(intent2)
     }
 }
