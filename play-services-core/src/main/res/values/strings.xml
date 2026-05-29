@@ -24,6 +24,8 @@
     <string name="home_serial_label">Serial: %1$s</string>
     <string name="home_self_check_hint">Tap to check system</string>
     <string name="home_account_none">No account signed in</string>
+    <string name="account_settings_error_no_account">No Google account configured. Please add an account first.</string>
+    <string name="account_settings_error_account_not_found">Account not found. It may have been removed.</string>
     <string name="home_push_connected">Connected</string>
     <string name="home_push_disconnected">Disconnected</string>
     <string name="home_push_disabled">Disabled</string>

@@ -22,7 +22,6 @@ dependencies {
     implementation "androidx.legacy:legacy-support-v4:$androidXLegacyVersion"
 
     // AndroidX UI
-    implementation "androidx.multidex:multidex:$multidexVersion"
     //noinspection GradleDependency
     implementation "androidx.appcompat:appcompat:$appcompatVersion"
     //noinspection GradleDependency
@@ -72,9 +71,6 @@ android {
 
         minSdkVersion androidMinSdk
         targetSdkVersion androidTargetSdk
-
-        multiDexEnabled true
-        multiDexKeepProguard file('multidex-keep.pro')
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 

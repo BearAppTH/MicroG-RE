@@ -12,6 +12,7 @@ import android.content.Intent.*
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import org.microg.gms.auth.AuthConstants.DEFAULT_ACCOUNT_TYPE
@@ -49,7 +50,6 @@ class LoaderActivity : AppCompatActivity() {
             Log.d(TAG, "No fallback")
             finishResult(RESULT_CANCELED)
         } else if (fallbackUrl in ALLOWED_FALLBACK_PREFIXES) {
-            // TODO: Error screen?
             Log.d(TAG, "Illegal fallback url")
             finishResult(RESULT_CANCELED)
         } else {
@@ -83,8 +83,8 @@ class LoaderActivity : AppCompatActivity() {
         val account = if (requestedAccountName != null) {
             val account = accounts.find { it.name == requestedAccountName }
             if (account == null) {
-                // TODO: Error screen?
                 Log.d(TAG, "Account not found: $requestedAccountName")
+                Toast.makeText(this, R.string.account_settings_error_account_not_found, Toast.LENGTH_LONG).show()
                 return finishResult(RESULT_CANCELED)
             }
             account
@@ -92,8 +92,8 @@ class LoaderActivity : AppCompatActivity() {
             if (intent?.getStringExtra(EXTRA_FALLBACK_URL) != null) {
                 return launchFallback()
             } else {
-                // TODO: Error screen?
                 Log.d(TAG, "No account configured")
+                Toast.makeText(this, R.string.account_settings_error_no_account, Toast.LENGTH_LONG).show()
                 return finishResult(RESULT_CANCELED)
             }
         } else if (accounts.size > 1) {

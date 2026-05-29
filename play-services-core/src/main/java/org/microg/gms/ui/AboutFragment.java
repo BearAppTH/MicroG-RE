@@ -42,12 +42,8 @@ public class AboutFragment extends AbstractAboutFragment {
         libraries.add(new Library("androidx.concurrent", "AndroidX Concurrent", "Apache License 2.0, The Android Open Source Project."));
         libraries.add(new Library("androidx.core", "AndroidX Core", "Apache License 2.0, The Android Open Source Project."));
         libraries.add(new Library("androidx.fragment", "AndroidX Fragment", "Apache License 2.0, The Android Open Source Project."));
-        libraries.add(new Library("androidx.legacy", "AndroidX Legacy", "Apache License 2.0, The Android Open Source Project."));
-        libraries.add(new Library("androidx.loader", "AndroidX Loader", "Apache License 2.0, The Android Open Source Project."));
         libraries.add(new Library("androidx.lifecycle", "AndroidX Lifecycle", "Apache License 2.0, The Android Open Source Project."));
-        libraries.add(new Library("androidx.media", "AndroidX Media", "Apache License 2.0, The Android Open Source Project."));
         libraries.add(new Library("androidx.mediarouter", "AndroidX MediaRouter", "Apache License 2.0, The Android Open Source Project."));
-        libraries.add(new Library("androidx.multidex", "AndroidX MultiDex", "Apache License 2.0, The Android Open Source Project."));
         libraries.add(new Library("androidx.navigation", "AndroidX Navigation", "Apache License 2.0, The Android Open Source Project."));
         libraries.add(new Library("androidx.preference", "AndroidX Preference", "Apache License 2.0, The Android Open Source Project."));
         libraries.add(new Library("androidx.recyclerview", "AndroidX RecyclerView", "Apache License 2.0, The Android Open Source Project."));
