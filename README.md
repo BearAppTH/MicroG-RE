@@ -84,7 +84,7 @@ Bear MicroG ใช้ Package name `app.bear.android.gms` แทน `com.google.
 
 | รายการ | ค่า |
 |--------|-----|
-| Version | 3.4.1 |
+| Version | 3.4.4 |
 | Package | `app.bear.android.gms` |
 | Min SDK | API 29 (Android 10) |
 | Target SDK | API 37 (Android 17) |

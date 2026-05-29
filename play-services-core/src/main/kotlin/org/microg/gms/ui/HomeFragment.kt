@@ -122,7 +122,7 @@ class HomeFragment : Fragment() {
                     isRegistered -> getString(
                         R.string.checkin_last_registration,
                         DateUtils.getRelativeTimeSpanString(
-                            checkinInfo!!.lastCheckin, System.currentTimeMillis(), 0
+                            checkinInfo?.lastCheckin ?: 0L, System.currentTimeMillis(), 0
                         )
                     )
                     !checkinEnabled -> getString(R.string.home_status_disabled_hint)

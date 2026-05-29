@@ -357,7 +357,7 @@ internal class PushRegisterHandler(
             }
 
             2 -> {
-                val messageId = subdata!!.getString("google.message_id")
+                val messageId = subdata?.getString("google.message_id")
                 Log.d(TAG, "Ack $messageId for $packageName")
                 val i = Intent(context, McsService::class.java)
                 i.action = McsConstants.ACTION_ACK
