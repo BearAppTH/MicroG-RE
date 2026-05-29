@@ -14,6 +14,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import com.google.android.gms.R
 import androidx.appcompat.app.AppCompatActivity
 import org.microg.gms.auth.AuthConstants.DEFAULT_ACCOUNT_TYPE
 import org.microg.gms.common.PackageUtils
