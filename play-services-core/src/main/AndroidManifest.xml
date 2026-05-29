@@ -95,7 +95,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:targetApi="tiramisu">
+        tools:targetApi="36">
 
         <library android:name="${basePackageName}.android.gms" />
 
