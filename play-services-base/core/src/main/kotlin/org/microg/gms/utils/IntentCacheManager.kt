@@ -15,6 +15,7 @@ import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Parcelable
 import android.os.SystemClock
@@ -22,7 +23,7 @@ import android.util.Log
 import androidx.core.content.getSystemService
 import java.util.UUID
 
-class IntentCacheManager<S : Service, T : Parcelable>(private val context: Context, private val clazz: Class<S>, private val type: Int) {
+class IntentCacheManager<S : Service, T : Parcelable>(private val context: Context, private val clazz: Class<S>, private val dataClass: Class<T>, private val type: Int) {
     private val lock = Any()
     private lateinit var content: ArrayList<T>
     private lateinit var id: String
@@ -81,7 +82,12 @@ class IntentCacheManager<S : Service, T : Parcelable>(private val context: Conte
     fun processIntent(intent: Intent) {
         if (isCache(intent) && getType(intent) == type) {
             synchronized(lock) {
-                content = intent.getParcelableArrayListExtra(EXTRA_DATA) ?: arrayListOf()
+                content = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    intent.getParcelableArrayListExtra(EXTRA_DATA, dataClass) ?: arrayListOf()
+                } else {
+                    @Suppress("DEPRECATION")
+                    intent.getParcelableArrayListExtra(EXTRA_DATA) ?: arrayListOf()
+                }
                 id = intent.getStringExtra(EXTRA_ID) ?: UUID.randomUUID().toString()
                 if (!intent.hasExtra(EXTRA_ID)) {
                     Log.d(TAG, "Created new intent cache with id $id")
@@ -130,7 +136,7 @@ class IntentCacheManager<S : Service, T : Parcelable>(private val context: Conte
         private const val EXTRA_ID = "org.microg.gms.IntentCacheManager.id"
         private const val EXTRA_DATA = "org.microg.gms.IntentCacheManager.data"
 
-        inline fun<reified S: Service, T: Parcelable> create(context: Context, type: Int) = IntentCacheManager<S, T>(context, S::class.java, type)
+        inline fun<reified S: Service, reified T: Parcelable> create(context: Context, type: Int) = IntentCacheManager<S, T>(context, S::class.java, T::class.java, type)
 
         fun isCache(intent: Intent): Boolean = try {
             intent.getBooleanExtra(EXTRA_IS_CACHE, false)
