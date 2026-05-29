@@ -43,6 +43,7 @@ import android.webkit.WebView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
@@ -186,6 +187,13 @@ public class LoginActivity extends AssistantActivity {
             setSpoofButtonText(R.string.auth_huawei_button);
             setNextButtonText(R.string.auth_sign_in);
         }
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                loginCanceled();
+            }
+        });
     }
 
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -242,14 +250,6 @@ public class LoginActivity extends AssistantActivity {
             response.onError(AccountManager.ERROR_CODE_CANCELED, "Canceled");
         }
         finishAndRemoveTask();
-    }
-
-    /** @noinspection deprecation*/
-    @SuppressLint("GestureBackNavigation")
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        loginCanceled();
     }
 
     private void init() {

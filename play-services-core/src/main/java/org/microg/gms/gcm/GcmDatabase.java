@@ -92,36 +92,32 @@ public class GcmDatabase extends SQLiteOpenHelper {
     }
 
     public synchronized List<App> getAppList() {
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query(TABLE_APPS, null, null, null, null, null, null);
         List<App> result = new ArrayList<>();
-        while (cursor.moveToNext()) {
-            result.add(new App(cursor));
+        try (Cursor cursor = getReadableDatabase().query(TABLE_APPS, null, null, null, null, null, null)) {
+            while (cursor.moveToNext()) {
+                result.add(new App(cursor));
+            }
         }
-        cursor.close();
         return result;
     }
 
     public synchronized List<Registration> getRegistrationList() {
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query(TABLE_REGISTRATIONS, null, null, null, null, null, null);
         List<Registration> result = new ArrayList<>();
-        while (cursor.moveToNext()) {
-            result.add(new Registration(cursor));
+        try (Cursor cursor = getReadableDatabase().query(TABLE_REGISTRATIONS, null, null, null, null, null, null)) {
+            while (cursor.moveToNext()) {
+                result.add(new Registration(cursor));
+            }
         }
-        cursor.close();
         return result;
     }
 
-
     public synchronized List<Registration> getRegistrationsByApp(String packageName) {
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query(TABLE_REGISTRATIONS, null, FIELD_PACKAGE_NAME + " LIKE ?", new String[]{packageName}, null, null, null);
         List<Registration> result = new ArrayList<>();
-        while (cursor.moveToNext()) {
-            result.add(new Registration(cursor));
+        try (Cursor cursor = getReadableDatabase().query(TABLE_REGISTRATIONS, null, FIELD_PACKAGE_NAME + " LIKE ?", new String[]{packageName}, null, null, null)) {
+            while (cursor.moveToNext()) {
+                result.add(new Registration(cursor));
+            }
         }
-        cursor.close();
         return result;
     }
 

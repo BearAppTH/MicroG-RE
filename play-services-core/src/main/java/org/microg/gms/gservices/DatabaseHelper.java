@@ -53,48 +53,41 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public String get(String name) {
-        String result = null;
-        Cursor cursor = getReadableDatabase().query("overrides", new String[]{"value"}, "name=?",
-                new String[]{name}, null, null, null, null);
-        if (cursor != null) {
-            if (cursor.moveToNext()) {
-                result = cursor.getString(0);
+        try (Cursor cursor = getReadableDatabase().query("overrides", new String[]{"value"}, "name=?",
+                new String[]{name}, null, null, null, null)) {
+            if (cursor != null && cursor.moveToNext()) {
+                return cursor.getString(0);
             }
-            cursor.close();
         }
-        if (result != null) return result;
-        cursor = getReadableDatabase().query("main", new String[]{"value"}, "name=?",
-                new String[]{name}, null, null, null, null);
-        if (cursor != null) {
-            if (cursor.moveToNext()) {
-                result = cursor.getString(0);
+        try (Cursor cursor = getReadableDatabase().query("main", new String[]{"value"}, "name=?",
+                new String[]{name}, null, null, null, null)) {
+            if (cursor != null && cursor.moveToNext()) {
+                return cursor.getString(0);
             }
-            cursor.close();
         }
-        return result;
+        return null;
     }
 
     public Map<String, String> search(String search) {
-        Map<String, String> map = new HashMap<String, String>();
-        Cursor cursor = getReadableDatabase().query("overrides", new String[]{"name", "value"},
-                "name LIKE ?", new String[]{search}, null, null, null, null);
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
-                map.put(cursor.getString(0), cursor.getString(1));
-            }
-            cursor.close();
-        }
-        cursor = getReadableDatabase().query("main", new String[]{"name", "value"},
-                "name LIKE ?", new String[]{search}, null, null, null, null);
-        if (cursor != null) {
-            if (cursor.moveToNext()) {
-                if (!map.containsKey(cursor.getString(0)))
+        Map<String, String> map = new HashMap<>();
+        try (Cursor cursor = getReadableDatabase().query("overrides", new String[]{"name", "value"},
+                "name LIKE ?", new String[]{search}, null, null, null, null)) {
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
                     map.put(cursor.getString(0), cursor.getString(1));
+                }
             }
-            cursor.close();
+        }
+        try (Cursor cursor = getReadableDatabase().query("main", new String[]{"name", "value"},
+                "name LIKE ?", new String[]{search}, null, null, null, null)) {
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    if (!map.containsKey(cursor.getString(0)))
+                        map.put(cursor.getString(0), cursor.getString(1));
+                }
+            }
         }
         return map;
-
     }
 
     public void put(String table, ContentValues values) {

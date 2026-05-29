@@ -61,9 +61,9 @@ public class CheckinClient {
 
         Log.d(TAG, "-- Request --\n" + request);
         try {
-            OutputStream os = new GZIPOutputStream(connection.getOutputStream());
-            os.write(request.encode());
-            os.close();
+            try (OutputStream os = new GZIPOutputStream(connection.getOutputStream())) {
+                os.write(request.encode());
+            }
 
             if (connection.getResponseCode() != 200) {
                 try {
@@ -73,10 +73,10 @@ public class CheckinClient {
                 }
             }
 
-            InputStream is = connection.getInputStream();
-            CheckinResponse response = CheckinResponse.ADAPTER.decode(new GZIPInputStream(is));
-            is.close();
-            return response;
+            try (InputStream is = connection.getInputStream();
+                 GZIPInputStream gzip = new GZIPInputStream(is)) {
+                return CheckinResponse.ADAPTER.decode(gzip);
+            }
         } finally {
             connection.disconnect();
         }
