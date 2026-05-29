@@ -31,7 +31,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import static android.os.Build.VERSION.SDK_INT;
 
 /**
  * Originally found in Google Services Framework (com.google.android.gsf), this provides a generic
@@ -59,11 +58,7 @@ public class GServicesProvider extends ContentProvider {
     }
 
     private String getCallingPackageName() {
-        if (SDK_INT >= 19) {
-            return getCallingPackage();
-        } else {
-            return "unknown";
-        }
+        return getCallingPackage();
     }
 
     @Override

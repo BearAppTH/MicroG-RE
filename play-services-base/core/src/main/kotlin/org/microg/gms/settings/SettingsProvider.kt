@@ -13,7 +13,6 @@ import android.content.SharedPreferences
 import android.database.Cursor
 import android.database.MatrixCursor
 import android.net.Uri
-import android.os.Build.VERSION.SDK_INT
 import android.preference.PreferenceManager
 import org.microg.gms.common.PackageUtils.warnIfNotMainProcess
 import org.microg.gms.settings.SettingsContract.Auth
@@ -276,13 +275,11 @@ class SettingsProvider : ContentProvider() {
     private fun getUnifiedNlpSettingsStringSetCompat(key: String, def: Set<String>): Set<String> = listOf(unifiedNlpPreferences, preferences, systemDefaultPreferences).getStringSetCompat(key, def)
 
     private fun SharedPreferences.getStringSetCompat(key: String, def: Set<String>): Set<String> {
-        if (SDK_INT >= 11) {
-            try {
-                val res = getStringSet(key, null)
-                if (res != null) return res.filter { it.isNotEmpty() }.toSet()
-            } catch (ignored: Exception) {
-                // Ignore
-            }
+        try {
+            val res = getStringSet(key, null)
+            if (res != null) return res.filter { it.isNotEmpty() }.toSet()
+        } catch (ignored: Exception) {
+            // Ignore
         }
         try {
             val str = getString(key, null)

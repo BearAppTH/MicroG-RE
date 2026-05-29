@@ -35,7 +35,6 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
 
-import static android.os.Build.VERSION.SDK_INT;
 
 public class SwitchBar extends LinearLayout implements CompoundButton.OnCheckedChangeListener,
         View.OnClickListener {
@@ -70,9 +69,7 @@ public class SwitchBar extends LinearLayout implements CompoundButton.OnCheckedC
         LayoutInflater.from(context).inflate(R.layout.switch_bar, this);
 
         mTextView = (TextView) findViewById(R.id.switch_text);
-        if (SDK_INT > 16) {
-            mTextView.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
-        }
+        mTextView.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
         mLabel = getResources().getString(androidx.appcompat.R.string.abc_capital_off);
         mSummarySpan = new TextAppearanceSpan(context, androidx.appcompat.R.style.TextAppearance_AppCompat_Widget_Switch);
         updateText();
@@ -81,9 +78,7 @@ public class SwitchBar extends LinearLayout implements CompoundButton.OnCheckedC
         // Prevent onSaveInstanceState() to be called as we are managing the state of the Switch
         // on our own
         mSwitch.setSaveEnabled(false);
-        if (SDK_INT >= 16) {
-            mSwitch.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
-        }
+        mSwitch.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
 
         addOnSwitchChangeListener(new OnSwitchChangeListener() {
             @Override

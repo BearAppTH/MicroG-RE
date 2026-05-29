@@ -178,11 +178,6 @@ public class CastMediaRouteProvider extends MediaRouteProvider {
     public CastMediaRouteProvider(Context context) {
         super(context);
 
-        if (android.os.Build.VERSION.SDK_INT < 16) {
-            Log.i(TAG, "Cast discovery disabled. Android SDK version 16 or higher required.");
-            return;
-        }
-
         mNsdManager = (NsdManager)context.getApplicationContext().getSystemService(Context.NSD_SERVICE);
 
         mDiscoveryListener = new NsdManager.DiscoveryListener() {
@@ -281,10 +276,6 @@ public class CastMediaRouteProvider extends MediaRouteProvider {
     @SuppressLint("NewApi")
     @Override
     public void onDiscoveryRequestChanged(MediaRouteDiscoveryRequest request) {
-        if (android.os.Build.VERSION.SDK_INT < 16) {
-            return;
-        }
-
         if (request != null && request.isValid() && request.isActiveScan()) {
             if (request.getSelector() != null) {
                 for (String category : request.getSelector().getControlCategories()) {
