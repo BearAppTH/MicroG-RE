@@ -1,0 +1,34 @@
+# Baseline Profile for Bear MicroG
+# Hot classes/methods pre-compiled by ART on install to reduce startup latency.
+# Generated from critical paths: app startup, auth, GCM, settings.
+
+# ── App startup ──────────────────────────────────────────────────────────────
+HSPLorg/microg/gms/ui/MainSettingsActivity;->onCreate(Landroid/os/Bundle;)V
+HSPLorg/microg/gms/ui/MainSettingsActivity;->onStart()V
+HSPLorg/microg/gms/ui/SettingsDashboardActivity;->onCreate(Landroid/os/Bundle;)V
+
+# ── Auth & Account ───────────────────────────────────────────────────────────
+HSPLorg/microg/gms/auth/AuthManagerServiceImpl;-><init>(Landroid/content/Context;)V
+HSPLorg/microg/gms/auth/AuthManager;-><init>(Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+HSPLorg/microg/gms/auth/AuthManager;->getAuthToken()Ljava/lang/String;
+HSPLorg/microg/gms/auth/AccountContentProvider;->call(Ljava/lang/String;Ljava/lang/String;Landroid/os/Bundle;)Landroid/os/Bundle;
+HSPLorg/microg/gms/auth/login/LoginActivity;->onCreate(Landroid/os/Bundle;)V
+
+# ── GCM / Push ───────────────────────────────────────────────────────────────
+HSPLorg/microg/gms/gcm/McsService;->onCreate()V
+HSPLorg/microg/gms/gcm/McsService;->onStartCommand(Landroid/content/Intent;II)I
+HSPLorg/microg/gms/gcm/GcmDatabase;-><init>(Landroid/content/Context;)V
+HSPLorg/microg/gms/gcm/GcmPrefs;->get(Landroid/content/Context;)Lorg/microg/gms/gcm/GcmPrefs;
+
+# ── Checkin ──────────────────────────────────────────────────────────────────
+HSPLorg/microg/gms/checkin/CheckinService;->onCreate()V
+HSPLorg/microg/gms/checkin/LastCheckinInfo;->read(Landroid/content/Context;)Lorg/microg/gms/checkin/LastCheckinInfo;
+
+# ── GServices ────────────────────────────────────────────────────────────────
+HSPLorg/microg/gms/gservices/GServicesProvider;->onCreate()Z
+HSPLorg/microg/gms/gservices/GServices;->getString(Landroid/content/ContentResolver;Ljava/lang/String;)Ljava/lang/String;
+
+# ── Common utilities ─────────────────────────────────────────────────────────
+HSPLorg/microg/gms/common/PackageUtils;->getAndCheckCallingPackage(Landroid/content/Context;Ljava/lang/String;)Ljava/lang/String;
+HSPLorg/microg/gms/common/PackageUtils;->callerHasExtendedAccess(Landroid/content/Context;)Z
+HSPLorg/microg/gms/common/ForegroundServiceContext;->completeForegroundService(Landroid/app/Service;Landroid/content/Intent;Ljava/lang/String;)V

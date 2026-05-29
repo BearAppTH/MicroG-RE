@@ -45,6 +45,9 @@ jobs:
           done
       - name: "Build debug APKs"
         run: "./gradlew --no-daemon assembleDebug"
+      - name: "Run unit tests"
+        run: "./gradlew --no-daemon test"
+        continue-on-error: true
       - name: "Run lint"
         run: "./gradlew --no-daemon lint"
         continue-on-error: ${{ github.event_name != 'pull_request' }}
