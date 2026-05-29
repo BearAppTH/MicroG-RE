@@ -65,14 +65,15 @@ public class PeopleServiceImpl extends IPeopleService.Stub {
         }
         Bundle extras = new Bundle();
         extras.putBundle("account_metadata", accountMetadata);
-        try {
-            DatabaseHelper databaseHelper = new DatabaseHelper(context);
-            DataHolder dataHolder = new DataHolder(databaseHelper.getOwners(), 0, extras);
+        DatabaseHelper databaseHelper = new DatabaseHelper(context);
+        try (Cursor cursor = databaseHelper.getOwners()) {
+            DataHolder dataHolder = new DataHolder(cursor, 0, extras);
             Log.d(TAG, "loadOwners[result]: " + dataHolder);
             callbacks.onDataHolder(0, extras, dataHolder);
-            databaseHelper.close();
         } catch (Exception e) {
             Log.w(TAG, e);
+        } finally {
+            databaseHelper.close();
         }
     }
 
@@ -93,20 +94,21 @@ public class PeopleServiceImpl extends IPeopleService.Stub {
     public void loadCircles(IPeopleCallbacks callbacks, String account, String pageGaiaId, String circleId, int type, String var6, boolean var7) throws RemoteException {
         Log.d(TAG, "loadCircles: " + account + ", " + pageGaiaId + ", " + circleId + ", " + type + ", " + var6 + ", " + var7);
         PackageUtils.assertExtendedAccess(context);
+        DatabaseHelper databaseHelper = new DatabaseHelper(context);
         try {
-            DatabaseHelper databaseHelper = new DatabaseHelper(context);
-            Cursor owner = databaseHelper.getOwner(account);
             int ownerId = -1;
-            if (owner.moveToNext()) {
-                ownerId = owner.getInt(0);
+            try (Cursor owner = databaseHelper.getOwner(account)) {
+                if (owner.moveToNext()) ownerId = owner.getInt(0);
             }
-            owner.close();
             Bundle extras = new Bundle();
-            DataHolder dataHolder = new DataHolder(databaseHelper.getCircles(ownerId, circleId, type), 0, extras);
-            callbacks.onDataHolder(0, new Bundle(), dataHolder);
-            databaseHelper.close();
+            try (Cursor circles = databaseHelper.getCircles(ownerId, circleId, type)) {
+                DataHolder dataHolder = new DataHolder(circles, 0, extras);
+                callbacks.onDataHolder(0, new Bundle(), dataHolder);
+            }
         } catch (Exception e) {
             Log.w(TAG, e);
+        } finally {
+            databaseHelper.close();
         }
     }
 
@@ -128,14 +130,17 @@ public class PeopleServiceImpl extends IPeopleService.Stub {
                 extras.putInt("width", 0);
                 extras.putInt("height", 0);
                 File avaterFile = PeopleManager.getOwnerAvatarFile(context, account, true);
+                ParcelFileDescriptor fileDescriptor = null;
                 try {
-                    ParcelFileDescriptor fileDescriptor = null;
                     if (avaterFile != null) {
                         fileDescriptor = ParcelFileDescriptor.open(avaterFile, ParcelFileDescriptor.MODE_READ_ONLY);
                     }
                     callbacks.onParcelFileDescriptor(0, extras, fileDescriptor, extras);
                 } catch (Exception e) {
                     Log.w(TAG, e);
+                    if (fileDescriptor != null) {
+                        try { fileDescriptor.close(); } catch (Exception ignored) {}
+                    }
                 }
             }
         });

@@ -37,6 +37,7 @@ import org.microg.gms.common.Utils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -48,13 +49,13 @@ public class PeopleManager {
 
     public static File getOwnerAvatarFile(Context context, String accountName, boolean network) {
         DatabaseHelper databaseHelper = new DatabaseHelper(context);
-        Cursor cursor = databaseHelper.getOwner(accountName);
         String url = null;
-        if (cursor.moveToNext()) {
-            int idx = cursor.getColumnIndex("avatar");
-            if (idx >= 0 && !cursor.isNull(idx)) url = cursor.getString(idx);
+        try (Cursor cursor = databaseHelper.getOwner(accountName)) {
+            if (cursor.moveToNext()) {
+                int idx = cursor.getColumnIndex("avatar");
+                if (idx >= 0 && !cursor.isNull(idx)) url = cursor.getString(idx);
+            }
         }
-        cursor.close();
         databaseHelper.close();
         if (url == null) return null;
         String urlLastPart = url.replaceFirst(REGEX_SEARCH_USER_PHOTO, "");
@@ -66,9 +67,11 @@ public class PeopleManager {
         try {
             URLConnection conn = new URL(url).openConnection();
             conn.setDoInput(true);
-            byte[] bytes = Utils.readStreamToEnd(conn.getInputStream());
-            try (FileOutputStream outputStream = new FileOutputStream(file)) {
-                outputStream.write(bytes);
+            try (InputStream inputStream = conn.getInputStream()) {
+                byte[] bytes = Utils.readStreamToEnd(inputStream);
+                try (FileOutputStream outputStream = new FileOutputStream(file)) {
+                    outputStream.write(bytes);
+                }
             }
             return file;
         } catch (Exception e) {
@@ -89,7 +92,10 @@ public class PeopleManager {
             URLConnection conn = new URL(USERINFO_URL).openConnection();
             conn.addRequestProperty("Authorization", "Bearer " + getUserInfoAuthKey(context, account));
             conn.setDoInput(true);
-            byte[] bytes = Utils.readStreamToEnd(conn.getInputStream());
+            byte[] bytes;
+            try (InputStream inputStream = conn.getInputStream()) {
+                bytes = Utils.readStreamToEnd(inputStream);
+            }
             JSONObject info = new JSONObject(new String(bytes));
             ContentValues contentValues = new ContentValues();
             contentValues.put("account_name", account.name);
