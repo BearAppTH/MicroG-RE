@@ -7,19 +7,17 @@ package org.microg.gms.accountsettings.ui
 
 import android.accounts.Account
 import android.accounts.AccountManager
-import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
-import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.webkit.WebView
-import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.RelativeLayout.LayoutParams.MATCH_PARENT
 import android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.updateLayoutParams
 import org.microg.gms.auth.AuthConstants
 import org.microg.gms.common.Constants
 
@@ -145,10 +143,27 @@ class MainActivity : AppCompatActivity() {
 
         val callingPackage = intent?.getStringExtra(EXTRA_CALLING_PACKAGE_NAME) ?: callingActivity?.packageName ?: Constants.GMS_PACKAGE_NAME
 
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (this@MainActivity::webView.isInitialized && webView.canGoBack()) {
+                    webView.goBack()
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                }
+            }
+        })
+
         val ignoreAccount = intent?.getBooleanExtra(EXTRA_IGNORE_ACCOUNT, false) ?: false
         val accountName = if (ignoreAccount) null else {
             val accounts = AccountManager.get(this).getAccountsByType(AuthConstants.DEFAULT_ACCOUNT_TYPE)
-            val accountName = intent.getStringExtra(EXTRA_ACCOUNT_NAME) ?: intent.getParcelableExtra<Account>("account")?.name ?: getSelectedAccountName()
+            val accountExtra = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                intent.getParcelableExtra("account", Account::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                intent.getParcelableExtra<Account>("account")
+            }
+            val accountName = intent.getStringExtra(EXTRA_ACCOUNT_NAME) ?: accountExtra?.name ?: getSelectedAccountName()
             accounts.find { it.name.equals(accountName) }?.name
         }
 
@@ -183,14 +198,5 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-    }
-
-    @SuppressLint("MissingSuperCall")
-    override fun onBackPressed() {
-        if (this::webView.isInitialized && webView.canGoBack()) {
-            webView.goBack()
-        } else {
-            super.onBackPressed()
-        }
     }
 }

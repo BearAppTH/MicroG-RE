@@ -43,7 +43,7 @@ class GoogleCertificatesImpl : IGoogleCertificatesApi.Stub() {
 
     override fun isGoogleOrPlatformSigned(query: GoogleCertificatesQuery, packageManager: IObjectWrapper): Boolean {
         val pm = ObjectWrapper.unwrapTyped(packageManager, PackageManager::class.java)
-        return if (query == null || query.callingPackage == null) {
+        return if (query.callingPackage == null) {
             false
         } else if (query.getCertData() == null) {
             if (pm == null) false else PackageUtils.isGooglePackage(pm, query.callingPackage)

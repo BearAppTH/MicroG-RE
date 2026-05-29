@@ -1,5 +1,12 @@
 # Proguard/R8 rules for play-services-core (minifyEnabled=true for release)
 
+# ── Conscrypt platform adapters ─────────────────────────────────────────────
+# Conscrypt references internal Android platform classes and Apache Harmony
+# classes that exist on-device at runtime but are absent from the compile-time
+# classpath, causing R8 to fail with "Missing class" errors.
+-dontwarn com.android.org.conscrypt.**
+-dontwarn org.apache.harmony.xnet.provider.jsse.**
+
 # ── microG / GmsCore ─────────────────────────────────────────────────────────
 # Keep all app-level classes; they are accessed by external apps via AIDL and
 # reflection, so shrinking them would break the GMS replacement contract.

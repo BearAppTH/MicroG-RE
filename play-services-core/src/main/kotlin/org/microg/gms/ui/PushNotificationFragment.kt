@@ -14,7 +14,6 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import androidx.core.os.bundleOf
 import androidx.core.view.MenuProvider
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -149,9 +148,8 @@ class PushNotificationFragment : PreferenceFragmentCompat() {
                             pref.applicationInfo = applicationInfo
                             pref.onPreferenceClickListener = Preference.OnPreferenceClickListener {
                                 findNavController().navigate(
-                                    requireContext(), R.id.openGcmAppDetails, bundleOf(
-                                        "package" to app.packageName
-                                    )
+                                    requireContext(), R.id.openGcmAppDetails,
+                                    Bundle().apply { putString("package", app.packageName) }
                                 )
                                 true
                             }

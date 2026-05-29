@@ -42,7 +42,8 @@ class WebViewHelper(private val activity: AppCompatActivity, private val webView
                 webView.visibility = View.VISIBLE
             }
 
-            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+            override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
+                val url = request.url.toString()
                 Log.d(TAG, "Navigating to $url")
                 if (url.startsWith("intent:")) {
                     try {
@@ -133,7 +134,6 @@ class WebViewHelper(private val activity: AppCompatActivity, private val webView
         settings.javaScriptEnabled = true
         settings.setSupportMultipleWindows(false)
         settings.allowFileAccess = false
-        settings.databaseEnabled = false
         settings.setNeedInitialFocus(false)
         settings.useWideViewPort = false
         settings.setSupportZoom(false)

@@ -162,7 +162,7 @@ class HomeFragment : Fragment() {
 
                 val serial = ProfileManager.getSerial(appContext)
                 v.findViewById<TextView>(R.id.tv_device_serial)?.text =
-                    getString(R.string.home_serial_label, serial ?: "—")
+                    getString(R.string.home_serial_label, serial)
             } catch (e: CancellationException) {
                 throw e
             } catch (_: Exception) {

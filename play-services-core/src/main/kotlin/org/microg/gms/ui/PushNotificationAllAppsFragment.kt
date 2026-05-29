@@ -8,7 +8,6 @@ package org.microg.gms.ui
 import android.os.Bundle
 import android.text.format.DateUtils
 import android.view.View
-import androidx.core.os.bundleOf
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -85,7 +84,7 @@ class PushNotificationAllAppsFragment : PreferenceFragmentCompat() {
                                 findNavController().navigate(
                                     requireContext(),
                                     R.id.openGcmAppDetailsFromAll,
-                                    bundleOf("package" to app.packageName)
+                                    Bundle().apply { putString("package", app.packageName) }
                                 )
                                 true
                             }

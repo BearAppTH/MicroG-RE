@@ -338,7 +338,7 @@ internal class PushRegisterHandler(
                 lifecycleScope.launch {
                     try {
                         val sender = subdata?.getString("sender")
-                        val delete = subdata?.get("delete") != null
+                        val delete = subdata?.containsKey("delete") == true
                         ensureCheckinIsUpToDate(context)
                         if (!delete) ensureAppRegistrationAllowed(context, database, packageName)
                         val bundle = completeRegisterRequest(
@@ -383,7 +383,7 @@ internal class PushRegisterHandler(
 class PushRegisterReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val intent2 = Intent(context, PushRegisterService::class.java)
-        if (intent.extras!!.get("delete") != null) {
+        if (intent.extras!!.containsKey("delete")) {
             intent2.action = ACTION_C2DM_UNREGISTER
         } else {
             intent2.action = ACTION_C2DM_REGISTER
