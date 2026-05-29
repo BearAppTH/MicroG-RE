@@ -13,7 +13,7 @@
 [![GitHub](https://img.shields.io/badge/GitHub-0a0a0a?style=for-the-badge&logo=github&logoColor=white)](https://github.com/BearAppTH/MicroG-RE)
 [![Latest Release](https://img.shields.io/github/v/release/BearAppTH/MicroG-RE?style=for-the-badge&color=4f8ef7&label=Latest)](https://github.com/BearAppTH/MicroG-RE/releases/latest)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue?style=for-the-badge)](LICENSE)
-[![Min SDK](https://img.shields.io/badge/Android-7.0%2B-green?style=for-the-badge&logo=android&logoColor=white)](https://github.com/BearAppTH/MicroG-RE)
+[![Min SDK](https://img.shields.io/badge/Android-10%2B-green?style=for-the-badge&logo=android&logoColor=white)](https://github.com/BearAppTH/MicroG-RE)
 
 <br/>
 
@@ -69,7 +69,7 @@ Bear MicroG ใช้ Package name `app.bear.android.gms` แทน `com.google.
 > ไม่ต้อง ติดตั้งเหมือนแอปทั่วไปได้เลย
 
 **Q: รองรับ Android เวอร์ชันอะไรบ้าง?**
-> Android 7.0 (API 24) ขึ้นไป
+> Android 10 (API 29) ขึ้นไป
 
 **Q: ใช้งานได้กับแอปอะไรบ้าง?**
 > ใช้งานได้กับแอปที่ผ่านการ patch ด้วย GmsCore support patch ซึ่งพัฒนาโดยทีม BearAppTH
