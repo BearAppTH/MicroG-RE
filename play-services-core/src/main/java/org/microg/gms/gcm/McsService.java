@@ -63,6 +63,7 @@ import org.microg.gms.gcm.mcs.LoginResponse;
 import org.microg.gms.gcm.mcs.Setting;
 
 import java.io.Closeable;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.Socket;
@@ -109,9 +110,9 @@ public class McsService extends Service implements Handler.Callback {
     private boolean wasTornDown = false;
     private AtomicInteger nextMessageId = new AtomicInteger(0x1000000);
 
-    private static Socket sslSocket;
-    private static McsInputStream inputStream;
-    private static McsOutputStream outputStream;
+    private static volatile Socket sslSocket;
+    private static volatile McsInputStream inputStream;
+    private static volatile McsOutputStream outputStream;
 
     private PendingIntent heartbeatIntent;
 
@@ -442,7 +443,12 @@ public class McsService extends Service implements Handler.Callback {
         logd(this, "Starting MCS connection to port " + port + "...");
         Socket socket = new Socket(SERVICE_HOST, port);
         logd(this, "Connected to " + SERVICE_HOST + ":" + port);
-        sslSocket = SSLContext.getDefault().getSocketFactory().createSocket(socket, SERVICE_HOST, port, true);
+        try {
+            sslSocket = SSLContext.getDefault().getSocketFactory().createSocket(socket, SERVICE_HOST, port, true);
+        } catch (IOException e) {
+            socket.close();
+            throw e;
+        }
         logd(this, "Activated SSL with " + SERVICE_HOST + ":" + port);
         inputStream = new McsInputStream(sslSocket.getInputStream(), rootHandler);
         outputStream = new McsOutputStream(sslSocket.getOutputStream(), rootHandler);

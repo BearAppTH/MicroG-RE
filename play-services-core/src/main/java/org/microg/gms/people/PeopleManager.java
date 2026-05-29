@@ -67,9 +67,9 @@ public class PeopleManager {
             URLConnection conn = new URL(url).openConnection();
             conn.setDoInput(true);
             byte[] bytes = Utils.readStreamToEnd(conn.getInputStream());
-            FileOutputStream outputStream = new FileOutputStream(file);
-            outputStream.write(bytes);
-            outputStream.close();
+            try (FileOutputStream outputStream = new FileOutputStream(file)) {
+                outputStream.write(bytes);
+            }
             return file;
         } catch (Exception e) {
             Log.w(TAG, e);

@@ -301,6 +301,7 @@ public class LoginActivity extends AssistantActivity {
         settings.setNeedInitialFocus(false);
         settings.setUseWideViewPort(false);
         settings.setSupportZoom(false);
+        settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
         settings.setJavaScriptCanOpenWindowsAutomatically(false);
     }
 

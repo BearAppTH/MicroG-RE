@@ -41,12 +41,10 @@ public class GServices {
 
     public static String getString(ContentResolver resolver, String key, String defaultValue) {
         String result = defaultValue;
-        Cursor cursor = resolver.query(CONTENT_URI, null, null, new String[]{key}, null);
-        if (cursor != null) {
-            if (cursor.moveToNext()) {
+        try (Cursor cursor = resolver.query(CONTENT_URI, null, null, new String[]{key}, null)) {
+            if (cursor != null && cursor.moveToNext()) {
                 result = cursor.getString(1);
             }
-            cursor.close();
         }
         return result;
     }

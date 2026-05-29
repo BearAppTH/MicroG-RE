@@ -60,22 +60,26 @@ public class CheckinClient {
         connection.setRequestProperty("User-Agent", "Android-Checkin/2.0 (vbox86p JLS36G); gzip");
 
         Log.d(TAG, "-- Request --\n" + request);
-        OutputStream os = new GZIPOutputStream(connection.getOutputStream());
-        os.write(request.encode());
-        os.close();
+        try {
+            OutputStream os = new GZIPOutputStream(connection.getOutputStream());
+            os.write(request.encode());
+            os.close();
 
-        if (connection.getResponseCode() != 200) {
-            try {
-                throw new IOException(new String(Utils.readStreamToEnd(new GZIPInputStream(connection.getErrorStream()))));
-            } catch (Exception e) {
-                throw new IOException(connection.getResponseMessage(), e);
+            if (connection.getResponseCode() != 200) {
+                try {
+                    throw new IOException(new String(Utils.readStreamToEnd(new GZIPInputStream(connection.getErrorStream()))));
+                } catch (Exception e) {
+                    throw new IOException(connection.getResponseMessage(), e);
+                }
             }
-        }
 
-        InputStream is = connection.getInputStream();
-        CheckinResponse response = CheckinResponse.ADAPTER.decode(new GZIPInputStream(is));
-        is.close();
-        return response;
+            InputStream is = connection.getInputStream();
+            CheckinResponse response = CheckinResponse.ADAPTER.decode(new GZIPInputStream(is));
+            is.close();
+            return response;
+        } finally {
+            connection.disconnect();
+        }
     }
 
     public static CheckinRequest makeRequest(Context context, DeviceConfiguration deviceConfiguration,
