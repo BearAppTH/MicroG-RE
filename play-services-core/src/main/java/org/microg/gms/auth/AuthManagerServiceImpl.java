@@ -19,6 +19,7 @@ package org.microg.gms.auth;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -56,6 +57,7 @@ import static org.microg.gms.auth.AskPermissionActivity.EXTRA_CONSENT_DATA;
 
 public class AuthManagerServiceImpl extends IAuthManagerService.Stub {
     private static final String TAG = "GmsAuthManagerSvc";
+    private static final String AUTH_NOTIFICATION_CHANNEL = "auth-notification";
 
     public static final String KEY_ACCOUNT_FEATURES = "account_features";
     public static final String KEY_AUTHORITY = "authority";
@@ -165,7 +167,14 @@ public class AuthManagerServiceImpl extends IAuthManagerService.Stub {
                 }
                 if (notify) {
                     NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-                    nm.notify(packageName.hashCode(), new NotificationCompat.Builder(context)
+                    if (nm.getNotificationChannel(AUTH_NOTIFICATION_CHANNEL) == null) {
+                        NotificationChannel channel = new NotificationChannel(
+                                AUTH_NOTIFICATION_CHANNEL,
+                                context.getString(R.string.auth_notification_title),
+                                NotificationManager.IMPORTANCE_DEFAULT);
+                        nm.createNotificationChannel(channel);
+                    }
+                    nm.notify(packageName.hashCode(), new NotificationCompat.Builder(context, AUTH_NOTIFICATION_CHANNEL)
                             .setContentIntent(PendingIntent.getActivity(context, 0, i, PendingIntent.FLAG_IMMUTABLE))
                             .setContentTitle(context.getString(R.string.auth_notification_title))
                             .setContentText(context.getString(R.string.auth_notification_content, getPackageLabel(packageName, context.getPackageManager())))
