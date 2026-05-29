@@ -37,7 +37,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static android.os.Build.VERSION.SDK_INT;
 
 /**
  * Class for accessing collections of data, organized into columns. This provides the backing
@@ -155,31 +154,8 @@ public class DataHolder extends AutoSafeParcelable implements Closeable {
         return empty(statusCode, null);
     }
 
-    @SuppressWarnings("deprecation")
-    @SuppressLint({"NewApi", "ObsoleteSdkInt"})
     static int getCursorType(Cursor cursor, int i) {
-        if (SDK_INT >= 11) {
-            return cursor.getType(i);
-        }
-        if (cursor instanceof AbstractWindowedCursor) {
-            CursorWindow cursorWindow = ((AbstractWindowedCursor) cursor).getWindow();
-            int pos = cursor.getPosition();
-            int type = -1;
-            if (cursorWindow.isNull(pos, i)) {
-                type = FIELD_TYPE_NULL;
-            } else if (cursorWindow.isLong(pos, i)) {
-                type = FIELD_TYPE_INTEGER;
-            } else if (cursorWindow.isFloat(pos, i)) {
-                type = FIELD_TYPE_FLOAT;
-            } else if (cursorWindow.isString(pos, i)) {
-                type = FIELD_TYPE_STRING;
-            } else if (cursorWindow.isBlob(pos, i)) {
-                type = FIELD_TYPE_BLOB;
-            }
-
-            return type;
-        }
-        throw new RuntimeException("Unsupported cursor on this platform!");
+        return cursor.getType(i);
     }
 
     /**

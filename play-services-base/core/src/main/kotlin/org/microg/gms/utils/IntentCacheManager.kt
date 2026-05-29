@@ -32,11 +32,7 @@ class IntentCacheManager<S : Service, T : Parcelable>(private val context: Conte
     init {
         val pendingIntent = PendingIntent.getService(context, type, getIntent(), if (SDK_INT >= 31) FLAG_MUTABLE else FLAG_IMMUTABLE)
         val alarmManager = context.getSystemService<AlarmManager>()
-        if (SDK_INT >= 19) {
-            alarmManager?.setWindow(ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + TEN_YEARS, -1, pendingIntent)
-        } else {
-            alarmManager?.set(ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + TEN_YEARS, pendingIntent)
-        }
+        alarmManager?.setWindow(ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + TEN_YEARS, -1, pendingIntent)
         pendingIntent.send()
     }
 

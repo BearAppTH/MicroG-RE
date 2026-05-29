@@ -8,7 +8,6 @@ package org.microg.gms.ui
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
-import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
@@ -47,15 +46,8 @@ fun NavController.navigate(context: Context, @IdRes resId: Int, args: Bundle? = 
 
 val Context.systemAnimationsEnabled: Boolean
     get() {
-        val duration: Float
-        val transition: Float
-        if (SDK_INT >= 17) {
-            duration = Settings.Global.getFloat(contentResolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f)
-            transition = Settings.Global.getFloat(contentResolver, Settings.Global.TRANSITION_ANIMATION_SCALE, 1f)
-        } else {
-            duration = Settings.System.getFloat(contentResolver, Settings.System.ANIMATOR_DURATION_SCALE, 1f)
-            transition = Settings.System.getFloat(contentResolver, Settings.System.TRANSITION_ANIMATION_SCALE, 1f)
-        }
+        val duration = Settings.Global.getFloat(contentResolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f)
+        val transition = Settings.Global.getFloat(contentResolver, Settings.Global.TRANSITION_ANIMATION_SCALE, 1f)
         return duration != 0f && transition != 0f
     }
 

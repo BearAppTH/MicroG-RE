@@ -37,6 +37,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.CookieManager;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.RelativeLayout;
@@ -121,11 +122,10 @@ public class LoginActivity extends AssistantActivity {
         ((ViewGroup) findViewById(R.id.auth_root)).addView(webView);
         webView.setWebViewClient(new WebViewClientCompat() {
 
-            @SuppressWarnings("deprecation")
             @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                Log.d(TAG, "shouldOverrideUrlLoading: url: " + url);
-                Uri uri = Uri.parse(url);
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                Uri uri = request.getUrl();
+                Log.d(TAG, "shouldOverrideUrlLoading: url: " + uri);
                 String uriPath = uri.getPath();
                 if (uriPath != null && uriPath.contains("/signup")) {
                     String biz = uri.getQueryParameter("biz");
@@ -135,7 +135,7 @@ public class LoginActivity extends AssistantActivity {
                     startActivityForResult(intent, REQUEST_CODE_SIGNUP);
                     return true;
                 }
-                return super.shouldOverrideUrlLoading(view, url);
+                return super.shouldOverrideUrlLoading(view, request);
             }
 
             @Override
@@ -279,10 +279,12 @@ public class LoginActivity extends AssistantActivity {
         return webView;
     }
 
-    @SuppressWarnings("deprecation")
     private static void updateWebViewTheme(Context context, WebView webView) {
         boolean systemIsDark = isSystemDarkTheme(context);
-        if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
+        if (WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING)) {
+            WebSettingsCompat.setAlgorithmicDarkeningAllowed(webView.getSettings(), systemIsDark);
+        } else if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
+            //noinspection deprecation
             WebSettingsCompat.setForceDark(webView.getSettings(), systemIsDark ? WebSettingsCompat.FORCE_DARK_ON : WebSettingsCompat.FORCE_DARK_OFF);
         }
     }

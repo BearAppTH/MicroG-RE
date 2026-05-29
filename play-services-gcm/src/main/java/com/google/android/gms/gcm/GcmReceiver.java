@@ -25,7 +25,6 @@ import android.content.pm.ServiceInfo;
 import android.util.Base64;
 import android.util.Log;
 
-import static android.os.Build.VERSION.SDK_INT;
 import static org.microg.gms.gcm.GcmConstants.ACTION_C2DM_REGISTRATION;
 import static org.microg.gms.gcm.GcmConstants.ACTION_INSTANCE_ID;
 import static org.microg.gms.gcm.GcmConstants.EXTRA_FROM;
@@ -51,9 +50,6 @@ public class GcmReceiver extends BroadcastReceiver {
     private void sanitizeIntent(Context context, Intent intent) {
         intent.setComponent(null);
         intent.setPackage(context.getPackageName());
-        if (SDK_INT < 19) {
-            intent.removeCategory(context.getPackageName());
-        }
         String from = intent.getStringExtra(EXTRA_FROM);
         if (ACTION_C2DM_REGISTRATION.equals(intent.getAction()) || GCMID_INSTANCE_ID.equals(from) || GCMID_REFRESH.equals(from)) {
             intent.setAction(ACTION_INSTANCE_ID);
