@@ -37,8 +37,8 @@ buildscript {
     ext.androidBuildGradleVersion = '8.13.2'
 
     ext.androidMinSdk = 29
-    ext.androidTargetSdk = 35
-    ext.androidCompileSdk = 36
+    ext.androidTargetSdk = 36
+    ext.androidCompileSdk = 37
 
     ext.localProperties = new Properties()
 

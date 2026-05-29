@@ -3,7 +3,6 @@ package org.microg.tools.selfcheck;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.provider.Settings;
 
 import androidx.core.app.NotificationManagerCompat;
@@ -39,14 +38,8 @@ public class PermissionsChecks implements SelfCheckGroup {
                 context.getString(R.string.self_check_resolution_notifications),
                 true, null,
                 fragment -> {
-                    Intent intent = new Intent();
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        intent.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
-                        intent.putExtra(Settings.EXTRA_APP_PACKAGE, context.getPackageName());
-                    } else {
-                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                        intent.setData(Uri.parse("package:" + context.getPackageName()));
-                    }
+                    Intent intent = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+                            .putExtra(Settings.EXTRA_APP_PACKAGE, context.getPackageName());
                     launch(fragment, intent);
                 });
     }

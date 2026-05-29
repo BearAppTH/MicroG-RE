@@ -27,6 +27,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -36,7 +37,6 @@ import org.microg.gms.common.PackageUtils;
 
 import java.util.Arrays;
 
-import static android.os.Build.VERSION.SDK_INT;
 import static org.microg.gms.auth.AuthConstants.DEFAULT_ACCOUNT_TYPE;
 import static org.microg.gms.auth.AuthConstants.PROVIDER_EXTRA_ACCOUNTS;
 import static org.microg.gms.auth.AuthConstants.PROVIDER_EXTRA_CLEAR_PASSWORD;
@@ -54,10 +54,7 @@ public class AccountContentProvider extends ContentProvider {
     @Nullable
     @Override
     public Bundle call(String method, String arg, Bundle extras) {
-        String suggestedPackageName = null;
-        if (SDK_INT > 19) {
-            suggestedPackageName = getCallingPackage();
-        }
+        String suggestedPackageName = getCallingPackage();
         String packageName = PackageUtils.getAndCheckCallingPackage(getContext(), suggestedPackageName);
         if (!PackageUtils.callerHasExtendedAccess(getContext())) {
             String[] packagesForUid = getContext().getPackageManager().getPackagesForUid(Binder.getCallingUid());
@@ -92,7 +89,13 @@ public class AccountContentProvider extends ContentProvider {
             result.putParcelableArray(PROVIDER_EXTRA_ACCOUNTS, accounts);
             return result;
         } else if (PROVIDER_METHOD_CLEAR_PASSWORD.equals(method) && PackageUtils.callerHasExtendedAccess(getContext())) {
-            Account a = extras.getParcelable(PROVIDER_EXTRA_CLEAR_PASSWORD);
+            Account a;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                a = extras.getParcelable(PROVIDER_EXTRA_CLEAR_PASSWORD, Account.class);
+            } else {
+                //noinspection deprecation
+                a = extras.getParcelable(PROVIDER_EXTRA_CLEAR_PASSWORD);
+            }
             AccountManager.get(getContext()).clearPassword(a);
             return null;
         }
