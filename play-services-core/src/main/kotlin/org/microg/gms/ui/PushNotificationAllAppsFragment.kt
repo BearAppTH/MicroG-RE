@@ -8,9 +8,7 @@ package org.microg.gms.ui
 import android.os.Bundle
 import android.text.format.DateUtils
 import android.view.View
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
@@ -68,75 +66,69 @@ class PushNotificationAllAppsFragment : PreferenceFragmentCompat() {
     private fun updateContent() {
         val context = requireContext()
         lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                val apps = withContext(Dispatchers.IO) {
-                    try {
-                        database.appList.map { app ->
-                            val pref = AppIconPreference(context)
-                            pref.packageName = app.packageName
-                            pref.summary = if (app.lastMessageTimestamp > 0) {
-                                getString(
-                                    R.string.gcm_last_message_at,
-                                    DateUtils.getRelativeTimeSpanString(app.lastMessageTimestamp)
-                                )
-                            } else null
-                            pref.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-                                findNavController().navigate(
-                                    requireContext(),
-                                    R.id.openGcmAppDetailsFromAll,
-                                    Bundle().apply { putString("package", app.packageName) }
-                                )
-                                true
-                            }
-                            pref.key = "pref_push_app_" + app.packageName
-                            pref to database.getRegistrationsByApp(app.packageName)
-                        }.sortedBy {
-                            it.first.title.toString().lowercase()
-                        }.mapIndexed { idx, pair ->
-                            pair.first.order = idx
-                            pair
-                        }
-                    } finally {
-                        database.close()
+            val apps = withContext(Dispatchers.IO) {
+                database.appList.map { app ->
+                    val pref = AppIconPreference(context)
+                    pref.packageName = app.packageName
+                    pref.summary = if (app.lastMessageTimestamp > 0) {
+                        getString(
+                            R.string.gcm_last_message_at,
+                            DateUtils.getRelativeTimeSpanString(app.lastMessageTimestamp)
+                        )
+                    } else null
+                    pref.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+                        findNavController().navigate(
+                            requireContext(),
+                            R.id.openGcmAppDetailsFromAll,
+                            Bundle().apply { putString("package", app.packageName) }
+                        )
+                        true
                     }
+                    pref.key = "pref_push_app_" + app.packageName
+                    pref to database.getRegistrationsByApp(app.packageName)
+                }.sortedBy {
+                    it.first.title.toString().lowercase()
+                }.mapIndexed { idx, pair ->
+                    pair.first.order = idx
+                    pair
                 }
-
-                registered.removeAll()
-                unregistered.removeAll()
-
-                var hadRegistered = false
-                var hadUnregistered = false
-
-                val registeredList = mutableListOf<Preference>()
-                val unregisteredList = mutableListOf<Preference>()
-
-                for ((pref, registrations) in apps) {
-                    if (registrations.isEmpty()) {
-                        unregisteredList.add(pref)
-                        hadUnregistered = true
-                    } else {
-                        registeredList.add(pref)
-                        hadRegistered = true
-                    }
-                }
-
-                if (!hadRegistered) registeredList.add(registeredNone)
-                if (!hadUnregistered) unregisteredList.add(unregisteredNone)
-
-                registeredList.forEachIndexed { index, pref ->
-                    pref.layoutResource = chooseLayoutForPosition(index, registeredList.size)
-                    registered.addPreference(pref)
-                }
-
-                unregisteredList.forEachIndexed { index, pref ->
-                    pref.layoutResource = chooseLayoutForPosition(index, unregisteredList.size)
-                    unregistered.addPreference(pref)
-                }
-
-                registered.isVisible = true
-                unregistered.isVisible = true
-                progress.isVisible = false
             }
+
+            registered.removeAll()
+            unregistered.removeAll()
+
+            var hadRegistered = false
+            var hadUnregistered = false
+
+            val registeredList = mutableListOf<Preference>()
+            val unregisteredList = mutableListOf<Preference>()
+
+            for ((pref, registrations) in apps) {
+                if (registrations.isEmpty()) {
+                    unregisteredList.add(pref)
+                    hadUnregistered = true
+                } else {
+                    registeredList.add(pref)
+                    hadRegistered = true
+                }
+            }
+
+            if (!hadRegistered) registeredList.add(registeredNone)
+            if (!hadUnregistered) unregisteredList.add(unregisteredNone)
+
+            registeredList.forEachIndexed { index, pref ->
+                pref.layoutResource = chooseLayoutForPosition(index, registeredList.size)
+                registered.addPreference(pref)
+            }
+
+            unregisteredList.forEachIndexed { index, pref ->
+                pref.layoutResource = chooseLayoutForPosition(index, unregisteredList.size)
+                unregistered.addPreference(pref)
+            }
+
+            registered.isVisible = true
+            unregistered.isVisible = true
+            progress.isVisible = false
         }
     }
 

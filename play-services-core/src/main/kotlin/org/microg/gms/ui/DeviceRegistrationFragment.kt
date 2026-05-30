@@ -15,9 +15,7 @@ import android.util.Log
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.launch
 import androidx.preference.ListPreference
 import androidx.preference.Preference
@@ -165,22 +163,20 @@ class DeviceRegistrationFragment : PreferenceFragmentCompat() {
         handler.postDelayed(updateRunnable, UPDATE_INTERVAL)
         val appContext = requireContext().applicationContext
         lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                configureProfilePreference()
-                serial.summary = ProfileManager.getSerial(appContext)
-                val serviceInfo = getCheckinServiceInfo(appContext)
-                statusCategory.isVisible = serviceInfo.configuration.enabled
-                if (serviceInfo.lastCheckin > 0) {
-                    status.summary = getString(
-                        R.string.checkin_last_registration,
-                        DateUtils.getRelativeTimeSpanString(serviceInfo.lastCheckin, System.currentTimeMillis(), 0)
-                    )
-                    androidId.isVisible = true
-                    androidId.summary = serviceInfo.androidId.toString(16)
-                } else {
-                    status.summary = getString(R.string.checkin_not_registered)
-                    androidId.isVisible = false
-                }
+            configureProfilePreference()
+            serial.summary = ProfileManager.getSerial(appContext)
+            val serviceInfo = getCheckinServiceInfo(appContext)
+            statusCategory.isVisible = serviceInfo.configuration.enabled
+            if (serviceInfo.lastCheckin > 0) {
+                status.summary = getString(
+                    R.string.checkin_last_registration,
+                    DateUtils.getRelativeTimeSpanString(serviceInfo.lastCheckin, System.currentTimeMillis(), 0)
+                )
+                androidId.isVisible = true
+                androidId.summary = serviceInfo.androidId.toString(16)
+            } else {
+                status.summary = getString(R.string.checkin_not_registered)
+                androidId.isVisible = false
             }
         }
     }
