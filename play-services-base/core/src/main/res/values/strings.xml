@@ -41,4 +41,5 @@
     <string name="revanced_extended" translatable="false">ReVanced Extended</string>
     <string name="revanced_extended_anddea" translatable="false">ReVanced Extended (Anddea)</string>
     <string name="revanced_extended_rufusin" translatable="false">ReVanced Extended (Rufusin)</string>
+    <string name="battery_optimization_android16_hint">Find \"Bear MicroG\" in the list and select \"Unrestricted\"</string>
 </resources>

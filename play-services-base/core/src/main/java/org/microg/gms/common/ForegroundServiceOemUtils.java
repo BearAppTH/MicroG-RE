@@ -8,6 +8,8 @@ import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.microg.gms.base.core.R;
+
 import java.util.Locale;
 
 public class ForegroundServiceOemUtils {
@@ -41,13 +43,13 @@ public class ForegroundServiceOemUtils {
     }
 
     public static Intent getBatteryOptimizationIntent(Context context) {
-        // Temporary fix issues: https://github.com/MorpheApp/MicroG-RE/issues/112
-        if (isXiaomi()) {
+        // On Android 16+ (API 36), ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS no longer
+        // shows a direct Allow/Deny dialog for most apps — route to the settings list instead.
+        if (Build.VERSION.SDK_INT >= 36 || isXiaomi()) {
             return new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
-        } else {
-            return new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
-                    .setData(Uri.parse("package:" + context.getPackageName()));
         }
+        return new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+                .setData(Uri.parse("package:" + context.getPackageName()));
     }
 
     public interface IntentLauncher {
@@ -56,6 +58,9 @@ public class ForegroundServiceOemUtils {
 
     public static void openBatteryOptimizationSettings(Context context, IntentLauncher launcher) {
         Intent intent = getBatteryOptimizationIntent(context);
+        if (Build.VERSION.SDK_INT >= 36 && Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS.equals(intent.getAction())) {
+            Toast.makeText(context, R.string.battery_optimization_android16_hint, Toast.LENGTH_LONG).show();
+        }
         try {
             launcher.launch(intent);
         } catch (Exception e) {
