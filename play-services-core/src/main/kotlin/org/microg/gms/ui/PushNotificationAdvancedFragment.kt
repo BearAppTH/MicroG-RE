@@ -6,9 +6,7 @@
 package org.microg.gms.ui
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
-import android.provider.Settings
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Lifecycle
@@ -28,7 +26,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.microg.gms.checkin.LastCheckinInfo
 import org.microg.gms.gcm.*
-import androidx.core.net.toUri
 
 class PushNotificationAdvancedFragment : PreferenceFragmentCompat() {
     private lateinit var confirmNewApps: TwoStatePreference
@@ -75,15 +72,8 @@ class PushNotificationAdvancedFragment : PreferenceFragmentCompat() {
 
         confirmNewApps.onPreferenceChangeListener =
             Preference.OnPreferenceChangeListener { _, newValue ->
-
                 val enable = newValue as Boolean
                 val appContext = requireContext().applicationContext
-
-                if (enable && !hasOverlayPermission()) {
-                    openOverlayPermissionSettings()
-                    return@OnPreferenceChangeListener false
-                }
-
                 lifecycleScope.launch {
                     setGcmServiceConfiguration(
                         appContext,
@@ -91,7 +81,6 @@ class PushNotificationAdvancedFragment : PreferenceFragmentCompat() {
                     )
                     updateContent()
                 }
-
                 true
             }
         networkMobile.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
@@ -145,10 +134,8 @@ class PushNotificationAdvancedFragment : PreferenceFragmentCompat() {
     private suspend fun updateContent() {
         val appContext = requireContext().applicationContext
         val serviceInfo = getGcmServiceInfo(appContext)
-        val hasPermission = hasOverlayPermission()
-        val enabled = serviceInfo.configuration.confirmNewApps && hasPermission
 
-        confirmNewApps.isChecked = enabled
+        confirmNewApps.isChecked = serviceInfo.configuration.confirmNewApps
         networkMobile.value = serviceInfo.configuration.mobile.toString()
         networkMobile.summary = getSummaryString(serviceInfo.configuration.mobile, serviceInfo.learntMobileInterval)
         networkWifi.value = serviceInfo.configuration.wifi.toString()
@@ -157,13 +144,6 @@ class PushNotificationAdvancedFragment : PreferenceFragmentCompat() {
         networkRoaming.summary = getSummaryString(serviceInfo.configuration.roaming, serviceInfo.learntMobileInterval)
         networkOther.value = serviceInfo.configuration.other.toString()
         networkOther.summary = getSummaryString(serviceInfo.configuration.other, serviceInfo.learntOtherInterval)
-
-        if (serviceInfo.configuration.confirmNewApps && !hasPermission) {
-            setGcmServiceConfiguration(
-                appContext,
-                serviceInfo.configuration.copy(confirmNewApps = false)
-            )
-        }
     }
 
     private fun getSummaryString(value: Int, learnt: Int): String = when (value) {
@@ -181,18 +161,6 @@ class PushNotificationAdvancedFragment : PreferenceFragmentCompat() {
     companion object {
         @Suppress("unused")
         private val HEARTBEAT_PREFS = arrayOf(GcmPrefs.PREF_NETWORK_MOBILE, GcmPrefs.PREF_NETWORK_ROAMING, GcmPrefs.PREF_NETWORK_WIFI, GcmPrefs.PREF_NETWORK_OTHER)
-    }
-
-    private fun hasOverlayPermission(): Boolean {
-        return Settings.canDrawOverlays(requireContext())
-    }
-
-    private fun openOverlayPermissionSettings() {
-        val context = requireContext()
-        val intent = Intent(
-            Settings.ACTION_MANAGE_OVERLAY_PERMISSION, "package:${context.packageName}".toUri()
-        )
-        startActivity(intent)
     }
 
     @SuppressLint("SetTextI18n")

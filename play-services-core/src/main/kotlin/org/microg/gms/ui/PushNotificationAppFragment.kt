@@ -10,9 +10,7 @@ import android.os.Bundle
 import android.text.format.DateUtils
 import android.view.View
 import androidx.appcompat.app.AlertDialog
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
@@ -106,14 +104,12 @@ class PushNotificationAppFragment : PreferenceFragmentCompat() {
 
     private fun unregister() {
         lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                withContext(Dispatchers.IO) {
-                    for (registration in database.getRegistrationsByApp(packageName)) {
-                        PushRegisterManager.unregister(context, registration.packageName, registration.signature, null, null)
-                    }
+            withContext(Dispatchers.IO) {
+                for (registration in database.getRegistrationsByApp(packageName)) {
+                    PushRegisterManager.unregister(context, registration.packageName, registration.signature, null, null)
                 }
-                updateDetails()
             }
+            updateDetails()
         }
     }
 
@@ -124,37 +120,33 @@ class PushNotificationAppFragment : PreferenceFragmentCompat() {
 
     private fun updateDetails() {
         lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                try {
-                    appHeadingPreference.packageName = packageName
-                    val app = packageName?.let { database.getApp(it) }
-                    wakeForDelivery.isChecked = app?.wakeForDelivery ?: true
-                    allowRegister.isChecked = app?.allowRegister ?: true
-                    val registrations = packageName?.let { database.getRegistrationsByApp(it) } ?: emptyList()
-                    unregisterCat.isVisible = registrations.isNotEmpty()
+            appHeadingPreference.packageName = packageName
+            val app = withContext(Dispatchers.IO) { packageName?.let { database.getApp(it) } }
+            wakeForDelivery.isChecked = app?.wakeForDelivery ?: true
+            allowRegister.isChecked = app?.allowRegister ?: true
+            val registrations = withContext(Dispatchers.IO) {
+                packageName?.let { database.getRegistrationsByApp(it) } ?: emptyList()
+            }
+            unregisterCat.isVisible = registrations.isNotEmpty()
 
-                    val sb = StringBuilder()
-                    if ((app?.totalMessageCount ?: 0L) == 0L) {
-                        sb.append(getString(R.string.gcm_no_message_yet))
-                    } else {
-                        sb.append(getString(R.string.gcm_messages_counter, app?.totalMessageCount, app?.totalMessageBytes))
-                        if (app?.lastMessageTimestamp != 0L) {
-                            sb.append("\n").append(getString(R.string.gcm_last_message_at, DateUtils.getRelativeDateTimeString(context, app?.lastMessageTimestamp ?: 0L, DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_SHOW_TIME)))
-                        }
-                    }
-                    for (registration in registrations) {
-                        sb.append("\n")
-                        if (registration.timestamp == 0L) {
-                            sb.append(getString(R.string.gcm_registered))
-                        } else {
-                            sb.append(getString(R.string.gcm_registered_since, DateUtils.getRelativeDateTimeString(context, registration.timestamp, DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_SHOW_TIME)))
-                        }
-                    }
-                    status.title = sb.toString()
-                } finally {
-                    database.close()
+            val sb = StringBuilder()
+            if ((app?.totalMessageCount ?: 0L) == 0L) {
+                sb.append(getString(R.string.gcm_no_message_yet))
+            } else {
+                sb.append(getString(R.string.gcm_messages_counter, app?.totalMessageCount, app?.totalMessageBytes))
+                if (app?.lastMessageTimestamp != 0L) {
+                    sb.append("\n").append(getString(R.string.gcm_last_message_at, DateUtils.getRelativeDateTimeString(context, app?.lastMessageTimestamp ?: 0L, DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_SHOW_TIME)))
                 }
             }
+            for (registration in registrations) {
+                sb.append("\n")
+                if (registration.timestamp == 0L) {
+                    sb.append(getString(R.string.gcm_registered))
+                } else {
+                    sb.append(getString(R.string.gcm_registered_since, DateUtils.getRelativeDateTimeString(context, registration.timestamp, DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_SHOW_TIME)))
+                }
+            }
+            status.title = sb.toString()
         }
     }
 
