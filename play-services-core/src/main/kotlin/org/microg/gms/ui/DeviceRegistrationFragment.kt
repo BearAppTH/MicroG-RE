@@ -6,16 +6,22 @@
 package org.microg.gms.ui
 
 import android.annotation.SuppressLint
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.format.DateUtils
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import androidx.preference.ListPreference
 import androidx.preference.Preference
@@ -43,8 +49,6 @@ class DeviceRegistrationFragment : PreferenceFragmentCompat() {
     private lateinit var statusCategory: PreferenceCategory
     private lateinit var status: Preference
     private lateinit var androidId: Preference
-    private val handler = Handler(Looper.getMainLooper())
-    private val updateRunnable = Runnable { updateStatus() }
     private lateinit var profileFileImport: ActivityResultLauncher<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,7 +71,7 @@ class DeviceRegistrationFragment : PreferenceFragmentCompat() {
             if (success && ProfileManager.isAutoProfile(context, PROFILE_USER)) {
                 ProfileManager.setProfile(context, PROFILE_USER)
             }
-            updateStatus()
+            lifecycleScope.launch { updateStatus() }
         } catch (e: Exception) {
             Log.w(TAG, e)
         }
@@ -80,6 +84,15 @@ class DeviceRegistrationFragment : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         view.setBackgroundColor(MaterialColors.getColor(view, android.R.attr.colorBackground))
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                while (true) {
+                    updateStatus()
+                    delay(UPDATE_INTERVAL)
+                }
+            }
+        }
     }
 
     @SuppressLint("RestrictedApi")
@@ -94,7 +107,7 @@ class DeviceRegistrationFragment : PreferenceFragmentCompat() {
 
         deviceProfile.setOnPreferenceChangeListener { _, newValue ->
             ProfileManager.setProfile(requireContext(), newValue as String? ?: PROFILE_AUTO)
-            updateStatus()
+            lifecycleScope.launch { updateStatus() }
             true
         }
         importProfile.setOnPreferenceClickListener {
@@ -105,6 +118,23 @@ class DeviceRegistrationFragment : PreferenceFragmentCompat() {
             val newStatus = newValue as Boolean
             CheckinPreferences.setEnabled(requireContext(), newStatus)
             true
+        }
+
+        serial.setOnPreferenceClickListener {
+            copyToClipboard("Serial", serial.summary?.toString() ?: return@setOnPreferenceClickListener true)
+            true
+        }
+        androidId.setOnPreferenceClickListener {
+            copyToClipboard("Android ID", androidId.summary?.toString() ?: return@setOnPreferenceClickListener true)
+            true
+        }
+    }
+
+    private fun copyToClipboard(label: String, text: String) {
+        val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        clipboard.setPrimaryClip(ClipData.newPlainText(label, text))
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            Toast.makeText(requireContext(), R.string.pref_copied_to_clipboard, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -147,37 +177,25 @@ class DeviceRegistrationFragment : PreferenceFragmentCompat() {
 
     override fun onResume() {
         super.onResume()
-
         switchBarPreference.isChecked = CheckinPreferences.isEnabled(requireContext())
-
-        updateStatus()
     }
 
-    override fun onPause() {
-        super.onPause()
-        handler.removeCallbacks(updateRunnable)
-    }
-
-    private fun updateStatus() {
-        handler.removeCallbacks(updateRunnable)
+    private suspend fun updateStatus() {
+        configureProfilePreference()
         val appContext = requireContext().applicationContext
-        lifecycleScope.launch {
-            configureProfilePreference()
-            serial.summary = ProfileManager.getSerial(appContext)
-            val serviceInfo = getCheckinServiceInfo(appContext)
-            statusCategory.isVisible = serviceInfo.configuration.enabled
-            if (serviceInfo.lastCheckin > 0) {
-                status.summary = getString(
-                    R.string.checkin_last_registration,
-                    DateUtils.getRelativeTimeSpanString(serviceInfo.lastCheckin, System.currentTimeMillis(), 0)
-                )
-                androidId.isVisible = true
-                androidId.summary = serviceInfo.androidId.toString(16)
-            } else {
-                status.summary = getString(R.string.checkin_not_registered)
-                androidId.isVisible = false
-            }
-            handler.postDelayed(updateRunnable, UPDATE_INTERVAL)
+        serial.summary = ProfileManager.getSerial(appContext)
+        val serviceInfo = getCheckinServiceInfo(appContext)
+        statusCategory.isVisible = serviceInfo.configuration.enabled
+        if (serviceInfo.lastCheckin > 0) {
+            status.summary = getString(
+                R.string.checkin_last_registration,
+                DateUtils.getRelativeTimeSpanString(serviceInfo.lastCheckin, System.currentTimeMillis(), 0)
+            )
+            androidId.isVisible = true
+            androidId.summary = serviceInfo.androidId.toString(16)
+        } else {
+            status.summary = getString(R.string.checkin_not_registered)
+            androidId.isVisible = false
         }
     }
 

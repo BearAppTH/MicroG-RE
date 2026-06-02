@@ -7,8 +7,6 @@ package org.microg.gms.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.format.DateUtils
 import android.view.Menu
 import android.view.MenuInflater
@@ -17,6 +15,7 @@ import android.view.View
 import androidx.core.view.MenuProvider
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
@@ -25,10 +24,10 @@ import com.google.android.gms.R
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.transition.MaterialSharedAxis
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.microg.gms.checkin.CheckinPreferences
-import org.microg.gms.gcm.GcmDatabase
 import org.microg.gms.gcm.GcmPrefs
 import org.microg.gms.gcm.getGcmServiceInfo
 
@@ -39,9 +38,8 @@ class PushNotificationFragment : PreferenceFragmentCompat() {
     private lateinit var pushApps: PreferenceCategory
     private lateinit var pushAppsAll: Preference
     private lateinit var pushAppsNone: Preference
-    private lateinit var database: GcmDatabase
-    private val handler = Handler(Looper.getMainLooper())
-    private val updateRunnable = Runnable { updateStatus() }
+
+    private val database get() = GcmDatabaseProvider.get(requireContext())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +47,6 @@ class PushNotificationFragment : PreferenceFragmentCompat() {
         returnTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
         exitTransition = MaterialSharedAxis(MaterialSharedAxis.X, true)
         reenterTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
-        database = GcmDatabase(context)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -69,6 +66,15 @@ class PushNotificationFragment : PreferenceFragmentCompat() {
                 }
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                while (true) {
+                    updateStatus()
+                    delay(UPDATE_INTERVAL)
+                }
+            }
+        }
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -102,30 +108,18 @@ class PushNotificationFragment : PreferenceFragmentCompat() {
         super.onResume()
         switchBarPreference.isEnabled = CheckinPreferences.isEnabled(requireContext())
         switchBarPreference.isChecked = GcmPrefs.get(requireContext()).isEnabled
-
-        updateStatus()
         updateContent()
     }
 
-    override fun onPause() {
-        super.onPause()
-        database.close()
-        handler.removeCallbacks(updateRunnable)
-    }
-
-    private fun updateStatus() {
-        handler.removeCallbacks(updateRunnable)
+    private suspend fun updateStatus() {
         val appContext = requireContext().applicationContext
-        lifecycleScope.launch {
-            val statusInfo = getGcmServiceInfo(appContext)
-            switchBarPreference.isChecked = statusInfo.configuration.enabled
-            pushStatusCategory.isVisible = statusInfo.configuration.enabled
-            pushStatus.summary = if (statusInfo.connected) {
-                appContext.getString(R.string.gcm_network_state_connected, DateUtils.getRelativeTimeSpanString(statusInfo.startTimestamp, System.currentTimeMillis(), 0))
-            } else {
-                appContext.getString(R.string.gcm_network_state_disconnected)
-            }
-            handler.postDelayed(updateRunnable, UPDATE_INTERVAL)
+        val statusInfo = getGcmServiceInfo(appContext)
+        switchBarPreference.isChecked = statusInfo.configuration.enabled
+        pushStatusCategory.isVisible = statusInfo.configuration.enabled
+        pushStatus.summary = if (statusInfo.connected) {
+            appContext.getString(R.string.gcm_network_state_connected, DateUtils.getRelativeTimeSpanString(statusInfo.startTimestamp, System.currentTimeMillis(), 0))
+        } else {
+            appContext.getString(R.string.gcm_network_state_disconnected)
         }
     }
 
