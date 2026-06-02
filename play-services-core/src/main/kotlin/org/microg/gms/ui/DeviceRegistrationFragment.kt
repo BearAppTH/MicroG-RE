@@ -158,6 +158,7 @@ class DeviceRegistrationFragment : PreferenceFragmentCompat() {
     }
 
     private suspend fun updateStatus() {
+        if (!::deviceProfile.isInitialized) return
         val appContext = requireContext().applicationContext
         val profileStatus = withContext(Dispatchers.IO) { buildProfileStatus(appContext) }
         val serviceInfo = getCheckinServiceInfo(appContext)

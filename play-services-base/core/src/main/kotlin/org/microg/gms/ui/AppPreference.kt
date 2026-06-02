@@ -53,11 +53,10 @@ abstract class AppPreference : Preference {
         }
 
     fun setApplicationData(packageName: String, label: CharSequence, icon: Drawable?, versionName: String?) {
-        title = label
-        this.icon = icon ?: AppCompatResources.getDrawable(context, android.R.mipmap.sym_def_app_icon)
         appVersion = versionName
         packageNameField = packageName
-        notifyChanged()
+        title = label
+        this.icon = icon ?: AppCompatResources.getDrawable(context, android.R.mipmap.sym_def_app_icon)
     }
 
     var packageName: String?
