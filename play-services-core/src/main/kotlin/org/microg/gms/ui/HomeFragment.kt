@@ -24,7 +24,9 @@ import com.google.android.material.color.MaterialColors
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.transition.MaterialSharedAxis
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.microg.gms.auth.AuthConstants
 import org.microg.gms.checkin.CheckinPreferences
 import org.microg.gms.checkin.getCheckinServiceInfo
@@ -138,9 +140,15 @@ class HomeFragment : Fragment() {
                     }
                 }
 
-                val pushAppsCount = if (gcmEnabled) {
-                    GcmDatabaseProvider.get(appContext).registrationList.size
-                } else 0
+                val (pushAppsCount, profile, serial) = withContext(Dispatchers.IO) {
+                    val count = if (gcmEnabled) GcmDatabaseProvider.get(appContext).registrationList.size else 0
+                    val p = ProfileManager.getConfiguredProfile(appContext)
+                    val s = ProfileManager.getSerial(appContext)
+                    Triple(count, p, s)
+                }
+                val profileName = withContext(Dispatchers.IO) {
+                    ProfileManager.getProfileName(appContext, profile) ?: profile
+                }
 
                 v.findViewById<TextView>(R.id.tv_push_apps_count)?.text = if (pushAppsCount > 0)
                     resources.getQuantityString(R.plurals.home_push_apps_count, pushAppsCount, pushAppsCount)
@@ -149,12 +157,9 @@ class HomeFragment : Fragment() {
                 v.findViewById<TextView>(R.id.tv_push_apps_count)?.visibility =
                     if (pushAppsCount > 0) View.VISIBLE else View.GONE
 
-                val profile = ProfileManager.getConfiguredProfile(appContext)
-                val profileName = ProfileManager.getProfileName(appContext, profile) ?: profile
                 v.findViewById<TextView>(R.id.tv_device_profile)?.text =
                     getString(R.string.home_profile_label, profileName)
 
-                val serial = ProfileManager.getSerial(appContext)
                 v.findViewById<TextView>(R.id.tv_device_serial)?.text =
                     getString(R.string.home_serial_label, serial)
             } catch (e: CancellationException) {
