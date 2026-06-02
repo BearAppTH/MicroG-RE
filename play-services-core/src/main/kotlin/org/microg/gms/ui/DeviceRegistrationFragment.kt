@@ -54,8 +54,8 @@ class DeviceRegistrationFragment : PreferenceFragmentCompat() {
     private lateinit var profileFileImport: ActivityResultLauncher<String>
 
     private data class ProfileStatus(
-        val entryValues: Array<CharSequence>,
-        val entries: Array<CharSequence>,
+        val entryValues: List<CharSequence>,
+        val entries: List<CharSequence>,
         val value: String,
         val summary: String,
         val serial: String
@@ -162,8 +162,8 @@ class DeviceRegistrationFragment : PreferenceFragmentCompat() {
         val (profileStatus, serviceInfo) = withContext(Dispatchers.IO) {
             buildProfileStatus(appContext) to getCheckinServiceInfo(appContext)
         }
-        deviceProfile.entryValues = profileStatus.entryValues
-        deviceProfile.entries = profileStatus.entries
+        deviceProfile.entryValues = profileStatus.entryValues.toTypedArray()
+        deviceProfile.entries = profileStatus.entries.toTypedArray()
         deviceProfile.value = profileStatus.value
         deviceProfile.summary = profileStatus.summary
         serial.summary = profileStatus.serial
@@ -203,11 +203,7 @@ class DeviceRegistrationFragment : PreferenceFragmentCompat() {
             profiles.add(PROFILE_USER)
             profileNames.add(appContext.getString(R.string.profile_name_user, ProfileManager.getProfileName(appContext, PROFILE_USER)))
         }
-        for (profile in R.xml::class.java.declaredFields
-            .map { it.name }
-            .filter { it.startsWith("profile_") }
-            .map { it.substring(8) }
-            .sorted()) {
+        for (profile in BUILT_IN_PROFILES) {
             ProfileManager.getProfileName(appContext, profile)?.let { name ->
                 profiles.add(profile)
                 profileNames.add(name)
@@ -215,8 +211,8 @@ class DeviceRegistrationFragment : PreferenceFragmentCompat() {
         }
         val summary = profiles.indexOf(configured).takeIf { it >= 0 }?.let { profileNames[it] } ?: "Unknown"
         return ProfileStatus(
-            entryValues = profiles.toTypedArray(),
-            entries = profileNames.toTypedArray(),
+            entryValues = profiles,
+            entries = profileNames,
             value = configured,
             summary = summary,
             serial = ProfileManager.getSerial(appContext)
@@ -226,5 +222,12 @@ class DeviceRegistrationFragment : PreferenceFragmentCompat() {
     companion object {
         private const val UPDATE_INTERVAL = 1000L
         private const val TAG = "DeviceRegistrationFragment"
+        private val BUILT_IN_PROFILES: List<String> by lazy {
+            R.xml::class.java.declaredFields
+                .map { it.name }
+                .filter { it.startsWith("profile_") }
+                .map { it.substring(8) }
+                .sorted()
+        }
     }
 }

@@ -19,6 +19,7 @@ import com.google.android.gms.R
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.transition.MaterialSharedAxis
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -42,7 +43,10 @@ class PushNotificationAllAppsFragment : PreferenceFragmentCompat() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                updateContent()
+                while (true) {
+                    updateContent()
+                    delay(UPDATE_INTERVAL)
+                }
             }
         }
     }
@@ -61,15 +65,23 @@ class PushNotificationAllAppsFragment : PreferenceFragmentCompat() {
 
     private suspend fun updateContent() {
         val context = requireContext()
+        val pm = context.packageManager
         val rawData = withContext(Dispatchers.IO) {
             val appList = database.appList
             val registrationsByPackage = database.registrationList.groupBy { it.packageName }
-            appList.map { app -> app to (registrationsByPackage[app.packageName] ?: emptyList()) }
+            appList.map { app ->
+                val appInfo = pm.getApplicationInfoIfExists(app.packageName)
+                Triple(app, registrationsByPackage[app.packageName] ?: emptyList(), appInfo)
+            }
         }
 
-        val apps = rawData.map { (app, registrations) ->
+        val apps = rawData.map { (app, registrations, appInfo) ->
             val pref = AppIconPreference(context)
-            pref.packageName = app.packageName
+            if (appInfo != null) {
+                pref.applicationInfo = appInfo
+            } else {
+                pref.packageName = app.packageName
+            }
             pref.summary = if (app.lastMessageTimestamp > 0) {
                 getString(
                     R.string.gcm_last_message_at,
@@ -120,5 +132,9 @@ class PushNotificationAllAppsFragment : PreferenceFragmentCompat() {
         registered.isVisible = true
         unregistered.isVisible = true
         progress.isVisible = false
+    }
+
+    companion object {
+        private const val UPDATE_INTERVAL = 5_000L
     }
 }

@@ -152,6 +152,7 @@ class PushNotificationAdvancedFragment : PreferenceFragmentCompat() {
 
     @SuppressLint("SetTextI18n")
     private fun showRemoveRegistersDialog() {
+        removeRegistersDialog?.dismiss()
         val dialog = AlertDialog.Builder(requireContext()).setIcon(R.drawable.ic_unregister)
             .setTitle(R.string.gcm_remove_registers_dialog_title)
             .setMessage(R.string.gcm_remove_registers_dialog_message)

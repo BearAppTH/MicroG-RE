@@ -13,11 +13,11 @@ import android.os.Build
 import android.util.Log
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import java.io.Serializable
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 private const val ACTION_SERVICE_INFO_REQUEST = "org.microg.gms.gcm.SERVICE_INFO_REQUEST"
 private const val ACTION_SERVICE_INFO_RESPONSE = "org.microg.gms.gcm.SERVICE_INFO_RESPONSE"
@@ -52,10 +52,10 @@ class ServiceInfoReceiver : BroadcastReceiver() {
     }
 }
 
-private suspend fun sendToServiceInfoReceiver(intent: Intent, context: Context): ServiceInfo = suspendCoroutine {
-    ContextCompat.registerReceiver(context, object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            context.unregisterReceiver(this)
+private suspend fun sendToServiceInfoReceiver(intent: Intent, context: Context): ServiceInfo = suspendCancellableCoroutine { cont ->
+    val receiver = object : BroadcastReceiver() {
+        override fun onReceive(ctx: Context, intent: Intent) {
+            ctx.unregisterReceiver(this)
             val serviceInfo = try {
                 @Suppress("DEPRECATION")
                 val raw = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -65,20 +65,24 @@ private suspend fun sendToServiceInfoReceiver(intent: Intent, context: Context):
                 }
                 raw ?: throw Exception("ServiceInfo was null")
             } catch (e: Exception) {
-                it.resumeWithException(e)
+                cont.resumeWithException(e)
                 return
             }
             try {
-                it.resume(serviceInfo)
+                cont.resume(serviceInfo)
             } catch (e: Exception) {
                 Log.w(TAG, e)
             }
         }
-    }, IntentFilter(ACTION_SERVICE_INFO_RESPONSE), ContextCompat.RECEIVER_NOT_EXPORTED)
+    }
+    ContextCompat.registerReceiver(context, receiver, IntentFilter(ACTION_SERVICE_INFO_RESPONSE), ContextCompat.RECEIVER_NOT_EXPORTED)
+    cont.invokeOnCancellation {
+        try { context.unregisterReceiver(receiver) } catch (_: Exception) {}
+    }
     try {
         context.sendOrderedBroadcast(intent, null)
     } catch (e: Exception) {
-        it.resumeWithException(e)
+        cont.resumeWithException(e)
     }
 }
 
