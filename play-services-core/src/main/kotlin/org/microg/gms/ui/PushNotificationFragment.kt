@@ -114,7 +114,7 @@ class PushNotificationFragment : PreferenceFragmentCompat() {
     }
 
     private fun updateStatus() {
-        handler.postDelayed(updateRunnable, UPDATE_INTERVAL)
+        handler.removeCallbacks(updateRunnable)
         val appContext = requireContext().applicationContext
         lifecycleScope.launch {
             val statusInfo = getGcmServiceInfo(appContext)
@@ -125,33 +125,36 @@ class PushNotificationFragment : PreferenceFragmentCompat() {
             } else {
                 appContext.getString(R.string.gcm_network_state_disconnected)
             }
+            handler.postDelayed(updateRunnable, UPDATE_INTERVAL)
         }
     }
 
     private fun updateContent() {
         lifecycleScope.launch {
             val context = requireContext()
-            val (apps, showAll) = withContext(Dispatchers.IO) {
+            val (rawApps, showAll) = withContext(Dispatchers.IO) {
                 val appList = database.appList.sortedByDescending { it.lastMessageTimestamp }
-                val installed = appList.map { app ->
-                    app to context.packageManager.getApplicationInfoIfExists(app.packageName)
-                }.mapNotNull { (app, info) ->
+                val installed = appList.mapNotNull { app ->
+                    val info = context.packageManager.getApplicationInfoIfExists(app.packageName)
                     if (info == null) null else app to info
                 }
-                installed.take(3).mapIndexed { idx, (app, applicationInfo) ->
-                    val pref = AppIconPreference(context)
-                    pref.order = idx
-                    pref.applicationInfo = applicationInfo
-                    pref.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-                        findNavController().navigate(
-                            requireContext(), R.id.openGcmAppDetails,
-                            Bundle().apply { putString("package", app.packageName) }
-                        )
-                        true
-                    }
-                    pref.key = "pref_push_app_" + app.packageName
-                    pref
-                }.let { it to (it.size < installed.size) }
+                val toDisplay = installed.take(3)
+                toDisplay to (appList.size > toDisplay.size)
+            }
+
+            val apps = rawApps.mapIndexed { idx, (app, applicationInfo) ->
+                val pref = AppIconPreference(context)
+                pref.order = idx
+                pref.applicationInfo = applicationInfo
+                pref.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+                    findNavController().navigate(
+                        requireContext(), R.id.openGcmAppDetails,
+                        Bundle().apply { putString("package", app.packageName) }
+                    )
+                    true
+                }
+                pref.key = "pref_push_app_" + app.packageName
+                pref
             }
 
             pushApps.removeAll()
@@ -178,18 +181,6 @@ class PushNotificationFragment : PreferenceFragmentCompat() {
                 pushApps.addPreference(pushAppsAll)
             }
             pushAppsAll.isVisible = showAll
-        }
-    }
-
-    private fun chooseLayoutForPosition(index: Int, total: Int): Int {
-        return when {
-            total <= 1 -> R.layout.preference_material_secondary_single
-            total == 2 -> if (index == 0) R.layout.preference_material_secondary_top else R.layout.preference_material_secondary_bottom
-            else -> when (index) {
-                0 -> R.layout.preference_material_secondary_top
-                total - 1 -> R.layout.preference_material_secondary_bottom
-                else -> R.layout.preference_material_secondary_middle
-            }
         }
     }
 

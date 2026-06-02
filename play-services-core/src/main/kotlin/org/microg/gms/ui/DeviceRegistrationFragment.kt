@@ -160,7 +160,6 @@ class DeviceRegistrationFragment : PreferenceFragmentCompat() {
 
     private fun updateStatus() {
         handler.removeCallbacks(updateRunnable)
-        handler.postDelayed(updateRunnable, UPDATE_INTERVAL)
         val appContext = requireContext().applicationContext
         lifecycleScope.launch {
             configureProfilePreference()
@@ -178,6 +177,7 @@ class DeviceRegistrationFragment : PreferenceFragmentCompat() {
                 status.summary = getString(R.string.checkin_not_registered)
                 androidId.isVisible = false
             }
+            handler.postDelayed(updateRunnable, UPDATE_INTERVAL)
         }
     }
 

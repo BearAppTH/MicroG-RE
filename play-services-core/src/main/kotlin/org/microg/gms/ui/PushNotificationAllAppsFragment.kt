@@ -66,32 +66,36 @@ class PushNotificationAllAppsFragment : PreferenceFragmentCompat() {
     private fun updateContent() {
         val context = requireContext()
         lifecycleScope.launch {
-            val apps = withContext(Dispatchers.IO) {
+            val rawData = withContext(Dispatchers.IO) {
                 database.appList.map { app ->
-                    val pref = AppIconPreference(context)
-                    pref.packageName = app.packageName
-                    pref.summary = if (app.lastMessageTimestamp > 0) {
-                        getString(
-                            R.string.gcm_last_message_at,
-                            DateUtils.getRelativeTimeSpanString(app.lastMessageTimestamp)
-                        )
-                    } else null
-                    pref.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-                        findNavController().navigate(
-                            requireContext(),
-                            R.id.openGcmAppDetailsFromAll,
-                            Bundle().apply { putString("package", app.packageName) }
-                        )
-                        true
-                    }
-                    pref.key = "pref_push_app_" + app.packageName
-                    pref to database.getRegistrationsByApp(app.packageName)
-                }.sortedBy {
-                    it.first.title.toString().lowercase()
-                }.mapIndexed { idx, pair ->
-                    pair.first.order = idx
-                    pair
+                    app to database.getRegistrationsByApp(app.packageName)
                 }
+            }
+
+            val apps = rawData.map { (app, registrations) ->
+                val pref = AppIconPreference(context)
+                pref.packageName = app.packageName
+                pref.summary = if (app.lastMessageTimestamp > 0) {
+                    getString(
+                        R.string.gcm_last_message_at,
+                        DateUtils.getRelativeTimeSpanString(app.lastMessageTimestamp)
+                    )
+                } else null
+                pref.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+                    findNavController().navigate(
+                        requireContext(),
+                        R.id.openGcmAppDetailsFromAll,
+                        Bundle().apply { putString("package", app.packageName) }
+                    )
+                    true
+                }
+                pref.key = "pref_push_app_" + app.packageName
+                pref to registrations
+            }.sortedBy {
+                it.first.title?.toString()?.lowercase() ?: ""
+            }.mapIndexed { idx, pair ->
+                pair.first.order = idx
+                pair
             }
 
             registered.removeAll()
@@ -129,23 +133,6 @@ class PushNotificationAllAppsFragment : PreferenceFragmentCompat() {
             registered.isVisible = true
             unregistered.isVisible = true
             progress.isVisible = false
-        }
-    }
-
-    private fun chooseLayoutForPosition(index: Int, total: Int): Int {
-        return when {
-            total <= 1 -> R.layout.preference_material_secondary_single
-            total == 2 -> if (index == 0) {
-                R.layout.preference_material_secondary_top
-            } else {
-                R.layout.preference_material_secondary_bottom
-            }
-
-            else -> when (index) {
-                0 -> R.layout.preference_material_secondary_top
-                total - 1 -> R.layout.preference_material_secondary_bottom
-                else -> R.layout.preference_material_secondary_middle
-            }
         }
     }
 }
