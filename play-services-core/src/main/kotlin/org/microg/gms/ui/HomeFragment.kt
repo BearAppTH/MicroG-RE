@@ -28,7 +28,6 @@ import kotlinx.coroutines.launch
 import org.microg.gms.auth.AuthConstants
 import org.microg.gms.checkin.CheckinPreferences
 import org.microg.gms.checkin.getCheckinServiceInfo
-import org.microg.gms.gcm.GcmDatabase
 import org.microg.gms.gcm.GcmPrefs
 import org.microg.gms.gcm.getGcmServiceInfo
 import org.microg.gms.profile.ProfileManager
@@ -140,12 +139,7 @@ class HomeFragment : Fragment() {
                 }
 
                 val pushAppsCount = if (gcmEnabled) {
-                    val db = GcmDatabase(appContext)
-                    try {
-                        db.registrationList.size
-                    } finally {
-                        db.close()
-                    }
+                    GcmDatabaseProvider.get(appContext).registrationList.size
                 } else 0
 
                 v.findViewById<TextView>(R.id.tv_push_apps_count)?.text = if (pushAppsCount > 0)

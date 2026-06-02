@@ -21,8 +21,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
@@ -50,6 +52,14 @@ class DeviceRegistrationFragment : PreferenceFragmentCompat() {
     private lateinit var status: Preference
     private lateinit var androidId: Preference
     private lateinit var profileFileImport: ActivityResultLauncher<String>
+
+    private data class ProfileStatus(
+        val entryValues: Array<CharSequence>,
+        val entries: Array<CharSequence>,
+        val value: String,
+        val summary: String,
+        val serial: String
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -121,11 +131,15 @@ class DeviceRegistrationFragment : PreferenceFragmentCompat() {
         }
 
         serial.setOnPreferenceClickListener {
-            copyToClipboard("Serial", serial.summary?.toString() ?: return@setOnPreferenceClickListener true)
+            val text = serial.summary?.toString()?.takeIf { it.isNotEmpty() }
+                ?: return@setOnPreferenceClickListener true
+            copyToClipboard("Serial", text)
             true
         }
         androidId.setOnPreferenceClickListener {
-            copyToClipboard("Android ID", androidId.summary?.toString() ?: return@setOnPreferenceClickListener true)
+            val text = androidId.summary?.toString()?.takeIf { it.isNotEmpty() }
+                ?: return@setOnPreferenceClickListener true
+            copyToClipboard("Android ID", text)
             true
         }
     }
@@ -138,53 +152,21 @@ class DeviceRegistrationFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private fun configureProfilePreference() {
-        val context = requireContext()
-        val configuredProfile = ProfileManager.getConfiguredProfile(context)
-        val autoProfile = ProfileManager.getAutoProfile(context)
-        val autoProfileName = when (autoProfile) {
-            PROFILE_NATIVE -> getString(R.string.profile_name_native)
-            PROFILE_REAL -> getString(R.string.profile_name_real)
-            else -> ProfileManager.getProfileName(context, autoProfile)
-        }
-        val profiles =
-            mutableListOf(PROFILE_AUTO, PROFILE_NATIVE, PROFILE_REAL)
-        val profileNames = mutableListOf(getString(R.string.profile_name_auto, autoProfileName), getString(R.string.profile_name_native), getString(R.string.profile_name_real))
-        if (ProfileManager.hasProfile(context, PROFILE_SYSTEM)) {
-            profiles.add(PROFILE_SYSTEM)
-            profileNames.add(getString(R.string.profile_name_system, ProfileManager.getProfileName(context, PROFILE_SYSTEM)))
-        }
-        if (ProfileManager.hasProfile(context, PROFILE_USER)) {
-            profiles.add(PROFILE_USER)
-            profileNames.add(getString(R.string.profile_name_user, ProfileManager.getProfileName(context, PROFILE_USER)))
-        }
-        for (profile in R.xml::class.java.declaredFields.map { it.name }
-            .filter { it.startsWith("profile_") }
-            .map { it.substring(8) }
-            .sorted()) {
-            val profileName = ProfileManager.getProfileName(context, profile)
-            if (profileName != null) {
-                profiles.add(profile)
-                profileNames.add(profileName)
-            }
-        }
-        deviceProfile.entryValues = profiles.toTypedArray()
-        deviceProfile.entries = profileNames.toTypedArray()
-        deviceProfile.value = configuredProfile
-        deviceProfile.summary =
-            profiles.indexOf(configuredProfile).takeIf { it >= 0 }?.let { profileNames[it] } ?: "Unknown"
-    }
-
     override fun onResume() {
         super.onResume()
         switchBarPreference.isChecked = CheckinPreferences.isEnabled(requireContext())
     }
 
     private suspend fun updateStatus() {
-        configureProfilePreference()
         val appContext = requireContext().applicationContext
-        serial.summary = ProfileManager.getSerial(appContext)
-        val serviceInfo = getCheckinServiceInfo(appContext)
+        val (profileStatus, serviceInfo) = withContext(Dispatchers.IO) {
+            buildProfileStatus(appContext) to getCheckinServiceInfo(appContext)
+        }
+        deviceProfile.entryValues = profileStatus.entryValues
+        deviceProfile.entries = profileStatus.entries
+        deviceProfile.value = profileStatus.value
+        deviceProfile.summary = profileStatus.summary
+        serial.summary = profileStatus.serial
         statusCategory.isVisible = serviceInfo.configuration.enabled
         if (serviceInfo.lastCheckin > 0) {
             status.summary = getString(
@@ -197,6 +179,48 @@ class DeviceRegistrationFragment : PreferenceFragmentCompat() {
             status.summary = getString(R.string.checkin_not_registered)
             androidId.isVisible = false
         }
+    }
+
+    private fun buildProfileStatus(appContext: Context): ProfileStatus {
+        val configured = ProfileManager.getConfiguredProfile(appContext)
+        val autoProfile = ProfileManager.getAutoProfile(appContext)
+        val autoProfileName = when (autoProfile) {
+            PROFILE_NATIVE -> appContext.getString(R.string.profile_name_native)
+            PROFILE_REAL -> appContext.getString(R.string.profile_name_real)
+            else -> ProfileManager.getProfileName(appContext, autoProfile) ?: autoProfile
+        }
+        val profiles = mutableListOf(PROFILE_AUTO, PROFILE_NATIVE, PROFILE_REAL)
+        val profileNames = mutableListOf(
+            appContext.getString(R.string.profile_name_auto, autoProfileName),
+            appContext.getString(R.string.profile_name_native),
+            appContext.getString(R.string.profile_name_real)
+        )
+        if (ProfileManager.hasProfile(appContext, PROFILE_SYSTEM)) {
+            profiles.add(PROFILE_SYSTEM)
+            profileNames.add(appContext.getString(R.string.profile_name_system, ProfileManager.getProfileName(appContext, PROFILE_SYSTEM)))
+        }
+        if (ProfileManager.hasProfile(appContext, PROFILE_USER)) {
+            profiles.add(PROFILE_USER)
+            profileNames.add(appContext.getString(R.string.profile_name_user, ProfileManager.getProfileName(appContext, PROFILE_USER)))
+        }
+        for (profile in R.xml::class.java.declaredFields
+            .map { it.name }
+            .filter { it.startsWith("profile_") }
+            .map { it.substring(8) }
+            .sorted()) {
+            ProfileManager.getProfileName(appContext, profile)?.let { name ->
+                profiles.add(profile)
+                profileNames.add(name)
+            }
+        }
+        val summary = profiles.indexOf(configured).takeIf { it >= 0 }?.let { profileNames[it] } ?: "Unknown"
+        return ProfileStatus(
+            entryValues = profiles.toTypedArray(),
+            entries = profileNames.toTypedArray(),
+            value = configured,
+            summary = summary,
+            serial = ProfileManager.getSerial(appContext)
+        )
     }
 
     companion object {
