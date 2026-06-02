@@ -61,25 +61,24 @@ class PushNotificationAppFragment : PreferenceFragmentCompat() {
         unregisterCat = preferenceScreen.findPreference("prefcat_push_app_unregister") ?: unregisterCat
         status = preferenceScreen.findPreference("pref_push_app_status") ?: status
         wakeForDelivery.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
-            try {
-                database.setAppWakeForDelivery(packageName, newValue as Boolean)
-            } finally {
-                database.close()
+            val wake = newValue as Boolean
+            lifecycleScope.launch {
+                withContext(Dispatchers.IO) { database.setAppWakeForDelivery(packageName, wake) }
             }
             true
         }
         allowRegister.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
             val enabled = newValue as? Boolean ?: return@OnPreferenceChangeListener false
-            try {
+            lifecycleScope.launch {
                 if (!enabled) {
-                    val registrations = packageName?.let { database.getRegistrationsByApp(it) } ?: emptyList()
+                    val registrations = withContext(Dispatchers.IO) {
+                        packageName?.let { database.getRegistrationsByApp(it) } ?: emptyList()
+                    }
                     if (registrations.isNotEmpty()) {
                         showUnregisterConfirm(R.string.gcm_unregister_after_deny_message)
                     }
                 }
-                database.setAppAllowRegister(packageName, enabled)
-            } finally {
-                database.close()
+                withContext(Dispatchers.IO) { database.setAppAllowRegister(packageName, enabled) }
             }
             true
         }
@@ -88,7 +87,6 @@ class PushNotificationAppFragment : PreferenceFragmentCompat() {
             true
         }
     }
-
 
     private fun showUnregisterConfirm(unregisterConfirmDesc: Int) {
         val pm = requireContext().packageManager
@@ -103,10 +101,11 @@ class PushNotificationAppFragment : PreferenceFragmentCompat() {
     }
 
     private fun unregister() {
+        val appContext = requireContext().applicationContext
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
                 for (registration in database.getRegistrationsByApp(packageName)) {
-                    PushRegisterManager.unregister(context, registration.packageName, registration.signature, null, null)
+                    PushRegisterManager.unregister(appContext, registration.packageName, registration.signature, null, null)
                 }
             }
             updateDetails()
@@ -115,39 +114,38 @@ class PushNotificationAppFragment : PreferenceFragmentCompat() {
 
     override fun onResume() {
         super.onResume()
-        updateDetails()
+        lifecycleScope.launch { updateDetails() }
     }
 
-    private fun updateDetails() {
-        lifecycleScope.launch {
-            appHeadingPreference.packageName = packageName
-            val app = withContext(Dispatchers.IO) { packageName?.let { database.getApp(it) } }
-            wakeForDelivery.isChecked = app?.wakeForDelivery ?: true
-            allowRegister.isChecked = app?.allowRegister ?: true
-            val registrations = withContext(Dispatchers.IO) {
-                packageName?.let { database.getRegistrationsByApp(it) } ?: emptyList()
-            }
-            unregisterCat.isVisible = registrations.isNotEmpty()
-
-            val sb = StringBuilder()
-            if ((app?.totalMessageCount ?: 0L) == 0L) {
-                sb.append(getString(R.string.gcm_no_message_yet))
-            } else {
-                sb.append(getString(R.string.gcm_messages_counter, app?.totalMessageCount, app?.totalMessageBytes))
-                if (app?.lastMessageTimestamp != 0L) {
-                    sb.append("\n").append(getString(R.string.gcm_last_message_at, DateUtils.getRelativeDateTimeString(context, app?.lastMessageTimestamp ?: 0L, DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_SHOW_TIME)))
-                }
-            }
-            for (registration in registrations) {
-                sb.append("\n")
-                if (registration.timestamp == 0L) {
-                    sb.append(getString(R.string.gcm_registered))
-                } else {
-                    sb.append(getString(R.string.gcm_registered_since, DateUtils.getRelativeDateTimeString(context, registration.timestamp, DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_SHOW_TIME)))
-                }
-            }
-            status.title = sb.toString()
+    private suspend fun updateDetails() {
+        appHeadingPreference.packageName = packageName
+        val (app, registrations) = withContext(Dispatchers.IO) {
+            val app = packageName?.let { database.getApp(it) }
+            val registrations = packageName?.let { database.getRegistrationsByApp(it) } ?: emptyList()
+            app to registrations
         }
+        wakeForDelivery.isChecked = app?.wakeForDelivery ?: true
+        allowRegister.isChecked = app?.allowRegister ?: true
+        unregisterCat.isVisible = registrations.isNotEmpty()
+
+        val sb = StringBuilder()
+        if ((app?.totalMessageCount ?: 0L) == 0L) {
+            sb.append(getString(R.string.gcm_no_message_yet))
+        } else {
+            sb.append(getString(R.string.gcm_messages_counter, app?.totalMessageCount, app?.totalMessageBytes))
+            if (app?.lastMessageTimestamp != 0L) {
+                sb.append("\n").append(getString(R.string.gcm_last_message_at, DateUtils.getRelativeDateTimeString(context, app?.lastMessageTimestamp ?: 0L, DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_SHOW_TIME)))
+            }
+        }
+        for (registration in registrations) {
+            sb.append("\n")
+            if (registration.timestamp == 0L) {
+                sb.append(getString(R.string.gcm_registered))
+            } else {
+                sb.append(getString(R.string.gcm_registered_since, DateUtils.getRelativeDateTimeString(context, registration.timestamp, DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_SHOW_TIME)))
+            }
+        }
+        status.title = sb.toString()
     }
 
     override fun onPause() {
