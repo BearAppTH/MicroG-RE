@@ -42,10 +42,11 @@ class PushLogFragment : Fragment() {
         val recyclerView = view.findViewById<RecyclerView>(R.id.rv_push_log)
         val emptyView = view.findViewById<TextView>(R.id.tv_push_log_empty)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        val appContext = requireContext().applicationContext
 
         lifecycleScope.launch {
             val items = withContext(Dispatchers.IO) {
-                GcmDatabaseProvider.get(requireContext().applicationContext).appList
+                GcmDatabaseProvider.get(appContext).appList
                     .filter { it.lastMessageTimestamp > 0 }
                     .sortedByDescending { it.lastMessageTimestamp }
             }

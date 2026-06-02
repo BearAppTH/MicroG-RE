@@ -5,6 +5,8 @@
 
 package org.microg.gms.ui
 
+import android.content.pm.PackageManager
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.format.DateUtils
 import android.view.View
@@ -22,6 +24,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.microg.gms.gcm.GcmDatabase
 
 class PushNotificationAllAppsFragment : PreferenceFragmentCompat() {
     private val database get() = GcmDatabaseProvider.get(requireContext())
@@ -63,6 +66,14 @@ class PushNotificationAllAppsFragment : PreferenceFragmentCompat() {
         progress = preferenceScreen.findPreference("pref_push_apps_all_progress") ?: progress
     }
 
+    private data class AppDisplayData(
+        val app: GcmDatabase.App,
+        val registrations: List<GcmDatabase.Registration>,
+        val label: CharSequence,
+        val icon: Drawable?,
+        val version: String?
+    )
+
     private suspend fun updateContent() {
         val context = requireContext()
         val pm = context.packageManager
@@ -71,33 +82,35 @@ class PushNotificationAllAppsFragment : PreferenceFragmentCompat() {
             val registrationsByPackage = database.registrationList.groupBy { it.packageName }
             appList.map { app ->
                 val appInfo = pm.getApplicationInfoIfExists(app.packageName)
-                Triple(app, registrationsByPackage[app.packageName] ?: emptyList(), appInfo)
+                val label: CharSequence = appInfo?.loadLabel(pm) ?: app.packageName
+                val icon: Drawable? = appInfo?.loadIcon(pm)
+                val version: String? = appInfo?.let {
+                    try { pm.getPackageInfo(it.packageName, 0)?.versionName }
+                    catch (_: PackageManager.NameNotFoundException) { null }
+                }
+                AppDisplayData(app, registrationsByPackage[app.packageName] ?: emptyList(), label, icon, version)
             }
         }
 
-        val apps = rawData.map { (app, registrations, appInfo) ->
+        val apps = rawData.map { data ->
             val pref = AppIconPreference(context)
-            if (appInfo != null) {
-                pref.applicationInfo = appInfo
-            } else {
-                pref.packageName = app.packageName
-            }
-            pref.summary = if (app.lastMessageTimestamp > 0) {
+            pref.setApplicationData(data.app.packageName, data.label, data.icon, data.version)
+            pref.summary = if (data.app.lastMessageTimestamp > 0) {
                 getString(
                     R.string.gcm_last_message_at,
-                    DateUtils.getRelativeTimeSpanString(app.lastMessageTimestamp)
+                    DateUtils.getRelativeTimeSpanString(data.app.lastMessageTimestamp)
                 )
             } else null
             pref.onPreferenceClickListener = Preference.OnPreferenceClickListener {
                 findNavController().navigate(
                     requireContext(),
                     R.id.openGcmAppDetailsFromAll,
-                    Bundle().apply { putString("package", app.packageName) }
+                    Bundle().apply { putString("package", data.app.packageName) }
                 )
                 true
             }
-            pref.key = "pref_push_app_" + app.packageName
-            pref to registrations
+            pref.key = "pref_push_app_" + data.app.packageName
+            pref to data.registrations
         }.sortedBy {
             it.first.title?.toString()?.lowercase() ?: ""
         }.mapIndexed { idx, pair ->

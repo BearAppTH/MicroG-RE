@@ -25,6 +25,8 @@ import com.google.android.material.floatingactionbutton.ExtendedFloatingActionBu
 import com.google.android.material.transition.MaterialSharedAxis
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.microg.gms.auth.AuthConstants
@@ -91,7 +93,14 @@ class HomeFragment : Fragment() {
 
             try {
                 val checkinEnabled = CheckinPreferences.isEnabled(appContext)
-                val checkinInfo = if (checkinEnabled) getCheckinServiceInfo(appContext) else null
+                val gcmEnabled = GcmPrefs.get(appContext).isEnabled
+
+                val (checkinInfo, gcmInfo) = coroutineScope {
+                    val c = async { if (checkinEnabled) getCheckinServiceInfo(appContext) else null }
+                    val g = async { if (gcmEnabled) getGcmServiceInfo(appContext) else null }
+                    c.await() to g.await()
+                }
+
                 val isRegistered = checkinEnabled && (checkinInfo?.lastCheckin ?: 0L) > 0
 
                 val colorOk = ContextCompat.getColor(appContext, R.color.md_theme_primary)
@@ -130,24 +139,18 @@ class HomeFragment : Fragment() {
                     else -> getString(R.string.checkin_not_registered)
                 }
 
-                val gcmEnabled = GcmPrefs.get(appContext).isEnabled
                 v.findViewById<TextView>(R.id.tv_push_status)?.text = when {
                     !gcmEnabled -> getString(R.string.home_push_disabled)
-                    else -> {
-                        val gcmInfo = getGcmServiceInfo(appContext)
-                        if (gcmInfo.connected) getString(R.string.home_push_connected)
-                        else getString(R.string.home_push_disconnected)
-                    }
+                    gcmInfo?.connected == true -> getString(R.string.home_push_connected)
+                    else -> getString(R.string.home_push_disconnected)
                 }
 
-                val (pushAppsCount, profile, serial) = withContext(Dispatchers.IO) {
+                val (pushAppsCount, profileName, serial) = withContext(Dispatchers.IO) {
                     val count = if (gcmEnabled) GcmDatabaseProvider.get(appContext).registrationList.size else 0
                     val p = ProfileManager.getConfiguredProfile(appContext)
+                    val pName = ProfileManager.getProfileName(appContext, p) ?: p
                     val s = ProfileManager.getSerial(appContext)
-                    Triple(count, p, s)
-                }
-                val profileName = withContext(Dispatchers.IO) {
-                    ProfileManager.getProfileName(appContext, profile) ?: profile
+                    Triple(count, pName, s)
                 }
 
                 v.findViewById<TextView>(R.id.tv_push_apps_count)?.text = if (pushAppsCount > 0)

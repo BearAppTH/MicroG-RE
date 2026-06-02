@@ -8,6 +8,7 @@ package org.microg.gms.ui
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.View
 import android.widget.TextView
@@ -50,6 +51,13 @@ abstract class AppPreference : Preference {
             }
             packageNameField = value?.packageName
         }
+
+    fun setApplicationData(packageName: String, label: CharSequence, icon: Drawable?, versionName: String?) {
+        appVersion = versionName
+        packageNameField = packageName
+        title = label
+        this.icon = icon ?: AppCompatResources.getDrawable(context, android.R.mipmap.sym_def_app_icon)
+    }
 
     var packageName: String?
         get() = packageNameField

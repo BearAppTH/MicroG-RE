@@ -24,6 +24,7 @@ import com.google.android.gms.R
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.transition.MaterialSharedAxis
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -40,6 +41,7 @@ class PushNotificationFragment : PreferenceFragmentCompat() {
     private lateinit var pushAppsNone: Preference
 
     private val database get() = GcmDatabaseProvider.get(requireContext())
+    private var updateContentJob: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -108,7 +110,8 @@ class PushNotificationFragment : PreferenceFragmentCompat() {
         super.onResume()
         switchBarPreference.isEnabled = CheckinPreferences.isEnabled(requireContext())
         switchBarPreference.isChecked = GcmPrefs.get(requireContext()).isEnabled
-        updateContent()
+        updateContentJob?.cancel()
+        updateContentJob = lifecycleScope.launch { updateContent() }
     }
 
     private suspend fun updateStatus() {
@@ -123,59 +126,57 @@ class PushNotificationFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private fun updateContent() {
-        lifecycleScope.launch {
-            val context = requireContext()
-            val (rawApps, showAll) = withContext(Dispatchers.IO) {
-                val appList = database.appList.sortedByDescending { it.lastMessageTimestamp }
-                val installed = appList.mapNotNull { app ->
-                    val info = context.packageManager.getApplicationInfoIfExists(app.packageName)
-                    if (info == null) null else app to info
-                }
-                val toDisplay = installed.take(3)
-                toDisplay to (installed.size > toDisplay.size)
+    private suspend fun updateContent() {
+        val context = requireContext()
+        val (rawApps, showAll) = withContext(Dispatchers.IO) {
+            val appList = database.appList.sortedByDescending { it.lastMessageTimestamp }
+            val installed = appList.mapNotNull { app ->
+                val info = context.packageManager.getApplicationInfoIfExists(app.packageName)
+                if (info == null) null else app to info
             }
-
-            val apps = rawApps.mapIndexed { idx, (app, applicationInfo) ->
-                val pref = AppIconPreference(context)
-                pref.order = idx
-                pref.applicationInfo = applicationInfo
-                pref.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-                    findNavController().navigate(
-                        requireContext(), R.id.openGcmAppDetails,
-                        Bundle().apply { putString("package", app.packageName) }
-                    )
-                    true
-                }
-                pref.key = "pref_push_app_" + app.packageName
-                pref
-            }
-
-            pushApps.removeAll()
-
-            val totalDisplayed = when {
-                apps.isEmpty() -> 1
-                showAll -> apps.size + 1
-                else -> apps.size
-            }
-
-            apps.forEachIndexed { index, pref ->
-                pref.layoutResource = chooseLayoutForPosition(index, totalDisplayed)
-                pref.isIconSpaceReserved = true
-                pushApps.addPreference(pref)
-            }
-
-            if (apps.isEmpty()) {
-                pushAppsNone.layoutResource = chooseLayoutForPosition(0, totalDisplayed)
-                pushAppsNone.isIconSpaceReserved = false
-                pushApps.addPreference(pushAppsNone)
-            } else if (showAll) {
-                pushAppsAll.layoutResource = chooseLayoutForPosition(apps.size, totalDisplayed)
-                pushAppsAll.isIconSpaceReserved = false
-                pushApps.addPreference(pushAppsAll)
-            }
-            pushAppsAll.isVisible = showAll
+            val toDisplay = installed.take(3)
+            toDisplay to (installed.size > toDisplay.size)
         }
+
+        val apps = rawApps.mapIndexed { idx, (app, applicationInfo) ->
+            val pref = AppIconPreference(context)
+            pref.order = idx
+            pref.applicationInfo = applicationInfo
+            pref.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+                findNavController().navigate(
+                    requireContext(), R.id.openGcmAppDetails,
+                    Bundle().apply { putString("package", app.packageName) }
+                )
+                true
+            }
+            pref.key = "pref_push_app_" + app.packageName
+            pref
+        }
+
+        pushApps.removeAll()
+
+        val totalDisplayed = when {
+            apps.isEmpty() -> 1
+            showAll -> apps.size + 1
+            else -> apps.size
+        }
+
+        apps.forEachIndexed { index, pref ->
+            pref.layoutResource = chooseLayoutForPosition(index, totalDisplayed)
+            pref.isIconSpaceReserved = true
+            pushApps.addPreference(pref)
+        }
+
+        if (apps.isEmpty()) {
+            pushAppsNone.layoutResource = chooseLayoutForPosition(0, totalDisplayed)
+            pushAppsNone.isIconSpaceReserved = false
+            pushApps.addPreference(pushAppsNone)
+        } else if (showAll) {
+            pushAppsAll.layoutResource = chooseLayoutForPosition(apps.size, totalDisplayed)
+            pushAppsAll.isIconSpaceReserved = false
+            pushApps.addPreference(pushAppsAll)
+        }
+        pushAppsAll.isVisible = showAll
     }
 
     companion object {
