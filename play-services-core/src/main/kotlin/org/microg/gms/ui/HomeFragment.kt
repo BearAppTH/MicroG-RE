@@ -140,14 +140,12 @@ class HomeFragment : Fragment() {
                     }
                 }
 
-                val (pushAppsCount, profile, serial) = withContext(Dispatchers.IO) {
+                val (pushAppsCount, profileName, serial) = withContext(Dispatchers.IO) {
                     val count = if (gcmEnabled) GcmDatabaseProvider.get(appContext).registrationList.size else 0
                     val p = ProfileManager.getConfiguredProfile(appContext)
+                    val pName = ProfileManager.getProfileName(appContext, p) ?: p
                     val s = ProfileManager.getSerial(appContext)
-                    Triple(count, p, s)
-                }
-                val profileName = withContext(Dispatchers.IO) {
-                    ProfileManager.getProfileName(appContext, profile) ?: profile
+                    Triple(count, pName, s)
                 }
 
                 v.findViewById<TextView>(R.id.tv_push_apps_count)?.text = if (pushAppsCount > 0)

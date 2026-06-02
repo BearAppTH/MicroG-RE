@@ -159,9 +159,8 @@ class DeviceRegistrationFragment : PreferenceFragmentCompat() {
 
     private suspend fun updateStatus() {
         val appContext = requireContext().applicationContext
-        val (profileStatus, serviceInfo) = withContext(Dispatchers.IO) {
-            buildProfileStatus(appContext) to getCheckinServiceInfo(appContext)
-        }
+        val profileStatus = withContext(Dispatchers.IO) { buildProfileStatus(appContext) }
+        val serviceInfo = getCheckinServiceInfo(appContext)
         deviceProfile.entryValues = profileStatus.entryValues.toTypedArray()
         deviceProfile.entries = profileStatus.entries.toTypedArray()
         deviceProfile.value = profileStatus.value
