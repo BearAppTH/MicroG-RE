@@ -8,6 +8,7 @@ package org.microg.gms.ui
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -21,7 +22,6 @@ import com.google.android.material.color.MaterialColors
 import com.google.android.material.transition.MaterialSharedAxis
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import android.widget.Toast
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.microg.gms.checkin.LastCheckinInfo
@@ -35,6 +35,7 @@ class PushNotificationAdvancedFragment : PreferenceFragmentCompat() {
     private lateinit var networkOther: ListPreference
 
     private val database get() = GcmDatabaseProvider.get(requireContext())
+    private var removeRegistersDialog: AlertDialog? = null
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.preferences_push_notification_settings)
@@ -52,9 +53,18 @@ class PushNotificationAdvancedFragment : PreferenceFragmentCompat() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                updateContent()
+                while (true) {
+                    updateContent()
+                    delay(UPDATE_INTERVAL)
+                }
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        removeRegistersDialog?.dismiss()
+        removeRegistersDialog = null
     }
 
     @SuppressLint("RestrictedApi")
@@ -69,7 +79,7 @@ class PushNotificationAdvancedFragment : PreferenceFragmentCompat() {
             Preference.OnPreferenceChangeListener { _, newValue ->
                 val enable = newValue as Boolean
                 val appContext = requireContext().applicationContext
-                lifecycleScope.launch {
+                viewLifecycleOwner.lifecycleScope.launch {
                     setGcmServiceConfiguration(
                         appContext,
                         getGcmServiceInfo(appContext).configuration.copy(confirmNewApps = enable)
@@ -105,7 +115,7 @@ class PushNotificationAdvancedFragment : PreferenceFragmentCompat() {
     ) {
         pref.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
             val appContext = requireContext().applicationContext
-            lifecycleScope.launch {
+            viewLifecycleOwner.lifecycleScope.launch {
                 (newValue as? String)?.toIntOrNull()?.let { configure(appContext, it) }
                 updateContent()
             }
@@ -114,7 +124,7 @@ class PushNotificationAdvancedFragment : PreferenceFragmentCompat() {
     }
 
     private suspend fun updateContent() {
-        val appContext = requireContext().applicationContext
+        val appContext = context?.applicationContext ?: return
         val serviceInfo = getGcmServiceInfo(appContext)
 
         confirmNewApps.isChecked = serviceInfo.configuration.confirmNewApps
@@ -140,11 +150,6 @@ class PushNotificationAdvancedFragment : PreferenceFragmentCompat() {
         } else getString(R.string.push_notifications_summary_values_minutes, (heartbeatMs / 60000).toString())
     }
 
-    companion object {
-        @Suppress("unused")
-        private val HEARTBEAT_PREFS = arrayOf(GcmPrefs.PREF_NETWORK_MOBILE, GcmPrefs.PREF_NETWORK_ROAMING, GcmPrefs.PREF_NETWORK_WIFI, GcmPrefs.PREF_NETWORK_OTHER)
-    }
-
     @SuppressLint("SetTextI18n")
     private fun showRemoveRegistersDialog() {
         val dialog = AlertDialog.Builder(requireContext()).setIcon(R.drawable.ic_unregister)
@@ -152,6 +157,7 @@ class PushNotificationAdvancedFragment : PreferenceFragmentCompat() {
             .setMessage(R.string.gcm_remove_registers_dialog_message)
             .setPositiveButton(android.R.string.ok, null)
             .setNegativeButton(android.R.string.cancel, null).create()
+        removeRegistersDialog = dialog
 
         dialog.setOnShowListener {
             val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
@@ -172,12 +178,16 @@ class PushNotificationAdvancedFragment : PreferenceFragmentCompat() {
                 positiveButton.alpha = 1f
                 positiveButton.isEnabled = true
                 positiveButton.setOnClickListener {
+                    val appContext = context?.applicationContext ?: return@setOnClickListener
+                    val db = database
                     lifecycleScope.launch {
                         withContext(Dispatchers.IO) {
-                            LastCheckinInfo.clear(requireContext())
-                            database.resetDatabase()
+                            LastCheckinInfo.clear(appContext)
+                            db.resetDatabase()
                         }
-                        Toast.makeText(requireContext(), R.string.gcm_remove_registers_toast_message, Toast.LENGTH_SHORT).show()
+                        context?.let { ctx ->
+                            Toast.makeText(ctx, R.string.gcm_remove_registers_toast_message, Toast.LENGTH_SHORT).show()
+                        }
                     }
                     dialog.dismiss()
                 }
@@ -185,5 +195,9 @@ class PushNotificationAdvancedFragment : PreferenceFragmentCompat() {
         }
 
         dialog.show()
+    }
+
+    companion object {
+        private const val UPDATE_INTERVAL = 5_000L
     }
 }

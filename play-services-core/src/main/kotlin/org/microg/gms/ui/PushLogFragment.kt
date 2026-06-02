@@ -22,7 +22,6 @@ import com.google.android.material.transition.MaterialSharedAxis
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.microg.gms.gcm.GcmDatabase
 
 class PushLogFragment : Fragment() {
 
@@ -45,14 +44,9 @@ class PushLogFragment : Fragment() {
 
         lifecycleScope.launch {
             val items = withContext(Dispatchers.IO) {
-                val db = GcmDatabase(requireContext().applicationContext)
-                try {
-                    db.appList
-                        .filter { it.lastMessageTimestamp > 0 }
-                        .sortedByDescending { it.lastMessageTimestamp }
-                } finally {
-                    db.close()
-                }
+                GcmDatabaseProvider.get(requireContext().applicationContext).appList
+                    .filter { it.lastMessageTimestamp > 0 }
+                    .sortedByDescending { it.lastMessageTimestamp }
             }
 
             if (items.isEmpty()) {
