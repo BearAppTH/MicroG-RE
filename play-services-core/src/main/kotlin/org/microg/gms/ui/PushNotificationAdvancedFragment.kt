@@ -33,7 +33,8 @@ class PushNotificationAdvancedFragment : PreferenceFragmentCompat() {
     private lateinit var networkWifi: ListPreference
     private lateinit var networkRoaming: ListPreference
     private lateinit var networkOther: ListPreference
-    private lateinit var database: GcmDatabase
+
+    private val database get() = GcmDatabaseProvider.get(requireContext())
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.preferences_push_notification_settings)
@@ -41,14 +42,8 @@ class PushNotificationAdvancedFragment : PreferenceFragmentCompat() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        database = GcmDatabase(context)
         enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, true)
         returnTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        database.close()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -83,45 +78,18 @@ class PushNotificationAdvancedFragment : PreferenceFragmentCompat() {
                 }
                 true
             }
-        networkMobile.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
-            val appContext = requireContext().applicationContext
-            lifecycleScope.launch {
-                (newValue as? String)?.toIntOrNull()?.let {
-                    setGcmServiceConfiguration(appContext, getGcmServiceInfo(appContext).configuration.copy(mobile = it))
-                }
-                updateContent()
-            }
-            true
+
+        bindNetworkPref(networkMobile) { appContext, value ->
+            setGcmServiceConfiguration(appContext, getGcmServiceInfo(appContext).configuration.copy(mobile = value))
         }
-        networkWifi.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
-            val appContext = requireContext().applicationContext
-            lifecycleScope.launch {
-                (newValue as? String)?.toIntOrNull()?.let {
-                    setGcmServiceConfiguration(appContext, getGcmServiceInfo(appContext).configuration.copy(wifi = it))
-                }
-                updateContent()
-            }
-            true
+        bindNetworkPref(networkWifi) { appContext, value ->
+            setGcmServiceConfiguration(appContext, getGcmServiceInfo(appContext).configuration.copy(wifi = value))
         }
-        networkRoaming.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
-            val appContext = requireContext().applicationContext
-            lifecycleScope.launch {
-                (newValue as? String)?.toIntOrNull()?.let {
-                    setGcmServiceConfiguration(appContext, getGcmServiceInfo(appContext).configuration.copy(roaming = it))
-                }
-                updateContent()
-            }
-            true
+        bindNetworkPref(networkRoaming) { appContext, value ->
+            setGcmServiceConfiguration(appContext, getGcmServiceInfo(appContext).configuration.copy(roaming = value))
         }
-        networkOther.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
-            val appContext = requireContext().applicationContext
-            lifecycleScope.launch {
-                (newValue as? String)?.toIntOrNull()?.let {
-                    setGcmServiceConfiguration(appContext, getGcmServiceInfo(appContext).configuration.copy(other = it))
-                }
-                updateContent()
-            }
-            true
+        bindNetworkPref(networkOther) { appContext, value ->
+            setGcmServiceConfiguration(appContext, getGcmServiceInfo(appContext).configuration.copy(other = value))
         }
 
         findPreference<Preference>("pref_remove_all_registers")
@@ -129,6 +97,20 @@ class PushNotificationAdvancedFragment : PreferenceFragmentCompat() {
                 showRemoveRegistersDialog()
                 true
             }
+    }
+
+    private fun bindNetworkPref(
+        pref: ListPreference,
+        configure: suspend (android.content.Context, Int) -> Unit
+    ) {
+        pref.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
+            val appContext = requireContext().applicationContext
+            lifecycleScope.launch {
+                (newValue as? String)?.toIntOrNull()?.let { configure(appContext, it) }
+                updateContent()
+            }
+            true
+        }
     }
 
     private suspend fun updateContent() {

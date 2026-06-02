@@ -19,10 +19,8 @@ import com.google.android.material.transition.MaterialSharedAxis
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.microg.gms.gcm.GcmDatabase
-
 class PushNotificationAllAppsFragment : PreferenceFragmentCompat() {
-    private lateinit var database: GcmDatabase
+    private val database get() = GcmDatabaseProvider.get(requireContext())
     private lateinit var registered: PreferenceCategory
     private lateinit var unregistered: PreferenceCategory
     private lateinit var registeredNone: Preference
@@ -33,7 +31,6 @@ class PushNotificationAllAppsFragment : PreferenceFragmentCompat() {
         super.onCreate(savedInstanceState)
         enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, true)
         returnTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
-        database = GcmDatabase(context)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -44,11 +41,6 @@ class PushNotificationAllAppsFragment : PreferenceFragmentCompat() {
     override fun onResume() {
         super.onResume()
         updateContent()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        database.close()
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
