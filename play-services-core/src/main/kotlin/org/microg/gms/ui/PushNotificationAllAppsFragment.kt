@@ -105,7 +105,7 @@ class PushNotificationAllAppsFragment : PreferenceFragmentCompat() {
                 val newSummary = if (data.app.lastMessageTimestamp > 0) {
                     getString(R.string.gcm_last_message_at, DateUtils.getRelativeTimeSpanString(data.app.lastMessageTimestamp))
                 } else null
-                (registered.findPreference(key) ?: unregistered.findPreference(key))?.summary = newSummary
+                (registered.findPreference<Preference>(key) ?: unregistered.findPreference<Preference>(key))?.summary = newSummary
             }
             return
         }
