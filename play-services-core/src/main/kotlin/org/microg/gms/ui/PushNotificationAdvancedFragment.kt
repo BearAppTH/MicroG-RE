@@ -69,11 +69,11 @@ class PushNotificationAdvancedFragment : PreferenceFragmentCompat() {
 
     @SuppressLint("RestrictedApi")
     override fun onBindPreferences() {
-        confirmNewApps = preferenceScreen.findPreference(GcmPrefs.PREF_CONFIRM_NEW_APPS) ?: confirmNewApps
-        networkMobile = preferenceScreen.findPreference(GcmPrefs.PREF_NETWORK_MOBILE) ?: networkMobile
-        networkWifi = preferenceScreen.findPreference(GcmPrefs.PREF_NETWORK_WIFI) ?: networkWifi
-        networkRoaming = preferenceScreen.findPreference(GcmPrefs.PREF_NETWORK_ROAMING) ?: networkRoaming
-        networkOther = preferenceScreen.findPreference(GcmPrefs.PREF_NETWORK_OTHER) ?: networkOther
+        confirmNewApps = preferenceScreen.findPreference(GcmPrefs.PREF_CONFIRM_NEW_APPS) ?: return
+        networkMobile = preferenceScreen.findPreference(GcmPrefs.PREF_NETWORK_MOBILE) ?: return
+        networkWifi = preferenceScreen.findPreference(GcmPrefs.PREF_NETWORK_WIFI) ?: return
+        networkRoaming = preferenceScreen.findPreference(GcmPrefs.PREF_NETWORK_ROAMING) ?: return
+        networkOther = preferenceScreen.findPreference(GcmPrefs.PREF_NETWORK_OTHER) ?: return
 
         confirmNewApps.onPreferenceChangeListener =
             Preference.OnPreferenceChangeListener { _, newValue ->
@@ -124,6 +124,7 @@ class PushNotificationAdvancedFragment : PreferenceFragmentCompat() {
     }
 
     private suspend fun updateContent() {
+        if (!::confirmNewApps.isInitialized) return
         val appContext = context?.applicationContext ?: return
         val serviceInfo = getGcmServiceInfo(appContext)
 
@@ -133,6 +134,7 @@ class PushNotificationAdvancedFragment : PreferenceFragmentCompat() {
         networkWifi.value = serviceInfo.configuration.wifi.toString()
         networkWifi.summary = getSummaryString(serviceInfo.configuration.wifi, serviceInfo.learntWifiInterval)
         networkRoaming.value = serviceInfo.configuration.roaming.toString()
+        // Roaming uses mobile cellular, so it shares the same learnt heartbeat interval as mobile
         networkRoaming.summary = getSummaryString(serviceInfo.configuration.roaming, serviceInfo.learntMobileInterval)
         networkOther.value = serviceInfo.configuration.other.toString()
         networkOther.summary = getSummaryString(serviceInfo.configuration.other, serviceInfo.learntOtherInterval)
@@ -181,7 +183,7 @@ class PushNotificationAdvancedFragment : PreferenceFragmentCompat() {
                 positiveButton.setOnClickListener {
                     val appContext = context?.applicationContext ?: return@setOnClickListener
                     val db = database
-                    lifecycleScope.launch {
+                    viewLifecycleOwner.lifecycleScope.launch {
                         withContext(Dispatchers.IO) {
                             LastCheckinInfo.clear(appContext)
                             db.resetDatabase()

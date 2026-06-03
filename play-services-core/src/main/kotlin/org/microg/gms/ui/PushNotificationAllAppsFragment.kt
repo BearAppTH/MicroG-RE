@@ -34,6 +34,17 @@ class PushNotificationAllAppsFragment : PreferenceFragmentCompat() {
     private lateinit var unregisteredNone: Preference
     private lateinit var progress: Preference
 
+    private data class AppDisplayData(
+        val app: GcmDatabase.App,
+        val registrations: List<GcmDatabase.Registration>,
+        val label: CharSequence,
+        val icon: Drawable?,
+        val version: String?
+    )
+
+    private data class AppListSnapshot(val packageName: String, val isRegistered: Boolean)
+    private var lastSnapshot: List<AppListSnapshot> = emptyList()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, true)
@@ -56,25 +67,15 @@ class PushNotificationAllAppsFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.preferences_push_notifications_all_apps)
-        registered = preferenceScreen.findPreference("prefcat_push_apps_registered") ?: registered
-        unregistered =
-            preferenceScreen.findPreference("prefcat_push_apps_unregistered") ?: unregistered
-        registeredNone =
-            preferenceScreen.findPreference("pref_push_apps_registered_none") ?: registeredNone
-        unregisteredNone =
-            preferenceScreen.findPreference("pref_push_apps_unregistered_none") ?: unregisteredNone
-        progress = preferenceScreen.findPreference("pref_push_apps_all_progress") ?: progress
+        registered = preferenceScreen.findPreference("prefcat_push_apps_registered") ?: return
+        unregistered = preferenceScreen.findPreference("prefcat_push_apps_unregistered") ?: return
+        registeredNone = preferenceScreen.findPreference("pref_push_apps_registered_none") ?: return
+        unregisteredNone = preferenceScreen.findPreference("pref_push_apps_unregistered_none") ?: return
+        progress = preferenceScreen.findPreference("pref_push_apps_all_progress") ?: return
     }
 
-    private data class AppDisplayData(
-        val app: GcmDatabase.App,
-        val registrations: List<GcmDatabase.Registration>,
-        val label: CharSequence,
-        val icon: Drawable?,
-        val version: String?
-    )
-
     private suspend fun updateContent() {
+        if (!::registered.isInitialized) return
         val context = requireContext()
         val pm = context.packageManager
         val rawData = withContext(Dispatchers.IO) {
@@ -90,6 +91,23 @@ class PushNotificationAllAppsFragment : PreferenceFragmentCompat() {
                 }
                 AppDisplayData(app, registrationsByPackage[app.packageName] ?: emptyList(), label, icon, version)
             }
+        }
+
+        val snapshot = rawData
+            .sortedBy { it.app.packageName }
+            .map { AppListSnapshot(it.app.packageName, it.registrations.isNotEmpty()) }
+        val structurallyChanged = snapshot != lastSnapshot
+        lastSnapshot = snapshot
+
+        if (!structurallyChanged) {
+            for (data in rawData) {
+                val key = "pref_push_app_" + data.app.packageName
+                val newSummary = if (data.app.lastMessageTimestamp > 0) {
+                    getString(R.string.gcm_last_message_at, DateUtils.getRelativeTimeSpanString(data.app.lastMessageTimestamp))
+                } else null
+                (registered.findPreference(key) ?: unregistered.findPreference(key))?.summary = newSummary
+            }
+            return
         }
 
         val apps = rawData.map { data ->

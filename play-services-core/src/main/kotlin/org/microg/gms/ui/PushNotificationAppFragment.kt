@@ -87,22 +87,26 @@ class PushNotificationAppFragment : PreferenceFragmentCompat() {
     }
 
     private fun showUnregisterConfirm(unregisterConfirmDesc: Int) {
-        val pm = requireContext().packageManager
-        val applicationInfo = pm.getApplicationInfoIfExists(packageName)
-        AlertDialog.Builder(requireContext())
+        lifecycleScope.launch {
+            val pm = requireContext().packageManager
+            val appLabel = withContext(Dispatchers.IO) {
+                pm.getApplicationInfoIfExists(packageName)?.loadLabel(pm) ?: packageName
+            }
+            AlertDialog.Builder(requireContext())
                 .setIcon(R.drawable.ic_unregister)
-                .setTitle(getString(R.string.gcm_unregister_confirm_title, applicationInfo?.loadLabel(pm)
-                        ?: packageName))
+                .setTitle(getString(R.string.gcm_unregister_confirm_title, appLabel))
                 .setMessage(unregisterConfirmDesc)
                 .setPositiveButton(android.R.string.ok) { _, _ -> unregister() }
                 .setNegativeButton(android.R.string.cancel) { _, _ -> }.show()
+        }
     }
 
     private fun unregister() {
+        val pkg = packageName ?: return
         val appContext = requireContext().applicationContext
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                for (registration in database.getRegistrationsByApp(packageName)) {
+                for (registration in database.getRegistrationsByApp(pkg)) {
                     PushRegisterManager.unregister(appContext, registration.packageName, registration.signature, null, null)
                 }
             }
