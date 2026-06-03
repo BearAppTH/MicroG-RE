@@ -108,6 +108,7 @@ class PushNotificationFragment : PreferenceFragmentCompat() {
 
     override fun onResume() {
         super.onResume()
+        if (!::switchBarPreference.isInitialized) return
         switchBarPreference.isEnabled = CheckinPreferences.isEnabled(requireContext())
         switchBarPreference.isChecked = GcmPrefs.get(requireContext()).isEnabled
         updateContentJob?.cancel()
@@ -115,6 +116,7 @@ class PushNotificationFragment : PreferenceFragmentCompat() {
     }
 
     private suspend fun updateStatus() {
+        if (!::switchBarPreference.isInitialized) return
         val appContext = requireContext().applicationContext
         val statusInfo = getGcmServiceInfo(appContext)
         switchBarPreference.isChecked = statusInfo.configuration.enabled

@@ -70,20 +70,20 @@ class DeviceRegistrationFragment : PreferenceFragmentCompat() {
 
     private fun onFileSelected(uri: Uri?) {
         if (uri == null) return
+        val context = requireContext()
+        val file = File.createTempFile("profile_", ".xml", context.cacheDir)
         try {
-            val context = requireContext()
-            val file = File.createTempFile("profile_", ".xml", context.cacheDir)
-            context.contentResolver.openInputStream(uri)?.use { inputStream ->
-                FileOutputStream(file).use { inputStream.copyTo(it) }
-            }
+            val inputStream = context.contentResolver.openInputStream(uri) ?: return
+            inputStream.use { FileOutputStream(file).use { out -> it.copyTo(out) } }
             val success = ProfileManager.importUserProfile(context, file)
-            file.delete()
             if (success && ProfileManager.isAutoProfile(context, PROFILE_USER)) {
                 ProfileManager.setProfile(context, PROFILE_USER)
             }
             lifecycleScope.launch { updateStatus() }
         } catch (e: Exception) {
             Log.w(TAG, e)
+        } finally {
+            file.delete()
         }
     }
 

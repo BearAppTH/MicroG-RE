@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 import java.io.Serializable
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -23,6 +24,7 @@ private const val ACTION_SERVICE_INFO_REQUEST = "org.microg.gms.gcm.SERVICE_INFO
 private const val ACTION_SERVICE_INFO_RESPONSE = "org.microg.gms.gcm.SERVICE_INFO_RESPONSE"
 private const val EXTRA_SERVICE_INFO = "org.microg.gms.gcm.SERVICE_INFO"
 private const val TAG = "GmsGcmStatusInfo"
+private const val SERVICE_INFO_TIMEOUT_MS = 5_000L
 
 data class ServiceInfo(val configuration: ServiceConfiguration, val connected: Boolean, val startTimestamp: Long, val learntMobileInterval: Int, val learntWifiInterval: Int, val learntOtherInterval: Int) : Serializable
 
@@ -52,7 +54,7 @@ class ServiceInfoReceiver : BroadcastReceiver() {
     }
 }
 
-private suspend fun sendToServiceInfoReceiver(intent: Intent, context: Context): ServiceInfo = suspendCancellableCoroutine { cont ->
+private suspend fun sendToServiceInfoReceiver(intent: Intent, context: Context): ServiceInfo = withTimeout(SERVICE_INFO_TIMEOUT_MS) { suspendCancellableCoroutine { cont ->
     val receiver = object : BroadcastReceiver() {
         override fun onReceive(ctx: Context, intent: Intent) {
             ctx.unregisterReceiver(this)
@@ -84,7 +86,7 @@ private suspend fun sendToServiceInfoReceiver(intent: Intent, context: Context):
     } catch (e: Exception) {
         cont.resumeWithException(e)
     }
-}
+} }
 
 suspend fun getGcmServiceInfo(context: Context): ServiceInfo = sendToServiceInfoReceiver(
     // this is still using a broadcast, because it calls into McsService in the persistent process
