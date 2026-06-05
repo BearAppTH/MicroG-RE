@@ -118,7 +118,7 @@ class PushNotificationFragment : PreferenceFragmentCompat() {
     private suspend fun updateStatus() {
         if (!::switchBarPreference.isInitialized) return
         val appContext = requireContext().applicationContext
-        val statusInfo = getGcmServiceInfo(appContext)
+        val statusInfo = getGcmServiceInfo(appContext) ?: return
         switchBarPreference.isChecked = statusInfo.configuration.enabled
         pushStatusCategory.isVisible = statusInfo.configuration.enabled
         pushStatus.summary = if (statusInfo.connected) {
