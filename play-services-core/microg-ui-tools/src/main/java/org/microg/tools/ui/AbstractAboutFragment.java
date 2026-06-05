@@ -169,7 +169,7 @@ public abstract class AbstractAboutFragment extends Fragment {
             View bearCard = inflater.inflate(R.layout.about_bear, bearCardContainer, true);
 
             bearCard.findViewById(R.id.bear_github).setOnClickListener(v -> openUrl("https://github.com/BearAppTH"));
-            bearCard.findViewById(R.id.bear_website).setOnClickListener(v -> openUrl("https://www.bearappth.online"));
+            bearCard.findViewById(R.id.bear_website).setOnClickListener(v -> openUrl("https://bearappth.github.io"));
         }
 
         ViewGroup changelogContainer = aboutRoot.findViewById(R.id.changelog_container);
