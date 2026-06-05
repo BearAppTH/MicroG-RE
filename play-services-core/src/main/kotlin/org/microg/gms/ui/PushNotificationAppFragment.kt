@@ -16,7 +16,7 @@ import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.TwoStatePreference
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.isActive
+import kotlinx.coroutines.ensureActive
 import com.google.android.gms.R
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.transition.MaterialSharedAxis
@@ -138,7 +138,8 @@ class PushNotificationAppFragment : PreferenceFragmentCompat() {
             val registrations = packageName?.let { database.getRegistrationsByApp(it) } ?: emptyList()
             app to registrations
         }
-        if (!isActive || !isAdded) return
+        ensureActive()
+        if (!isAdded) return
         wakeForDelivery.isChecked = app?.wakeForDelivery ?: true
         allowRegister.isChecked = app?.allowRegister ?: true
         unregisterCat.isVisible = registrations.isNotEmpty()
