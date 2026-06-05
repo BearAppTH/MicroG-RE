@@ -34,7 +34,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.microg.gms.checkin.CheckinPreferences
 import org.microg.gms.common.ForegroundServiceOemUtils
-import org.microg.gms.gcm.GcmDatabase
 import org.microg.gms.gcm.GcmPrefs
 import org.microg.gms.ui.settings.SettingsProvider
 import org.microg.gms.ui.settings.getAllSettingsProviders
@@ -289,12 +288,7 @@ class SettingsFragment : ResourceSettingsFragment() {
         val pref = findPreference<Preference>(PREF_GCM) ?: return
 
         if (GcmPrefs.get(context).isEnabled) {
-            val database = GcmDatabase(context)
-            val regCount = try {
-                database.registrationList.size
-            } finally {
-                database.close()
-            }
+            val regCount = GcmDatabaseProvider.get(context).registrationList.size
             pref.summary =
                 context.getString(org.microg.gms.base.core.R.string.service_status_enabled_short) + " - " + context.resources.getQuantityString(
                     R.plurals.gcm_registered_apps_counter, regCount, regCount
