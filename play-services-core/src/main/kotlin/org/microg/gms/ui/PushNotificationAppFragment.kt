@@ -138,7 +138,7 @@ class PushNotificationAppFragment : PreferenceFragmentCompat() {
             val registrations = packageName?.let { database.getRegistrationsByApp(it) } ?: emptyList()
             app to registrations
         }
-        ensureActive()
+        coroutineContext.ensureActive()
         if (!isAdded) return
         wakeForDelivery.isChecked = app?.wakeForDelivery ?: true
         allowRegister.isChecked = app?.allowRegister ?: true
