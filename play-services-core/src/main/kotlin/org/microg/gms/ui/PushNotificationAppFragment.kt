@@ -15,6 +15,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.TwoStatePreference
+import kotlinx.coroutines.Job
 import com.google.android.gms.R
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.transition.MaterialSharedAxis
@@ -34,6 +35,7 @@ class PushNotificationAppFragment : PreferenceFragmentCompat() {
     private val database get() = GcmDatabaseProvider.get(requireContext())
     private val packageName: String?
         get() = arguments?.getString("package")
+    private var updateDetailsJob: Job? = null
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.preferences_push_notifications_app)
@@ -52,12 +54,12 @@ class PushNotificationAppFragment : PreferenceFragmentCompat() {
 
     @SuppressLint("RestrictedApi")
     override fun onBindPreferences() {
-        appHeadingPreference = preferenceScreen.findPreference("pref_push_app_heading") ?: appHeadingPreference
-        wakeForDelivery = preferenceScreen.findPreference("pref_push_app_wake_for_delivery") ?: wakeForDelivery
-        allowRegister = preferenceScreen.findPreference("pref_push_app_allow_register") ?: allowRegister
-        unregister = preferenceScreen.findPreference("pref_push_app_unregister") ?: unregister
-        unregisterCat = preferenceScreen.findPreference("prefcat_push_app_unregister") ?: unregisterCat
-        status = preferenceScreen.findPreference("pref_push_app_status") ?: status
+        appHeadingPreference = preferenceScreen.findPreference("pref_push_app_heading") ?: return
+        wakeForDelivery = preferenceScreen.findPreference("pref_push_app_wake_for_delivery") ?: return
+        allowRegister = preferenceScreen.findPreference("pref_push_app_allow_register") ?: return
+        unregister = preferenceScreen.findPreference("pref_push_app_unregister") ?: return
+        unregisterCat = preferenceScreen.findPreference("prefcat_push_app_unregister") ?: return
+        status = preferenceScreen.findPreference("pref_push_app_status") ?: return
         wakeForDelivery.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
             val wake = newValue as Boolean
             lifecycleScope.launch {
@@ -87,12 +89,14 @@ class PushNotificationAppFragment : PreferenceFragmentCompat() {
     }
 
     private fun showUnregisterConfirm(unregisterConfirmDesc: Int) {
+        val ctx = context ?: return
+        val pm = ctx.packageManager
         lifecycleScope.launch {
-            val pm = requireContext().packageManager
             val appLabel = withContext(Dispatchers.IO) {
                 pm.getApplicationInfoIfExists(packageName)?.loadLabel(pm) ?: packageName
             }
-            AlertDialog.Builder(requireContext())
+            if (!isAdded) return@launch
+            AlertDialog.Builder(ctx)
                 .setIcon(R.drawable.ic_unregister)
                 .setTitle(getString(R.string.gcm_unregister_confirm_title, appLabel))
                 .setMessage(unregisterConfirmDesc)
@@ -116,10 +120,12 @@ class PushNotificationAppFragment : PreferenceFragmentCompat() {
 
     override fun onResume() {
         super.onResume()
-        lifecycleScope.launch { updateDetails() }
+        updateDetailsJob?.cancel()
+        updateDetailsJob = lifecycleScope.launch { updateDetails() }
     }
 
     private suspend fun updateDetails() {
+        if (!::appHeadingPreference.isInitialized) return
         appHeadingPreference.packageName = packageName
         val (app, registrations) = withContext(Dispatchers.IO) {
             val app = packageName?.let { database.getApp(it) }

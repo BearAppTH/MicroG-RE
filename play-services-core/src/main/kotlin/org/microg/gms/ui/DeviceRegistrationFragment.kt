@@ -70,9 +70,10 @@ class DeviceRegistrationFragment : PreferenceFragmentCompat() {
 
     private fun onFileSelected(uri: Uri?) {
         if (uri == null) return
-        val context = requireContext()
-        val file = File.createTempFile("profile_", ".xml", context.cacheDir)
+        var file: File? = null
         try {
+            val context = requireContext()
+            file = File.createTempFile("profile_", ".xml", context.cacheDir)
             val inputStream = context.contentResolver.openInputStream(uri) ?: return
             inputStream.use { FileOutputStream(file).use { out -> it.copyTo(out) } }
             val success = ProfileManager.importUserProfile(context, file)
@@ -83,7 +84,7 @@ class DeviceRegistrationFragment : PreferenceFragmentCompat() {
         } catch (e: Exception) {
             Log.w(TAG, e)
         } finally {
-            file.delete()
+            file?.delete()
         }
     }
 
@@ -154,6 +155,7 @@ class DeviceRegistrationFragment : PreferenceFragmentCompat() {
 
     override fun onResume() {
         super.onResume()
+        if (!::switchBarPreference.isInitialized) return
         switchBarPreference.isChecked = CheckinPreferences.isEnabled(requireContext())
     }
 

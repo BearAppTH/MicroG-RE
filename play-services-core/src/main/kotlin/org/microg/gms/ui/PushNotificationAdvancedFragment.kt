@@ -80,26 +80,28 @@ class PushNotificationAdvancedFragment : PreferenceFragmentCompat() {
                 val enable = newValue as Boolean
                 val appContext = requireContext().applicationContext
                 viewLifecycleOwner.lifecycleScope.launch {
-                    setGcmServiceConfiguration(
-                        appContext,
-                        getGcmServiceInfo(appContext).configuration.copy(confirmNewApps = enable)
-                    )
+                    val cfg = getGcmServiceInfo(appContext)?.configuration ?: return@launch
+                    setGcmServiceConfiguration(appContext, cfg.copy(confirmNewApps = enable))
                     updateContent()
                 }
                 true
             }
 
         bindNetworkPref(networkMobile) { appContext, value ->
-            setGcmServiceConfiguration(appContext, getGcmServiceInfo(appContext).configuration.copy(mobile = value))
+            val cfg = getGcmServiceInfo(appContext)?.configuration ?: return@bindNetworkPref
+            setGcmServiceConfiguration(appContext, cfg.copy(mobile = value))
         }
         bindNetworkPref(networkWifi) { appContext, value ->
-            setGcmServiceConfiguration(appContext, getGcmServiceInfo(appContext).configuration.copy(wifi = value))
+            val cfg = getGcmServiceInfo(appContext)?.configuration ?: return@bindNetworkPref
+            setGcmServiceConfiguration(appContext, cfg.copy(wifi = value))
         }
         bindNetworkPref(networkRoaming) { appContext, value ->
-            setGcmServiceConfiguration(appContext, getGcmServiceInfo(appContext).configuration.copy(roaming = value))
+            val cfg = getGcmServiceInfo(appContext)?.configuration ?: return@bindNetworkPref
+            setGcmServiceConfiguration(appContext, cfg.copy(roaming = value))
         }
         bindNetworkPref(networkOther) { appContext, value ->
-            setGcmServiceConfiguration(appContext, getGcmServiceInfo(appContext).configuration.copy(other = value))
+            val cfg = getGcmServiceInfo(appContext)?.configuration ?: return@bindNetworkPref
+            setGcmServiceConfiguration(appContext, cfg.copy(other = value))
         }
 
         findPreference<Preference>("pref_remove_all_registers")
@@ -124,9 +126,9 @@ class PushNotificationAdvancedFragment : PreferenceFragmentCompat() {
     }
 
     private suspend fun updateContent() {
-        if (!::confirmNewApps.isInitialized) return
+        if (!::networkOther.isInitialized) return
         val appContext = context?.applicationContext ?: return
-        val serviceInfo = getGcmServiceInfo(appContext)
+        val serviceInfo = getGcmServiceInfo(appContext) ?: return
 
         confirmNewApps.isChecked = serviceInfo.configuration.confirmNewApps
         networkMobile.value = serviceInfo.configuration.mobile.toString()

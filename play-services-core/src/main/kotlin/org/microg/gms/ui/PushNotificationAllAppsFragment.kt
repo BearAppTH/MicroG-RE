@@ -72,6 +72,7 @@ class PushNotificationAllAppsFragment : PreferenceFragmentCompat() {
         registeredNone = preferenceScreen.findPreference("pref_push_apps_registered_none") ?: return
         unregisteredNone = preferenceScreen.findPreference("pref_push_apps_unregistered_none") ?: return
         progress = preferenceScreen.findPreference("pref_push_apps_all_progress") ?: return
+        lastSnapshot = emptyList()
     }
 
     private suspend fun updateContent() {
