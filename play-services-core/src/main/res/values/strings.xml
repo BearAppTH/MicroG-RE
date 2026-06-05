@@ -102,6 +102,7 @@ Some apps may not be able to register again after this action. You may need to c
     <string name="gcm_unregister_confirm_message">"Some apps do not automatically re-register and/or do not provide an option to do so manually. These apps might not work correctly after unregistering.
 Continue?"</string>
     <string name="gcm_remove_registers_toast_message">All apps removed from push notification</string>
+    <string name="gcm_push_service_unavailable">Unable to apply setting: push service unavailable</string>
     <string name="gcm_unregister_after_deny_message">"You denied an app to register for push notifications that is already registered.
 Do you want to unregister it now so it does not receive push messages in the future?"</string>
     <!--gcm: register messages infos-->
