@@ -124,6 +124,11 @@ class PushNotificationAppFragment : PreferenceFragmentCompat() {
         updateDetailsJob = lifecycleScope.launch { updateDetails() }
     }
 
+    override fun onPause() {
+        super.onPause()
+        updateDetailsJob?.cancel()
+    }
+
     private suspend fun updateDetails() {
         if (!::appHeadingPreference.isInitialized) return
         appHeadingPreference.packageName = packageName
@@ -132,17 +137,19 @@ class PushNotificationAppFragment : PreferenceFragmentCompat() {
             val registrations = packageName?.let { database.getRegistrationsByApp(it) } ?: emptyList()
             app to registrations
         }
+        if (!isAdded) return
         wakeForDelivery.isChecked = app?.wakeForDelivery ?: true
         allowRegister.isChecked = app?.allowRegister ?: true
         unregisterCat.isVisible = registrations.isNotEmpty()
 
+        val ctx = context ?: return
         val sb = StringBuilder()
         if ((app?.totalMessageCount ?: 0L) == 0L) {
             sb.append(getString(R.string.gcm_no_message_yet))
         } else {
             sb.append(getString(R.string.gcm_messages_counter, app?.totalMessageCount, app?.totalMessageBytes))
             if (app?.lastMessageTimestamp != 0L) {
-                sb.append("\n").append(getString(R.string.gcm_last_message_at, DateUtils.getRelativeDateTimeString(context, app?.lastMessageTimestamp ?: 0L, DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_SHOW_TIME)))
+                sb.append("\n").append(getString(R.string.gcm_last_message_at, DateUtils.getRelativeDateTimeString(ctx, app?.lastMessageTimestamp ?: 0L, DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_SHOW_TIME)))
             }
         }
         for (registration in registrations) {
@@ -150,7 +157,7 @@ class PushNotificationAppFragment : PreferenceFragmentCompat() {
             if (registration.timestamp == 0L) {
                 sb.append(getString(R.string.gcm_registered))
             } else {
-                sb.append(getString(R.string.gcm_registered_since, DateUtils.getRelativeDateTimeString(context, registration.timestamp, DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_SHOW_TIME)))
+                sb.append(getString(R.string.gcm_registered_since, DateUtils.getRelativeDateTimeString(ctx, registration.timestamp, DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_SHOW_TIME)))
             }
         }
         status.title = sb.toString()

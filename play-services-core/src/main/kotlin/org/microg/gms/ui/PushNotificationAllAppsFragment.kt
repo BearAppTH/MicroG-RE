@@ -79,9 +79,32 @@ class PushNotificationAllAppsFragment : PreferenceFragmentCompat() {
         if (!::registered.isInitialized) return
         val context = requireContext()
         val pm = context.packageManager
+
+        // Always fetch DB data — cheap, needed for snapshot comparison and summary updates
+        val (appList, registrationsByPackage) = withContext(Dispatchers.IO) {
+            database.appList to database.registrationList.groupBy { it.packageName }
+        }
+
+        val snapshot = appList
+            .sortedBy { it.packageName }
+            .map { AppListSnapshot(it.packageName, registrationsByPackage[it.packageName]?.isNotEmpty() == true) }
+        val structurallyChanged = snapshot != lastSnapshot
+        lastSnapshot = snapshot
+
+        if (!structurallyChanged) {
+            // Only timestamp summaries changed — no PackageManager calls needed
+            for (app in appList) {
+                val key = "pref_push_app_" + app.packageName
+                val newSummary = if (app.lastMessageTimestamp > 0) {
+                    getString(R.string.gcm_last_message_at, DateUtils.getRelativeTimeSpanString(app.lastMessageTimestamp))
+                } else null
+                (registered.findPreference<Preference>(key) ?: unregistered.findPreference<Preference>(key))?.summary = newSummary
+            }
+            return
+        }
+
+        // Structural change — fetch PM metadata only now
         val rawData = withContext(Dispatchers.IO) {
-            val appList = database.appList
-            val registrationsByPackage = database.registrationList.groupBy { it.packageName }
             appList.map { app ->
                 val appInfo = pm.getApplicationInfoIfExists(app.packageName)
                 val label: CharSequence = appInfo?.loadLabel(pm) ?: app.packageName
@@ -92,23 +115,6 @@ class PushNotificationAllAppsFragment : PreferenceFragmentCompat() {
                 }
                 AppDisplayData(app, registrationsByPackage[app.packageName] ?: emptyList(), label, icon, version)
             }
-        }
-
-        val snapshot = rawData
-            .sortedBy { it.app.packageName }
-            .map { AppListSnapshot(it.app.packageName, it.registrations.isNotEmpty()) }
-        val structurallyChanged = snapshot != lastSnapshot
-        lastSnapshot = snapshot
-
-        if (!structurallyChanged) {
-            for (data in rawData) {
-                val key = "pref_push_app_" + data.app.packageName
-                val newSummary = if (data.app.lastMessageTimestamp > 0) {
-                    getString(R.string.gcm_last_message_at, DateUtils.getRelativeTimeSpanString(data.app.lastMessageTimestamp))
-                } else null
-                (registered.findPreference<Preference>(key) ?: unregistered.findPreference<Preference>(key))?.summary = newSummary
-            }
-            return
         }
 
         val apps = rawData.map { data ->
