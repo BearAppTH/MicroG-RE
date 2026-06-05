@@ -14,7 +14,6 @@
 [![Latest Release](https://img.shields.io/github/v/release/BearAppTH/MicroG-RE?style=for-the-badge&color=4f8ef7&label=Latest)](https://github.com/BearAppTH/MicroG-RE/releases/latest)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue?style=for-the-badge)](LICENSE)
 [![Min SDK](https://img.shields.io/badge/Android-10%2B-green?style=for-the-badge&logo=android&logoColor=white)](https://github.com/BearAppTH/MicroG-RE)
-[![Target SDK](https://img.shields.io/badge/Target-Android%2017-brightgreen?style=for-the-badge&logo=android&logoColor=white)](https://github.com/BearAppTH/MicroG-RE)
 
 <br/>
 
@@ -39,7 +38,6 @@
 - ✅ Push Notifications ผ่าน GCM/FCM
 - ✅ รองรับ Google Cast (Chromecast)
 - ✅ UI ออกแบบด้วย Material 3
-- ✅ Package name `app.bear.android.gms` แยกจากระบบ
 - ✅ รองรับ Android 10 – Android 17
 
 Bear MicroG ใช้ Package name `app.bear.android.gms` แทน `com.google.android.gms` ทำให้ทำงานควบคู่กับ Google Play Services ต้นฉบับได้โดยไม่ขัดแย้ง และรองรับเฉพาะแอปที่ patch ด้วย GmsCore support
@@ -80,20 +78,6 @@ Bear MicroG ใช้ Package name `app.bear.android.gms` แทน `com.google.
 
 &nbsp;
 
-## 🔧 ข้อมูลทางเทคนิค
-
-| รายการ | ค่า |
-|--------|-----|
-| Version | 3.5.4 |
-| Package | `app.bear.android.gms` |
-| Min SDK | API 29 (Android 10) |
-| Target SDK | API 37 (Android 17) |
-| Compile SDK | API 37 (Android 17) |
-| Kotlin | 2.3.21 |
-| AGP | 8.13.2 |
-
-&nbsp;
-
 ## ❓ คำถามที่พบบ่อย
 
 **Q: Bear MicroG แตกต่างจาก Google Play Services อย่างไร?**
@@ -110,28 +94,6 @@ Bear MicroG ใช้ Package name `app.bear.android.gms` แทน `com.google.
 
 **Q: ปลอดภัยไหม?**
 > Bear MicroG เป็น Open Source ทั้งหมด ตรวจสอบ Source Code ได้เองที่ repository นี้
-
-&nbsp;
-
-## 🛠️ สำหรับนักพัฒนา
-
-### Build จาก Source
-
-```bash
-git clone https://github.com/BearAppTH/MicroG-RE.git
-cd MicroG-RE
-./gradlew assembleRelease
-```
-
-### GitHub Secrets ที่จำเป็นสำหรับ Release Workflow
-
-| Secret | คำอธิบาย |
-|--------|----------|
-| `KEYSTORE_B64` | Keystore ที่ encode ด้วย Base64 (`base64 -w0 release.keystore`) |
-| `KEYSTORE_ENTRY_ALIAS` | Key alias ใน Keystore |
-| `KEYSTORE_PASSWORD` | Password ของ Keystore |
-| `KEYSTORE_ENTRY_PASSWORD` | Password ของ Key entry |
-| `GradleEncryptionKey` | Key สำหรับ Gradle build cache encryption |
 
 &nbsp;
 
