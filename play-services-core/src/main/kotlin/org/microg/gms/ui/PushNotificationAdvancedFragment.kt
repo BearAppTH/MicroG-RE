@@ -79,9 +79,9 @@ class PushNotificationAdvancedFragment : PreferenceFragmentCompat() {
             Preference.OnPreferenceChangeListener { _, newValue ->
                 val enable = newValue as Boolean
                 val appContext = requireContext().applicationContext
-                val ctx = context ?: return@OnPreferenceChangeListener true
                 viewLifecycleOwner.lifecycleScope.launch {
                     val cfg = getGcmServiceInfo(appContext)?.configuration
+                    val ctx = context ?: return@launch
                     if (cfg == null) {
                         Toast.makeText(ctx, R.string.gcm_push_service_unavailable, Toast.LENGTH_SHORT).show()
                     } else {
@@ -126,9 +126,9 @@ class PushNotificationAdvancedFragment : PreferenceFragmentCompat() {
     ) {
         pref.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
             val appContext = requireContext().applicationContext
-            val ctx = context ?: return@OnPreferenceChangeListener true
             viewLifecycleOwner.lifecycleScope.launch {
                 val succeeded = (newValue as? String)?.toIntOrNull()?.let { configure(appContext, it) } ?: false
+                val ctx = context ?: return@launch
                 if (!succeeded) Toast.makeText(ctx, R.string.gcm_push_service_unavailable, Toast.LENGTH_SHORT).show()
                 updateContent()
             }
@@ -183,7 +183,7 @@ class PushNotificationAdvancedFragment : PreferenceFragmentCompat() {
             positiveButton.text = "${getString(android.R.string.ok)} ($secondsLeft)"
             positiveButton.alpha = 0.6f
 
-            viewLifecycleOwner.lifecycleScope.launch {
+            val countdownJob = viewLifecycleOwner.lifecycleScope.launch {
                 while (secondsLeft > 0) {
                     delay(1_000)
                     secondsLeft--
@@ -208,6 +208,7 @@ class PushNotificationAdvancedFragment : PreferenceFragmentCompat() {
                     dialog.dismiss()
                 }
             }
+            dialog.setOnDismissListener { countdownJob.cancel() }
         }
 
         dialog.show()

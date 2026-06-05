@@ -80,7 +80,7 @@ class DeviceRegistrationFragment : PreferenceFragmentCompat() {
             if (success && ProfileManager.isAutoProfile(context, PROFILE_USER)) {
                 ProfileManager.setProfile(context, PROFILE_USER)
             }
-            lifecycleScope.launch { updateStatus() }
+            viewLifecycleOwner.lifecycleScope.launch { updateStatus() }
         } catch (e: Exception) {
             Log.w(TAG, e)
         } finally {
@@ -118,7 +118,7 @@ class DeviceRegistrationFragment : PreferenceFragmentCompat() {
 
         deviceProfile.setOnPreferenceChangeListener { _, newValue ->
             ProfileManager.setProfile(requireContext(), newValue as String? ?: PROFILE_AUTO)
-            lifecycleScope.launch { updateStatus() }
+            viewLifecycleOwner.lifecycleScope.launch { updateStatus() }
             true
         }
         importProfile.setOnPreferenceClickListener {

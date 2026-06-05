@@ -27,8 +27,11 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import org.microg.gms.auth.AuthConstants
 import org.microg.gms.checkin.CheckinPreferences
 import org.microg.gms.checkin.getCheckinServiceInfo
@@ -70,12 +73,20 @@ class HomeFragment : Fragment() {
         view.findViewById<MaterialCardView>(R.id.card_self_check)?.setOnClickListener {
             findNavController().navigate(R.id.openSelfCheckFromHome)
         }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                while (true) {
+                    updateStatus()
+                    delay(UPDATE_INTERVAL)
+                }
+            }
+        }
     }
 
     override fun onResume() {
         super.onResume()
         requireActivity().findViewById<ExtendedFloatingActionButton>(R.id.preference_fab)?.visibility = View.GONE
-        updateStatus()
     }
 
     private fun updateStatus() {
@@ -171,5 +182,9 @@ class HomeFragment : Fragment() {
                 // Status update failed silently; UI retains previous state
             }
         }
+    }
+
+    companion object {
+        private const val UPDATE_INTERVAL = 5_000L
     }
 }
