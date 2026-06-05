@@ -128,7 +128,7 @@ class PushNotificationAdvancedFragment : PreferenceFragmentCompat() {
             val appContext = requireContext().applicationContext
             val ctx = context ?: return@OnPreferenceChangeListener true
             viewLifecycleOwner.lifecycleScope.launch {
-                val succeeded = (newValue as? String)?.toIntOrNull()?.let { configure(appContext, it) } ?: true
+                val succeeded = (newValue as? String)?.toIntOrNull()?.let { configure(appContext, it) } ?: false
                 if (!succeeded) Toast.makeText(ctx, R.string.gcm_push_service_unavailable, Toast.LENGTH_SHORT).show()
                 updateContent()
             }

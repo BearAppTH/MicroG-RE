@@ -89,13 +89,13 @@ class PushNotificationAppFragment : PreferenceFragmentCompat() {
     }
 
     private fun showUnregisterConfirm(unregisterConfirmDesc: Int) {
-        val ctx = context ?: return
-        val pm = ctx.packageManager
+        val ctx0 = context ?: return
+        val pm = ctx0.packageManager
         lifecycleScope.launch {
             val appLabel = withContext(Dispatchers.IO) {
                 pm.getApplicationInfoIfExists(packageName)?.loadLabel(pm) ?: packageName
             }
-            if (!isAdded) return@launch
+            val ctx = context ?: return@launch
             AlertDialog.Builder(ctx)
                 .setIcon(R.drawable.ic_unregister)
                 .setTitle(getString(R.string.gcm_unregister_confirm_title, appLabel))
