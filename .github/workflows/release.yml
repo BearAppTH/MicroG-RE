@@ -139,7 +139,7 @@ jobs:
 
             ---
 
-            🌐 **Website:** https://www.bearappth.online
+            🌐 **Website:** https://bearappth.github.io
             💻 **GitHub:** https://github.com/BearAppTH/MicroG-RE
           files: bear-microg-v${{ steps.version.outputs.name }}.apk
           draft: false
