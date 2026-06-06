@@ -163,12 +163,12 @@ class DeviceRegistrationFragment : PreferenceFragmentCompat() {
         if (!::deviceProfile.isInitialized) return
         val appContext = requireContext().applicationContext
         val profileStatus = withContext(Dispatchers.IO) { buildProfileStatus(appContext) }
-        val serviceInfo = try { getCheckinServiceInfo(appContext) } catch (_: Exception) { return }
         deviceProfile.entryValues = profileStatus.entryValues.toTypedArray()
         deviceProfile.entries = profileStatus.entries.toTypedArray()
         deviceProfile.value = profileStatus.value
         deviceProfile.summary = profileStatus.summary
         serial.summary = profileStatus.serial
+        val serviceInfo = try { getCheckinServiceInfo(appContext) } catch (_: Exception) { return }
         statusCategory.isVisible = serviceInfo.configuration.enabled
         if (serviceInfo.lastCheckin > 0) {
             status.summary = getString(

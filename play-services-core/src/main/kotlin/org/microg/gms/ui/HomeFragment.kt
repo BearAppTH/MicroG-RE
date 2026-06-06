@@ -162,12 +162,12 @@ class HomeFragment : Fragment() {
                 Triple(count, pName, s)
             }
 
-            v.findViewById<TextView>(R.id.tv_push_apps_count)?.text = if (pushAppsCount > 0)
+            val tvPushAppsCount = v.findViewById<TextView>(R.id.tv_push_apps_count)
+            tvPushAppsCount?.text = if (pushAppsCount > 0)
                 resources.getQuantityString(R.plurals.home_push_apps_count, pushAppsCount, pushAppsCount)
             else
                 ""
-            v.findViewById<TextView>(R.id.tv_push_apps_count)?.visibility =
-                if (pushAppsCount > 0) View.VISIBLE else View.GONE
+            tvPushAppsCount?.visibility = if (pushAppsCount > 0) View.VISIBLE else View.GONE
 
             v.findViewById<TextView>(R.id.tv_device_profile)?.text =
                 getString(R.string.home_profile_label, profileName)

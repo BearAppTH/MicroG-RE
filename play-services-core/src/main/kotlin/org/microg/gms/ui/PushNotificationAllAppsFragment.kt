@@ -81,7 +81,7 @@ class PushNotificationAllAppsFragment : PreferenceFragmentCompat() {
     }
 
     private suspend fun updateContent() {
-        if (!::registered.isInitialized) return
+        if (!::registered.isInitialized || !::progress.isInitialized) return
         val context = requireContext()
         val pm = context.packageManager
 

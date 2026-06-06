@@ -55,7 +55,7 @@ class PushNotificationAdvancedFragment : PreferenceFragmentCompat() {
         view.setBackgroundColor(MaterialColors.getColor(view, android.R.attr.colorBackground))
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 while (true) {
                     updateContent()
                     delay(UPDATE_INTERVAL)
@@ -151,8 +151,10 @@ class PushNotificationAdvancedFragment : PreferenceFragmentCompat() {
         val hasOverlay = hasOverlayPermission()
         if (serviceInfo.configuration.confirmNewApps && !hasOverlay) {
             setGcmServiceConfiguration(appContext, serviceInfo.configuration.copy(confirmNewApps = false))
+            confirmNewApps.isChecked = false
+            return
         }
-        confirmNewApps.isChecked = serviceInfo.configuration.confirmNewApps && hasOverlay
+        confirmNewApps.isChecked = serviceInfo.configuration.confirmNewApps
         networkMobile.value = serviceInfo.configuration.mobile.toString()
         networkMobile.summary = getSummaryString(serviceInfo.configuration.mobile, serviceInfo.learntMobileInterval)
         networkWifi.value = serviceInfo.configuration.wifi.toString()

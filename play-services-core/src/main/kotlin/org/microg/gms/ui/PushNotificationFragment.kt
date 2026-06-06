@@ -70,7 +70,7 @@ class PushNotificationFragment : PreferenceFragmentCompat() {
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 while (true) {
                     updateStatus()
                     delay(UPDATE_INTERVAL)
