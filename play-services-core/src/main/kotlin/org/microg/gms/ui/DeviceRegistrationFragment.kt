@@ -97,7 +97,7 @@ class DeviceRegistrationFragment : PreferenceFragmentCompat() {
         view.setBackgroundColor(MaterialColors.getColor(view, android.R.attr.colorBackground))
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 while (true) {
                     updateStatus()
                     delay(UPDATE_INTERVAL)
@@ -222,7 +222,7 @@ class DeviceRegistrationFragment : PreferenceFragmentCompat() {
     }
 
     companion object {
-        private const val UPDATE_INTERVAL = 1000L
+        private const val UPDATE_INTERVAL = 5_000L
         private const val TAG = "DeviceRegistrationFragment"
         private val BUILT_IN_PROFILES: List<String> by lazy {
             R.xml::class.java.declaredFields

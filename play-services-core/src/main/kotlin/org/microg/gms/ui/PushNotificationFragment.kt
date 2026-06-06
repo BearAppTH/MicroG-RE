@@ -137,7 +137,7 @@ class PushNotificationFragment : PreferenceFragmentCompat() {
                 if (info == null) null else app to info
             }
             val toDisplay = installed.take(3)
-            toDisplay to (installed.size > toDisplay.size)
+            toDisplay to (appList.size > toDisplay.size)
         }
 
         val apps = rawApps.mapIndexed { idx, (app, applicationInfo) ->

@@ -131,6 +131,7 @@ class PushNotificationAppFragment : PreferenceFragmentCompat() {
 
     private suspend fun updateDetails() {
         if (!::appHeadingPreference.isInitialized) return
+        if (!isAdded) return
         appHeadingPreference.packageName = packageName
         val (app, registrations) = withContext(Dispatchers.IO) {
             val app = packageName?.let { database.getApp(it) }
