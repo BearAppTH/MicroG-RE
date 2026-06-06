@@ -75,6 +75,11 @@ class PushNotificationAllAppsFragment : PreferenceFragmentCompat() {
         lastSnapshot = emptyList()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        lastSnapshot = emptyList()
+    }
+
     private suspend fun updateContent() {
         if (!::registered.isInitialized) return
         val context = requireContext()

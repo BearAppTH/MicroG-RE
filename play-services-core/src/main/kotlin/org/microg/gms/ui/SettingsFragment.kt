@@ -284,17 +284,20 @@ class SettingsFragment : ResourceSettingsFragment() {
     }
 
     private fun updateGcmSummary() {
-        val context = requireContext()
         val pref = findPreference<Preference>(PREF_GCM) ?: return
+        val appContext = requireContext().applicationContext
 
-        if (GcmPrefs.get(context).isEnabled) {
-            val regCount = GcmDatabaseProvider.get(context).registrationList.size
-            pref.summary =
-                context.getString(org.microg.gms.base.core.R.string.service_status_enabled_short) + " - " + context.resources.getQuantityString(
-                    R.plurals.gcm_registered_apps_counter, regCount, regCount
-                )
-        } else {
+        if (!GcmPrefs.get(appContext).isEnabled) {
             pref.setSummary(org.microg.gms.base.core.R.string.service_status_disabled_short)
+            return
+        }
+        lifecycleScope.launch {
+            val regCount = withContext(Dispatchers.IO) {
+                GcmDatabaseProvider.get(appContext).registrationList.size
+            }
+            val ctx = context ?: return@launch
+            pref.summary = ctx.getString(org.microg.gms.base.core.R.string.service_status_enabled_short) +
+                " - " + ctx.resources.getQuantityString(R.plurals.gcm_registered_apps_counter, regCount, regCount)
         }
     }
 
