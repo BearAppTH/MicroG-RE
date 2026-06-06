@@ -6,9 +6,12 @@
 package org.microg.gms.ui
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
+import android.provider.Settings
 import android.view.View
 import android.widget.Toast
+import androidx.core.net.toUri
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -78,6 +81,10 @@ class PushNotificationAdvancedFragment : PreferenceFragmentCompat() {
         confirmNewApps.onPreferenceChangeListener =
             Preference.OnPreferenceChangeListener { _, newValue ->
                 val enable = newValue as Boolean
+                if (enable && !hasOverlayPermission()) {
+                    openOverlayPermissionSettings()
+                    return@OnPreferenceChangeListener false
+                }
                 val appContext = requireContext().applicationContext
                 viewLifecycleOwner.lifecycleScope.launch {
                     val cfg = getGcmServiceInfo(appContext)?.configuration
@@ -141,7 +148,11 @@ class PushNotificationAdvancedFragment : PreferenceFragmentCompat() {
         val appContext = context?.applicationContext ?: return
         val serviceInfo = getGcmServiceInfo(appContext) ?: return
 
-        confirmNewApps.isChecked = serviceInfo.configuration.confirmNewApps
+        val hasOverlay = hasOverlayPermission()
+        if (serviceInfo.configuration.confirmNewApps && !hasOverlay) {
+            setGcmServiceConfiguration(appContext, serviceInfo.configuration.copy(confirmNewApps = false))
+        }
+        confirmNewApps.isChecked = serviceInfo.configuration.confirmNewApps && hasOverlay
         networkMobile.value = serviceInfo.configuration.mobile.toString()
         networkMobile.summary = getSummaryString(serviceInfo.configuration.mobile, serviceInfo.learntMobileInterval)
         networkWifi.value = serviceInfo.configuration.wifi.toString()
@@ -212,6 +223,13 @@ class PushNotificationAdvancedFragment : PreferenceFragmentCompat() {
         }
 
         dialog.show()
+    }
+
+    private fun hasOverlayPermission(): Boolean = Settings.canDrawOverlays(requireContext())
+
+    private fun openOverlayPermissionSettings() {
+        val ctx = context ?: return
+        startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, "package:${ctx.packageName}".toUri()))
     }
 
     companion object {

@@ -84,6 +84,7 @@ private suspend fun sendToServiceInfoReceiver(intent: Intent, context: Context):
     try {
         context.sendOrderedBroadcast(intent, null)
     } catch (e: Exception) {
+        try { context.unregisterReceiver(receiver) } catch (_: Exception) {}
         cont.resumeWithException(e)
     }
 } }

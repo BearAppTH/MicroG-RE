@@ -93,7 +93,7 @@ class PushNotificationAllAppsFragment : PreferenceFragmentCompat() {
         val snapshot = appList
             .sortedBy { it.packageName }
             .map { AppListSnapshot(it.packageName, registrationsByPackage[it.packageName]?.isNotEmpty() == true) }
-        val structurallyChanged = snapshot != lastSnapshot
+        val structurallyChanged = snapshot != lastSnapshot || progress.isVisible
         lastSnapshot = snapshot
 
         if (!structurallyChanged) {
