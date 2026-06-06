@@ -30,6 +30,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.transition.MaterialSharedAxis
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.microg.gms.checkin.CheckinPreferences
@@ -63,6 +64,7 @@ class SettingsFragment : ResourceSettingsFragment() {
     }
 
     private val createdPreferences = mutableListOf<Preference>()
+    private var updateGcmSummaryJob: Job? = null
 
     private val requestIgnoreBatteryOptimizationLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -291,7 +293,8 @@ class SettingsFragment : ResourceSettingsFragment() {
             pref.setSummary(org.microg.gms.base.core.R.string.service_status_disabled_short)
             return
         }
-        lifecycleScope.launch {
+        updateGcmSummaryJob?.cancel()
+        updateGcmSummaryJob = lifecycleScope.launch {
             val regCount = withContext(Dispatchers.IO) {
                 GcmDatabaseProvider.get(appContext).registrationList.size
             }
