@@ -2,12 +2,14 @@
 
 ขอบคุณที่สนใจร่วมพัฒนา Bear MicroG! เอกสารนี้อธิบายวิธีการ contribute ให้กับโปรเจกต์
 
+การมีส่วนร่วมในโปรเจกต์นี้อยู่ภายใต้ [Code of Conduct](CODE_OF_CONDUCT.md) กรุณาอ่านก่อนเริ่ม contribute
+
 ## 🛠️ การตั้งค่า Development Environment
 
 ### ความต้องการ
 - Android Studio Hedgehog (2023.1.1) หรือใหม่กว่า
 - Java 21
-- Android SDK (Compile SDK 36)
+- Android SDK (Compile SDK 37)
 - Git
 
 ### การ Build โปรเจกต์

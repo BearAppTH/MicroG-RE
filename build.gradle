@@ -84,6 +84,16 @@ allprojects {
     ext.appVersionName = '3.6.1'
     def _vParts = ext.appVersionName.tokenize('.')
     // versionCode = 255034XYZ where XYZ encodes vMajor*100 + vMinor*10 + vPatch
+    // Each part must stay a single digit (0-9): the XYZ encoding only reserves
+    // one decimal place per component, so e.g. minor=10 would silently collide
+    // with the major digit and produce a lower versionCode than a prior release.
+    if (_vParts.size() != 3 || _vParts.any { it.toInteger() > 9 || it.toInteger() < 0 }) {
+        throw new GradleException(
+            "appVersionName '${ext.appVersionName}' is not compatible with the versionCode " +
+            "encoding (each of major.minor.patch must be a single digit 0-9). " +
+            "Update the versionCode formula below before bumping past x.9.9."
+        )
+    }
     // baseVersion stays "25.50.34" for GMS compatibility display
     ext.appVersionCode = 255034000 + _vParts[0].toInteger() * 100 + _vParts[1].toInteger() * 10 + _vParts[2].toInteger()
     ext.baseVersion = ext.appVersionCode.toString()[0..1] + '.' + ext.appVersionCode.toString()[2..3] + '.' + ext.appVersionCode.toString()[4..5]

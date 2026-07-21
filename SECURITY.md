@@ -29,3 +29,4 @@
 - Data leakage ผ่าน GmsCore API
 - Privilege escalation
 - การดักจับข้อมูล Google Account
+- Deserialization ที่ไม่ปลอดภัยใน SafeParcel (parcelable ที่ generate โดย `safe-parcel-processor`)
