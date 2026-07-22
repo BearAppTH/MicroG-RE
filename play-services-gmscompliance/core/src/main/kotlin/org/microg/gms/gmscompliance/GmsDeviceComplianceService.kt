@@ -36,7 +36,12 @@ class GmsDeviceComplianceService : BaseService(TAG, GmsService.GMS_COMPLIANCE) {
 
 class GmsDeviceComplianceServiceImpl(override val lifecycle: Lifecycle) : IGmsDeviceComplianceService.Stub(), LifecycleOwner {
     override fun getDeviceCompliance(callback: IGmsDeviceComplianceServiceCallback?) {
-        Log.d(TAG, "getDeviceCompliance()")
+        // NOTE: This is a stub. It always reports compliant = true and does not perform any
+        // real Google attestation. It exists so apps that merely call this API don't crash,
+        // not to defeat SafetyNet/Play Integrity checks. Server-side verification against
+        // Google will still reject this response for apps that check strictly (e.g. banking
+        // apps). See README "ข้อจำกัดที่ทราบอยู่แล้ว" for details.
+        Log.w(TAG, "getDeviceCompliance() called - returning stub response (compliant=true, NOT a real attestation)")
         lifecycleScope.launch {
             try {
                 callback?.onResponse(Status.SUCCESS, GmsDeviceComplianceResponse().apply { compliant = true })
