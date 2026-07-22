@@ -63,12 +63,6 @@ Bear MicroG ใช้ Package name `app.bear.android.gms` แทน `com.google.
 
 &nbsp;
 
-## 📸 ภาพหน้าจอ
-
-> ยังไม่มีภาพหน้าจอในเอกสารนี้ — ทีมดูแลควรแนบภาพ UI จริงจากแอป (เช่น หน้า Sign-in, หน้า Account management, หน้า Cast) ไว้ที่ `.github/assets/` แล้วอ้างอิงด้วย `![alt](.github/assets/screenshot-x.png)` แทนข้อความนี้
-
-&nbsp;
-
 ## 📥 วิธีติดตั้ง
 
 1. ดาวน์โหลดไฟล์ `.apk` ล่าสุดจาก [Releases](https://github.com/BearAppTH/MicroG-RE/releases/latest)
