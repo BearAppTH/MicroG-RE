@@ -34,7 +34,7 @@ public class Utils {
     }
 
     public static DeviceIdentifier getDeviceIdentifier(Context context) {
-        return new DeviceIdentifier();
+        return DeviceIdentifier.getPersisted(context);
     }
 
     public static PhoneInfo getPhoneInfo(Context context) {

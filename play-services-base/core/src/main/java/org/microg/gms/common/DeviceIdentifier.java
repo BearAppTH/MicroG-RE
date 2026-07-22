@@ -16,13 +16,50 @@
 
 package org.microg.gms.common;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import java.util.Random;
 
 public class DeviceIdentifier {
-    public String wifiMac = randomMacAddress(); // TODO: static
+    private static final String PREF_FILE = "microg_device_identifier";
+    private static final String PREF_WIFI_MAC = "wifi_mac";
+    private static final String PREF_MEID = "meid";
+
+    public String wifiMac = randomMacAddress();
     public String meid = randomMeid();
     public String esn;
 
+    /**
+     * Loads a {@link DeviceIdentifier} whose {@link #wifiMac} and {@link #meid} are generated
+     * once per install and then persisted, instead of being re-randomized on every call.
+     * <p>
+     * Checkin identity (see {@code CheckinManager}/{@code CheckinClient}) is expected to stay
+     * stable across requests; regenerating these values on every checkin made the device look
+     * like a "new" device to the checkin backend each time, which can affect checkin/GCM
+     * registration reliability. This does not change behavior for {@link #esn}, which callers
+     * still need to set explicitly if used.
+     */
+    public static DeviceIdentifier getPersisted(Context context) {
+        SharedPreferences prefs = context.getApplicationContext()
+                .getSharedPreferences(PREF_FILE, Context.MODE_PRIVATE);
+        DeviceIdentifier identifier = new DeviceIdentifier();
+
+        String wifiMac = prefs.getString(PREF_WIFI_MAC, null);
+        String meid = prefs.getString(PREF_MEID, null);
+        if (wifiMac == null || meid == null) {
+            wifiMac = identifier.wifiMac;
+            meid = identifier.meid;
+            prefs.edit()
+                    .putString(PREF_WIFI_MAC, wifiMac)
+                    .putString(PREF_MEID, meid)
+                    .apply();
+        }
+
+        identifier.wifiMac = wifiMac;
+        identifier.meid = meid;
+        return identifier;
+    }
 
     private static String randomMacAddress() {
         String mac = "b407f9";
