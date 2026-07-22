@@ -25,10 +25,25 @@
    ./gradlew assembleDefaultDebug
    ```
 
+   สำหรับ build เวอร์ชัน Huawei (flavor `huawei`, versionName suffix `-hw`):
+   ```bash
+   ./gradlew assembleHuaweiDebug
+   ```
+
 3. ไฟล์ APK จะอยู่ที่:
    ```
    play-services-core/build/outputs/apk/default/debug/
    ```
+
+## 🧩 การเปิด/ปิดโมดูลตอน Build
+
+โปรเจกต์รองรับการเปิด/ปิดบางโมดูลผ่านไฟล์ `local.properties` (ไฟล์นี้ไม่ถูก commit เข้า repo) โดยตั้งค่าในรูปแบบ:
+
+```properties
+modules.<ชื่อโมดูล>=true
+```
+
+ถ้าไม่ระบุ ระบบจะใช้ค่า default ที่กำหนดไว้ใน `build.gradle`/`settings.gradle` ของแต่ละโมดูล มีประโยชน์เวลาต้องการ build เฉพาะบางส่วนเพื่อลดเวลา build ระหว่างพัฒนา
 
 ## 🌿 Branching Strategy
 

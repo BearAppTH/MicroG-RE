@@ -14,6 +14,7 @@
 [![Latest Release](https://img.shields.io/github/v/release/BearAppTH/MicroG-RE?style=for-the-badge&color=4f8ef7&label=Latest)](https://github.com/BearAppTH/MicroG-RE/releases/latest)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue?style=for-the-badge)](LICENSE)
 [![Min SDK](https://img.shields.io/badge/Android-10%2B-green?style=for-the-badge&logo=android&logoColor=white)](https://github.com/BearAppTH/MicroG-RE)
+[![Build](https://img.shields.io/github/actions/workflow/status/BearAppTH/MicroG-RE/build.yml?branch=main&style=for-the-badge&label=Build)](https://github.com/BearAppTH/MicroG-RE/actions/workflows/build.yml)
 
 <br/>
 
@@ -56,14 +57,15 @@ Bear MicroG ใช้ Package name `app.bear.android.gms` แทน `com.google.
 | Instance ID / Firebase IID | ✅ รองรับ |
 | GServices Provider | ✅ รองรับ |
 | Conscrypt TLS Provider | ✅ รองรับ |
-| SafetyNet / Play Integrity | ❌ ไม่รองรับ |
+| Huawei Device Flavor (`huawei`, suffix `-hw`) | ✅ รองรับ |
+| SafetyNet / Play Integrity | ⚠️ Stub เท่านั้น (`play-services-gmscompliance` ตอบ `compliant = true` เสมอ ไม่ได้เชื่อมกับ Google attestation จริง — แอปที่เช็คแบบเข้มงวดจะยังผ่านไม่ได้) |
 | Google Pay | ❌ ไม่รองรับ |
 
 &nbsp;
 
 ## 📸 ภาพหน้าจอ
 
-> ภาพหน้าจอจะถูกเพิ่มในเวอร์ชันถัดไป
+> ยังไม่มีภาพหน้าจอในเอกสารนี้ — ทีมดูแลควรแนบภาพ UI จริงจากแอป (เช่น หน้า Sign-in, หน้า Account management, หน้า Cast) ไว้ที่ `.github/assets/` แล้วอ้างอิงด้วย `![alt](.github/assets/screenshot-x.png)` แทนข้อความนี้
 
 &nbsp;
 
@@ -94,6 +96,14 @@ Bear MicroG ใช้ Package name `app.bear.android.gms` แทน `com.google.
 
 **Q: ปลอดภัยไหม?**
 > Bear MicroG เป็น Open Source ทั้งหมด ตรวจสอบ Source Code ได้เองที่ repository นี้
+
+&nbsp;
+
+## ⚠️ ข้อจำกัดที่ทราบอยู่แล้ว
+
+- แอปที่มีการตรวจสอบ SafetyNet / Play Integrity แบบเข้มงวด (เช่นแอปธนาคาร) **ยังใช้งานไม่ได้จริง** แม้ `play-services-gmscompliance` จะตอบกลับว่า compliant เสมอ เพราะไม่ใช่ attestation ที่เซ็นรับรองโดย Google จริง แอปฝั่งเซิร์ฟเวอร์ตรวจสอบแล้วจะปฏิเสธ
+- แอปที่ต้องพึ่ง Google Pay จะใช้งานไม่ได้
+- ต้องใช้คู่กับแอปที่ผ่านการ patch ด้วย GmsCore support เท่านั้น แอปทั่วไปที่ยังไม่ patch จะไม่สามารถเชื่อมต่อกับ Bear MicroG ได้
 
 &nbsp;
 
